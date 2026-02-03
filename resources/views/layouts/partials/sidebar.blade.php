@@ -2,10 +2,13 @@
     <!-- Logo -->
     <div class="flex items-center justify-center h-16 border-b border-gray-100">
         <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-blue-500/30">
-                S
+            <div class="flex-shrink-0 flex items-center gap-3">
+                <img src="{{ asset('images/logo_simpel.png') }}" alt="SiMPEL" class="h-10 w-auto object-contain">
+                <div class="flex flex-col">
+                    <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">SiMPEL</span>
+                    <span class="text-[10px] text-gray-500 font-medium tracking-wider uppercase">Landasan Ulin</span>
+                </div>
             </div>
-            <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-800 to-gray-600">SiMPEL</span>
         </div>
     </div>
 
