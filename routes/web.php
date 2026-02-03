@@ -20,7 +20,7 @@ use App\Http\Controllers\UserController;
 */
 
 Route::get('/', function () {
-    return redirect()->route('login');
+    return view('home');
 });
 
 // Authentication Routes

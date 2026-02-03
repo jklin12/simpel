@@ -1,4 +1,4 @@
-<aside class="fixed inset-y-0 left-0 bg-white shadow-xl max-h-screen w-64 hidden lg:flex flex-col z-10 border-r border-gray-100 font-sans">
+<aside class="fixed inset-y-0 left-0 bg-white shadow-xl max-h-screen w-64 flex flex-col z-30 border-r border-gray-100 font-sans transform transition-transform duration-300 lg:static lg:translate-x-0" :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
     <!-- Logo -->
     <div class="flex items-center justify-center h-16 border-b border-gray-100">
         <div class="flex items-center gap-2">
