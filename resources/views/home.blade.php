@@ -140,7 +140,7 @@
         </div>
 
         <div class="mt-12 text-center">
-            <a href="#" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <a href="{{ route('services.index') }}" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                 Lihat Semua Layanan
             </a>
         </div>

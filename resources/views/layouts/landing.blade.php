@@ -83,9 +83,9 @@
 
                 <!-- Desktop Menu -->
                 <nav class="hidden lg:flex items-center gap-8">
-                    <a href="{{ url('/') }}" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Home</a>
-                    <a href="#buat-surat" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Buat Surat</a>
-                    <a href="#cek-status" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Cek Status</a>
+                    <a href="{{ route('home') }}" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Home</a>
+                    <a href="{{ route('services.index') }}" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Buat Surat</a>
+                    <a href="{{ route('tracking.index') }}" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Cek Status</a>
                     <a href="#faq" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">FAQ</a>
                     <a href="#contact" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Contact Us</a>
                 </nav>

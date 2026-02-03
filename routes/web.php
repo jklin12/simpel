@@ -21,7 +21,7 @@ use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('home');
-});
+})->name('home');
 
 Route::get('/layanan', [App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');
 Route::get('/api/kelurahans/{kecamatanId}', [App\Http\Controllers\ServiceController::class, 'getKelurahans'])->name('api.kelurahans');
