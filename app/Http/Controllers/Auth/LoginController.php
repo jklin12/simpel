@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+
+class LoginController extends Controller
+{
+    /**
+     * Show the login view.
+     */
+    public function create()
+    {
+        return view('auth.login');
+    }
+
+    /**
+     * Handle an incoming authentication request.
+     */
+    public function store(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'string', 'email'],
+            'password' => ['required', 'string'],
+        ]);
+
+        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+            throw ValidationException::withMessages([
+                'email' => trans('auth.failed'),
+            ]);
+        }
+
+        $request->session()->regenerate();
+
+        return $this->authenticated($request, Auth::user())
+            ?: redirect()->intended(route('dashboard'));
+    }
+
+    /**
+     * Destroy an authenticated session.
+     */
+    public function destroy(Request $request)
+    {
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect('/');
+    }
+
+    /**
+     * Validasi role user setelah login
+     */
+    protected function authenticated(Request $request, $user)
+    {
+        if ($user->hasRole('super_admin')) {
+            return redirect()->route('dashboard.super_admin');
+        } elseif ($user->hasRole('admin_kecamatan')) {
+            return redirect()->route('dashboard.kecamatan');
+        } elseif ($user->hasRole('admin_kelurahan')) {
+            return redirect()->route('dashboard.kelurahan');
+        } elseif ($user->hasRole('admin_kabupaten')) {
+            return redirect()->route('dashboard.kabupaten');
+        }
+
+        // Default redirect if no specific role matched (should not happen based on seeders)
+        return redirect()->route('dashboard');
+    }
+}

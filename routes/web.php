@@ -1,0 +1,73 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+Route::get('/', function () {
+    return redirect()->route('login');
+});
+
+// Authentication Routes
+Route::middleware('guest')->group(function () {
+    Route::get('login', [LoginController::class, 'create'])->name('login');
+    Route::post('login', [LoginController::class, 'store']);
+});
+
+Route::post('logout', [LoginController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
+
+// Dashboard Routes (Protected)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // Role specific dashboards
+    Route::get('/admin/super', [DashboardController::class, 'superAdmin'])->name('dashboard.super_admin');
+    Route::get('/admin/kabupaten', [DashboardController::class, 'kabupaten'])->name('dashboard.kabupaten');
+    Route::get('/admin/kecamatan', [DashboardController::class, 'kecamatan'])->name('dashboard.kecamatan');
+    Route::get('/admin/kelurahan', [DashboardController::class, 'kelurahan'])->name('dashboard.kelurahan');
+
+    // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+
+    // Notification Routes
+    Route::get('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+
+    // Admin Only Routes
+    Route::middleware(['role:super_admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('users', UserController::class);
+        Route::resource('roles', RoleController::class);
+        Route::resource('permissions', App\Http\Controllers\PermissionController::class);
+
+        // Master Data
+        Route::prefix('master')->name('master.')->group(function () {
+            Route::resource('kabupaten', App\Http\Controllers\KabupatenController::class);
+            Route::resource('kecamatan', App\Http\Controllers\KecamatanController::class);
+            Route::resource('kelurahan', App\Http\Controllers\KelurahanController::class);
+        });
+    });
+});
+
+// Location Helper Routes (API)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api/location/kecamatan/{kabupatenId}', [App\Http\Controllers\LocationHelperController::class, 'getKecamatan']);
+    Route::get('/api/location/kelurahan/{kecamatanId}', [App\Http\Controllers\LocationHelperController::class, 'getKelurahan']);
+});
