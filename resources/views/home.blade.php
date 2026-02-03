@@ -4,8 +4,8 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="relative bg-white overflow-hidden">
-    <div class="max-w-7xl mx-auto">
+<section class="relative bg-white overflow-hidden lg:pt-[110px]">
+    <div class="max-w-7xl mx-auto  pt-24">
         <div class="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
             <svg class="hidden lg:block absolute right-0 inset-y-0 h-full w-48 text-white transform translate-x-1/2" fill="currentColor" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
                 <polygon points="50,0 100,0 50,100 0,100" />
@@ -15,19 +15,19 @@
                 <div class="sm:text-center lg:text-left">
                     <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
                         <span class="block xl:inline">Pelayanan Publik</span>
-                        <span class="block text-blue-600 xl:inline">Mudah & Terpercaya</span>
+                        <span class="block text-primary-600 xl:inline">Mudah & Terpercaya</span>
                     </h1>
                     <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
                         Selamat datang di Portal Layanan Administrasi Kelurahan Landasan Ulin. Kami berkomitmen memberikan pelayanan prima bagi seluruh warga.
                     </p>
                     <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                         <div class="rounded-md shadow">
-                            <a href="#buat-surat" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 md:py-4 md:text-lg md:px-10 transition-transform transform hover:-translate-y-1">
+                            <a href="#buat-surat" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10 transition-transform transform hover:-translate-y-1">
                                 Buat Surat Sekarang
                             </a>
                         </div>
                         <div class="mt-3 sm:mt-0 sm:ml-3">
-                            <a href="#cek-status" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 md:py-4 md:text-lg md:px-10 transition-transform transform hover:-translate-y-1">
+                            <a href="#cek-status" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-primary-700 bg-primary-100 hover:bg-primary-200 md:py-4 md:text-lg md:px-10 transition-transform transform hover:-translate-y-1">
                                 Cek Status
                             </a>
                         </div>
@@ -36,7 +36,7 @@
             </main>
         </div>
     </div>
-    <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+    <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 mt-8 lg:mt-0">
         <img class="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full" src="{{ asset('images/banner.png') }}" alt="Pelayanan Publik">
     </div>
 </section>
@@ -45,7 +45,7 @@
 <section class="py-16 bg-gray-50 overflow-hidden">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-            <h2 class="text-base text-blue-600 font-semibold tracking-wide uppercase">Alur Proses</h2>
+            <h2 class="text-base text-primary-600 font-semibold tracking-wide uppercase">Alur Proses</h2>
             <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
                 Mudahnya Mengurus Surat
             </p>
@@ -64,7 +64,7 @@
 <section id="buat-surat" class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
-            <h2 class="text-base text-blue-600 font-semibold tracking-wide uppercase">Layanan Kami</h2>
+            <h2 class="text-base text-primary-600 font-semibold tracking-wide uppercase">Layanan Kami</h2>
             <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
                 Jenis Layanan Surat
             </p>
@@ -76,14 +76,14 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <!-- Card 1 -->
             <div class="group relative bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
-                    <svg class="w-8 h-8 text-blue-600 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="w-14 h-14 bg-primary-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary-600 transition-colors">
+                    <svg class="w-8 h-8 text-primary-600 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900 mb-2">Surat Keterangan Domisili</h3>
                 <p class="text-gray-500 text-sm mb-4">Untuk keperluan administrasi kependudukan dan tempat tinggal.</p>
-                <a href="{{ route('login') }}" class="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700">
+                <a href="{{ route('login') }}" class="inline-flex items-center text-primary-600 font-semibold hover:text-primary-700">
                     Ajukan Sekarang <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
@@ -148,10 +148,10 @@
 </section>
 
 <!-- FAQ Section -->
-<section id="faq" class="py-16 bg-blue-50">
+<section id="faq" class="py-16 bg-primary-50">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
-            <h2 class="text-base text-blue-600 font-semibold tracking-wide uppercase">FAQ</h2>
+            <h2 class="text-base text-primary-600 font-semibold tracking-wide uppercase">FAQ</h2>
             <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
                 Pertanyaan Populer
             </p>
@@ -201,13 +201,13 @@
 </section>
 
 <!-- CTA Section -->
-<div class="bg-blue-700">
+<div class="bg-primary-700">
     <div class="max-w-2xl mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8">
         <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
             <span class="block">Siap untuk mengajukan surat?</span>
-            <span class="block text-blue-200">Mulai sekarang juga, cepat dan mudah.</span>
+            <span class="block text-primary-200">Mulai sekarang juga, cepat dan mudah.</span>
         </h2>
-        <p class="mt-4 text-lg leading-6 text-blue-100">
+        <p class="mt-4 text-lg leading-6 text-primary-100">
             Daftar akun sekarang untuk menikmati layanan administrasi digital tanpa antre.
         </p>
     </div>
