@@ -75,6 +75,36 @@
                     </div>
                 </div>
 
+                <!-- Manajemen Surat Group -->
+                <div x-data="{ open: {{ request()->routeIs('admin.jenis-surat*', 'admin.approval-flow*', 'admin.surat-counter*') ? 'true' : 'false' }} }">
+                    <button @click="open = !open" type="button" class="w-full flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group justify-between {{ request()->routeIs('admin.jenis-surat*', 'admin.approval-flow*', 'admin.surat-counter*') ? 'bg-blue-50 text-blue-600' : '' }}">
+                        <div class="flex items-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 transition-colors group-hover:text-blue-600 {{ request()->routeIs('admin.jenis-surat*', 'admin.approval-flow*', 'admin.surat-counter*') ? 'text-blue-600' : '' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span class="font-medium">Manajemen Surat</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="px-4 py-2 space-y-1">
+                        <a href="{{ route('admin.jenis-surat.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 {{ request()->routeIs('admin.jenis-surat*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.jenis-surat*') ? 'bg-blue-600' : 'bg-gray-400' }}"></span>
+                            Jenis Surat
+                        </a>
+                        <a href="{{ route('admin.approval-flow.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 {{ request()->routeIs('admin.approval-flow*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.approval-flow*') ? 'bg-blue-600' : 'bg-gray-400' }}"></span>
+                            Approval Flow
+                        </a>
+                        <a href="{{ route('admin.surat-counter.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 {{ request()->routeIs('admin.surat-counter*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.surat-counter*') ? 'bg-blue-600' : 'bg-gray-400' }}"></span>
+                            Monitor Counter
+                        </a>
+                    </div>
+                </div>
+
                 <!-- Access Control Group -->
                 <div x-data="{ open: {{ request()->routeIs('admin.roles*', 'admin.permissions*') ? 'true' : 'false' }} }">
                     <button @click="open = !open" type="button" class="w-full flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group justify-between {{ request()->routeIs('admin.roles*', 'admin.permissions*') ? 'bg-blue-50 text-blue-600' : '' }}">

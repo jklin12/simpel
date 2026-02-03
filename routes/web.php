@@ -76,6 +76,12 @@ Route::middleware(['auth'])->group(function () {
             Route::resource('kecamatan', App\Http\Controllers\KecamatanController::class);
             Route::resource('kelurahan', App\Http\Controllers\KelurahanController::class);
         });
+
+        // Letter Management
+        Route::resource('jenis-surat', App\Http\Controllers\JenisSuratController::class);
+        Route::resource('approval-flow', App\Http\Controllers\ApprovalFlowController::class);
+        Route::get('surat-counter', [App\Http\Controllers\SuratCounterController::class, 'index'])->name('surat-counter.index');
+        Route::patch('surat-counter/{suratCounter}/reset', [App\Http\Controllers\SuratCounterController::class, 'reset'])->name('surat-counter.reset');
     });
 });
 
