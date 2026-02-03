@@ -47,7 +47,7 @@ class UserRoleSeeder extends Seeder
             'view_permohonan',
             'approve_permohonan_kabupaten',
         ]);
-        
+
         $roleAdminKecamatan->givePermissionTo([
             'view_permohonan',
             'approve_permohonan_kecamatan',
@@ -74,12 +74,12 @@ class UserRoleSeeder extends Seeder
             'name' => 'Admin Kecamatan Landasan Ulin',
             'email' => 'admin.landasanulin@example.com',
             'password' => Hash::make('password'),
-            'kecamatan_id' => 2709,
+            'kecamatan_id' => 6372011,
             // Perlu juga set kabupaten_id agar konsisten? 
             // Dari data JSON: Landasan Ulin (2709) -> City 176 (Banjar Baru). 
             // Mari kita set kabupaten_id juga jika memungkinkan, tapi tabel users nullable.
             // Untuk saat ini cukup kecamatan_id sesuai request user.
-            'kabupaten_id' => 176, 
+            'kabupaten_id' => 6372,
         ]);
         $adminKecamatan->assignRole($roleAdminKecamatan);
 
@@ -88,12 +88,12 @@ class UserRoleSeeder extends Seeder
             'name' => 'Admin Kelurahan Guntung Manggis',
             'email' => 'admin.guntungmanggis@example.com',
             'password' => Hash::make('password'),
-            'kelurahan_id' => 31518,
-            'kecamatan_id' => 2709,
-            'kabupaten_id' => 176,
+            'kelurahan_id' => 6372011004,
+            'kecamatan_id' => 6372011,
+            'kabupaten_id' => 6372,
         ]);
         $adminKelurahan->assignRole($roleAdminKelurahan);
-        
+
         $this->command->info('Roles, Permissions, and Admin Users seeded successfully!');
     }
 }
