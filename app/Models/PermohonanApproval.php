@@ -21,10 +21,11 @@ class PermohonanApproval extends Model
         return $this->belongsTo(PermohonanSurat::class);
     }
 
-    public function step(): BelongsTo
-    {
-        return $this->belongsTo(ApprovalStep::class, 'approval_step_id');
-    }
+    // public function step()
+    // {
+    //     return $this->belongsTo(ApprovalStep::class, 'approval_step_id');
+    // } 
+    // Commented out as column is dropped
 
     public function user(): BelongsTo
     {

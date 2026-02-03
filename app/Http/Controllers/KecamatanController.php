@@ -21,7 +21,7 @@ class KecamatanController extends Controller
                         $q->where('nama', 'like', "%{$search}%");
                     });
             })
-            ->where('kabupaten_id', 176)
+            ->where('kabupaten_id', 6372)
             ->orderBy('kode', 'asc')
             ->paginate(10)
             ->withQueryString();

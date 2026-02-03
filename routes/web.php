@@ -23,6 +23,19 @@ Route::get('/', function () {
     return view('home');
 });
 
+Route::get('/layanan', [App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');
+Route::get('/api/kelurahans/{kecamatanId}', [App\Http\Controllers\ServiceController::class, 'getKelurahans'])->name('api.kelurahans');
+
+// Public Permohonan Routes
+Route::get('/pengajuan/create', [App\Http\Controllers\PublicPermohonanController::class, 'create'])->name('permohonan.create.public');
+Route::post('/pengajuan', [App\Http\Controllers\PublicPermohonanController::class, 'store'])->name('permohonan.store.public');
+Route::post('/pengajuan/ocr', [App\Http\Controllers\PublicPermohonanController::class, 'ocrKtp'])->name('permohonan.ocr');
+
+// Tracking Routes
+Route::get('/cek-status', [App\Http\Controllers\TrackingController::class, 'index'])->name('tracking.index');
+Route::get('/cek-status/search', [App\Http\Controllers\TrackingController::class, 'search'])->name('tracking.search');
+
+
 // Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('login', [LoginController::class, 'create'])->name('login');

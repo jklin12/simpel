@@ -212,4 +212,6 @@
         </p>
     </div>
 </div>
+
+@include('components.success-modal')
 @endsection

@@ -48,7 +48,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|exists:roles,name',
-            'kabupaten_id' => 'nullable|exists:m_kabupatens,id',
+            //'kabupaten_id' => 'nullable|exists:m_kabupatens,id',
             'kecamatan_id' => 'nullable|exists:m_kecamatans,id',
             'kelurahan_id' => 'nullable|exists:m_kelurahans,id',
         ]);
@@ -58,7 +58,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone' => $request->phone,
-            'kabupaten_id' => $request->kabupaten_id,
+            'kabupaten_id' => '6372',
             'kecamatan_id' => $request->kecamatan_id,
             'kelurahan_id' => $request->kelurahan_id,
         ]);

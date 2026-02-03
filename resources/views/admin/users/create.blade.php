@@ -151,7 +151,7 @@
                     this.kelurahan_id = '';
                 }
                 // Always fetch for ID 176
-                fetch(`/api/location/kecamatan/176`)
+                fetch(`/api/location/kecamatan/6372`)
                     .then(res => res.json())
                     .then(data => this.kecamatans = data);
             },
