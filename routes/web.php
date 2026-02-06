@@ -83,6 +83,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('surat-counter', [App\Http\Controllers\SuratCounterController::class, 'index'])->name('surat-counter.index');
         Route::patch('surat-counter/{suratCounter}/reset', [App\Http\Controllers\SuratCounterController::class, 'reset'])->name('surat-counter.reset');
     });
+
+    // Permohonan Surat Management (All authenticated users)
+    Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('permohonan-surat', [App\Http\Controllers\PermohonanSuratController::class, 'index'])->name('permohonan-surat.index');
+        Route::get('permohonan-surat/{permohonanSurat}', [App\Http\Controllers\PermohonanSuratController::class, 'show'])->name('permohonan-surat.show');
+        Route::post('permohonan-surat/{permohonanSurat}/approve', [App\Http\Controllers\PermohonanSuratController::class, 'approve'])->name('permohonan-surat.approve');
+        Route::post('permohonan-surat/{permohonanSurat}/reject', [App\Http\Controllers\PermohonanSuratController::class, 'reject'])->name('permohonan-surat.reject');
+        Route::get('permohonan-surat/{permohonanSurat}/download', [App\Http\Controllers\PermohonanSuratController::class, 'downloadLetter'])->name('permohonan-surat.download');
+    });
 });
 
 // Location Helper Routes (API)
