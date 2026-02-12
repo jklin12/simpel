@@ -66,7 +66,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Only Routes
     Route::middleware(['role:super_admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::resource('users', UserController::class);
+        Route::resource('users', App\Http\Controllers\Admin\UserController::class);
         Route::resource('roles', RoleController::class);
         Route::resource('permissions', App\Http\Controllers\PermissionController::class);
 

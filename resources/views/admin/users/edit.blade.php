@@ -9,6 +9,30 @@
         <p class="text-gray-500">Update user details and access level.</p>
     </div>
 
+    {{-- Flash Messages --}}
+    @if(session('error'))
+    <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start gap-3" role="alert">
+        <svg class="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+        <div>
+            <p class="font-semibold">Error!</p>
+            <p class="text-sm">{{ session('error') }}</p>
+        </div>
+    </div>
+    @endif
+
+    @if($errors->any())
+    <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg" role="alert">
+        <p class="font-semibold mb-2">Terdapat kesalahan pada form:</p>
+        <ul class="list-disc list-inside text-sm space-y-1">
+            @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8"
         x-data="userForm()"
         x-init="init()">
@@ -100,13 +124,10 @@
 <script>
     function userForm() {
         return {
-            role: '{{ old('
-            role ', $user->roles->first()?->name) }}',
-            kabupaten_id: '176', // Hardcoded Banjarbaru (was: '{{ $user->kabupaten_id }}')
-            kecamatan_id: '{{ old('
-            kecamatan_id ', $user->kecamatan_id) }}',
-            kelurahan_id: '{{ old('
-            kelurahan_id ', $user->kelurahan_id) }}',
+            role: '<?= old('role', $user->roles->first()?->name) ?>',
+            kabupaten_id: '<?= old('kabupaten_id', $user->kabupaten_id) ?>', // Hardcoded Banjarbaru (was: '{{ $user->kabupaten_id }}')
+            kecamatan_id: '<?= old('kecamatan_id', $user->kecamatan_id) ?>',
+            kelurahan_id: '<?= old('kelurahan_id', $user->kelurahan_id) ?>',
             kecamatans: [],
             kelurahans: [],
 
@@ -153,8 +174,8 @@
                     this.kecamatan_id = '';
                     this.kelurahan_id = '';
                 }
-                // Always fetch for ID 176
-                const res = await fetch(`/api/location/kecamatan/176`);
+                // Always fetch for ID 6372
+                const res = await fetch(`/api/location/kecamatan/6372`);
                 this.kecamatans = await res.json();
             },
 
