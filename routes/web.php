@@ -78,10 +78,10 @@ Route::middleware(['auth'])->group(function () {
         });
 
         // Letter Management
-        Route::resource('jenis-surat', App\Http\Controllers\JenisSuratController::class);
-        Route::resource('approval-flow', App\Http\Controllers\ApprovalFlowController::class);
-        Route::get('surat-counter', [App\Http\Controllers\SuratCounterController::class, 'index'])->name('surat-counter.index');
-        Route::patch('surat-counter/{suratCounter}/reset', [App\Http\Controllers\SuratCounterController::class, 'reset'])->name('surat-counter.reset');
+        Route::resource('jenis-surat', App\Http\Controllers\Admin\JenisSuratController::class);
+        Route::resource('approval-flow', App\Http\Controllers\Admin\ApprovalFlowController::class);
+        Route::get('surat-counter', [App\Http\Controllers\Admin\SuratCounterController::class, 'index'])->name('surat-counter.index');
+        Route::patch('surat-counter/{suratCounter}/reset', [App\Http\Controllers\Admin\SuratCounterController::class, 'reset'])->name('surat-counter.reset');
     });
 
     // Permohonan Surat Management (All authenticated users)
