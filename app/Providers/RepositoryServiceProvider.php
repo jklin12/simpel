@@ -22,6 +22,9 @@ class RepositoryServiceProvider extends ServiceProvider
         \App\Repositories\Contracts\SuratCounterRepositoryInterface::class =>
         \App\Repositories\SuratCounterRepository::class,
 
+        \App\Repositories\Contracts\PermohonanSuratRepositoryInterface::class =>
+        \App\Repositories\PermohonanSuratRepository::class,
+
         // Add more repositories here as needed
         // \App\Repositories\Contracts\ProductRepositoryInterface::class => 
         //     \App\Repositories\ProductRepository::class,
