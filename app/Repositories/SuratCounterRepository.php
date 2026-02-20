@@ -56,7 +56,7 @@ class SuratCounterRepository implements SuratCounterRepositoryInterface
     public function resetCounter($id)
     {
         $counter = $this->find($id);
-        $counter->update(['current_number' => 0]);
+        $counter->update(['counter' => 0]);
         return $counter->fresh();
     }
 

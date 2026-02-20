@@ -179,17 +179,17 @@ class PermohonanSuratService
                 'tahun' => $now->year,
                 'bulan' => $now->month,
             ],
-            ['current_number' => 0]
+            ['counter' => 0]
         );
 
         // Increment counter
-        $counter->increment('current_number');
+        $counter->increment('counter');
         $counter->refresh();
 
         // Format: 001/SKD/KEL-A/II/2026
         $nomorSurat = sprintf(
             '%03d/%s/%s/%s/%s',
-            $counter->current_number,
+            $counter->counter,
             $jenisSurat->kode,
             $kelurahan->kode,
             $now->format('m'),

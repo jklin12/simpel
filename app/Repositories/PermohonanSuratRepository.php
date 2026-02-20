@@ -21,8 +21,8 @@ class PermohonanSuratRepository implements PermohonanSuratRepositoryInterface
 
     public function find($id)
     {
-        return $this->model->with(['jenisSurat', 'kelurahan.kecamatan', 'createdBy', 'approvals.approver'])
-            ->findOrFail($id);
+        return $this->model->with(['jenisSurat', 'kelurahan.kecamatan', 'createdBy', 'approvals.user'])
+            ->find($id);
     }
 
     public function paginate($perPage = 15, array $filters = [])

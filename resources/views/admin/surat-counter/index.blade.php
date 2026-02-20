@@ -53,7 +53,7 @@
                 </td>
                 <td class="px-6 py-4 text-center">
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-bold bg-blue-100 text-blue-700">
-                        {{ str_pad($counter->current_number, 4, '0', STR_PAD_LEFT) }}
+                        {{ str_pad($counter->counter, 4, '0', STR_PAD_LEFT) }}
                     </span>
                 </td>
                 <td class="px-6 py-4 text-right">

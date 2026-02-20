@@ -104,7 +104,6 @@ class PublicPermohonanController extends Controller
                 // Log error but don't fail the transaction
                 Log::error('WA Notification failed: ' . $e->getMessage());
             }
-
             DB::commit();
 
             return redirect()->route('home')->with('success_application', [

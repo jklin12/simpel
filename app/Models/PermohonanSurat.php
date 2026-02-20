@@ -6,10 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Notifications\Notifiable;
 
 class PermohonanSurat extends Model
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
+
+    /**
+     * Route notifications for the WhatsApp channel.
+     */
+    public function routeNotificationForWhatsapp()
+    {
+        return $this->phone_pemohon;
+    }
 
     protected $guarded = ['id'];
 
@@ -46,7 +55,7 @@ class PermohonanSurat extends Model
 
     public function currentApprovalStep(): BelongsTo
     {
-        return $this->belongsTo(ApprovalStep::class, 'current_step', 'step_order'); 
+        return $this->belongsTo(ApprovalStep::class, 'current_step', 'step_order');
         // Note: Relation logic depends on how we define current_step. 
         // If it's step_order integer it's not a direct FK to ID. 
         // Helper method might be better.

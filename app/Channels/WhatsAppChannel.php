@@ -3,6 +3,7 @@
 namespace App\Channels;
 
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Http;
 
 class WhatsAppChannel
 {
@@ -23,7 +24,8 @@ class WhatsAppChannel
         }
 
         // Placeholder for API Call
-        // Example: Http::post('https://api.whatsapp-provider.com/send', ['phone' => $to, 'message' => $message]);
+        // Example: 
+        Http::post('http://wa.banjarbaru-bagawi.id/send-message', ['number' => $to, 'message' => $message]);
 
         \Log::info("WhatsApp sent to {$to}: {$message}");
     }
