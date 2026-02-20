@@ -8,9 +8,11 @@ use App\Models\Kelurahan;
 use App\Http\Requests\StorePermohonanRequest;
 use App\Models\PermohonanSurat;
 use App\Models\PermohonanApproval;
+use App\Models\PermohonanDokumen;
 use App\Models\ApprovalFlow;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Notifications\PermohonanBaruNotification;
 use App\Notifications\PermohonanCreatedWhatsapp;
@@ -49,9 +51,12 @@ class PublicPermohonanController extends Controller
             $trackToken = strtoupper(Str::random(10));
             $service = JenisSurat::findOrFail($request->jenis_surat_id);
 
-            // Filter out non-data fields for JSON storage
-            $mainFields = ['_token', 'jenis_surat_id', 'kelurahan_id', 'pemohon_nama', 'pemohon_nik', 'pemohon_phone', 'pemohon_alamat'];
-            $dataPermohonan = $request->except($mainFields);
+            // Filter out non-data fields AND file fields for JSON storage
+            $excludeFields = array_merge(
+                ['_token', 'jenis_surat_id', 'kelurahan_id', 'pemohon_nama', 'pemohon_nik', 'pemohon_phone', 'pemohon_alamat'],
+                StorePermohonanRequest::fileFields()
+            );
+            $dataPermohonan = $request->except($excludeFields);
 
             // Generate Nomor Permohonan: REG/YYYYMMDD/RANDOM
             $nomorPermohonan = 'REG/' . date('Ymd') . '/' . strtoupper(Str::random(5));
@@ -73,9 +78,10 @@ class PublicPermohonanController extends Controller
                 'current_step' => 1,
             ]);
 
+            // Handle File Uploads
+            $this->handleFileUploads($request, $permohonan);
+
             // Trigger Approval Flow
-            // Logic: Always start with Staf Kelurahan (Verifikasi)
-            // Determine Role Name (assuming seeded roles)
             $targetRole = 'admin_kelurahan';
 
             PermohonanApproval::create([
@@ -96,8 +102,6 @@ class PublicPermohonanController extends Controller
             }
 
             // Notify Applicant (WhatsApp)
-            // Using the Permohonan model itself as the Notifiable entity for ad-hoc notification
-            // OR finding the user if logged in. For public guest, we rely on phone_pemohon.
             try {
                 $permohonan->notify(new PermohonanCreatedWhatsapp($permohonan));
             } catch (\Exception $e) {
@@ -113,6 +117,35 @@ class PublicPermohonanController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    /**
+     * Handle file uploads for permohonan documents.
+     */
+    private function handleFileUploads(StorePermohonanRequest $request, PermohonanSurat $permohonan): void
+    {
+        $fileFields = StorePermohonanRequest::fileFields();
+        $labels = PermohonanDokumen::JENIS_DOKUMEN;
+
+        foreach ($fileFields as $field) {
+            if ($request->hasFile($field)) {
+                $file = $request->file($field);
+                $path = $file->store(
+                    'permohonan/' . $permohonan->id . '/dokumen',
+                    'public'
+                );
+
+                PermohonanDokumen::create([
+                    'permohonan_surat_id' => $permohonan->id,
+                    'nama_dokumen' => $labels[$field] ?? ucwords(str_replace('_', ' ', $field)),
+                    'jenis_dokumen' => $field,
+                    'file_path' => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type' => $file->getMimeType(),
+                    'file_size' => $file->getSize(),
+                ]);
+            }
         }
     }
 

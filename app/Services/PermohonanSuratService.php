@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Repositories\Contracts\PermohonanSuratRepositoryInterface;
 use App\Models\SuratCounter;
+use App\Notifications\PermohonanApprovedWhatsapp;
+use App\Notifications\PermohonanRejectedWhatsapp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -78,14 +80,13 @@ class PermohonanSuratService
                     'current_step' => $nextApproval->step_order,
                 ]);
             } else {
-                // Final approval - generate letter number
+                // Final approval - generate letter number, status -> approved (pending TTD upload)
                 $nomorSurat = $this->generateNomorSurat($permohonan);
 
-                $this->repository->updateStatus($id, 'completed', [
+                $this->repository->updateStatus($id, 'approved', [
                     'current_step' => null,
                     'nomor_surat' => $nomorSurat,
                     'tanggal_surat' => now(),
-                    'completed_at' => now(),
                 ]);
             }
 
@@ -96,6 +97,13 @@ class PermohonanSuratService
             ]);
 
             DB::commit();
+
+            // Send WhatsApp notification to applicant
+            try {
+                $permohonan->fresh()->notify(new PermohonanApprovedWhatsapp($permohonan->fresh()));
+            } catch (\Exception $e) {
+                Log::error('WA Approved notification failed: ' . $e->getMessage());
+            }
 
             return $permohonan->fresh();
         } catch (\Exception $e) {
@@ -150,6 +158,13 @@ class PermohonanSuratService
             ]);
 
             DB::commit();
+
+            // Send WhatsApp notification to applicant
+            try {
+                $permohonan->fresh()->notify(new PermohonanRejectedWhatsapp($permohonan->fresh(), $rejectedReason));
+            } catch (\Exception $e) {
+                Log::error('WA Rejected notification failed: ' . $e->getMessage());
+            }
 
             return $permohonan->fresh();
         } catch (\Exception $e) {

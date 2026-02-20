@@ -7,8 +7,10 @@ use App\Http\Requests\ApprovePermohonanRequest;
 use App\Http\Requests\RejectPermohonanRequest;
 use App\Services\PermohonanSuratService;
 use App\Models\JenisSurat;
+use App\Models\PermohonanDokumen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class PermohonanSuratController extends Controller
 {
@@ -40,6 +42,7 @@ class PermohonanSuratController extends Controller
     {
         try {
             $permohonanSurat = $this->service->getPermohonanById($id);
+            $permohonanSurat->load('dokumens'); // Eager load documents
             $approvals = $permohonanSurat->approvals()->orderBy('step_order')->get();
 
             return view('admin.permohonan-surat.show', compact('permohonanSurat', 'approvals'));
@@ -87,27 +90,128 @@ class PermohonanSuratController extends Controller
     }
 
     /**
-     * Download generated letter (placeholder).
+     * Download generated letter as PDF.
      */
     public function downloadLetter($id)
     {
         try {
-            $permohonanSurat = $this->service->getPermohonanById($id);
+            $permohonan = $this->service->getPermohonanById($id);
 
-            if ($permohonanSurat->status !== 'completed') {
+            if (!in_array($permohonan->status, ['approved', 'completed'])) {
                 return redirect()
                     ->back()
                     ->with('error', 'Surat belum selesai diproses');
             }
 
-            // TODO: Implement PDF generation
-            return redirect()
-                ->back()
-                ->with('info', 'Fitur download PDF akan segera tersedia');
+            // Load relations
+            $permohonan->load(['jenisSurat', 'kelurahan.kecamatan']);
+            $kelurahan = $permohonan->kelurahan;
+
+            // Data lurah dari kelurahan DB
+            $lurah = [
+                'nama' => $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : 'KEPALA KELURAHAN',
+                'nip'  => $kelurahan->lurah_nip ?? '-',
+            ];
+
+            // Pilih template PDF berdasarkan kode jenis surat
+            $kode = strtolower($permohonan->jenisSurat->kode ?? '');
+            $pdfView = "pdf.{$kode}";
+
+            if (!\Illuminate\Support\Facades\View::exists($pdfView)) {
+                return redirect()
+                    ->back()
+                    ->with('info', "Template PDF untuk surat {$permohonan->jenisSurat->nama} belum tersedia.");
+            }
+
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($pdfView, [
+                'permohonan' => $permohonan,
+                'kelurahan'  => $kelurahan,
+                'lurah'      => $lurah,
+            ]);
+
+            $pdf->setPaper('a4', 'portrait');
+
+            $filename = ($permohonan->nomor_surat)
+                ? str_replace('/', '-', $permohonan->nomor_surat) . '.pdf'
+                : $permohonan->nomor_permohonan . '.pdf';
+
+            return $pdf->download($filename);
         } catch (\Exception $e) {
             return redirect()
                 ->back()
-                ->with('error', 'Permohonan tidak ditemukan');
+                ->with('error', 'Gagal generate PDF: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Upload signed PDF letter — transitions status from 'approved' to 'completed'.
+     */
+    public function uploadSignedLetter(Request $request, $id)
+    {
+        $request->validate([
+            'signed_letter' => 'required|file|mimes:pdf|max:5120',
+        ], [
+            'signed_letter.required' => 'File surat yang sudah ditandatangani wajib diupload.',
+            'signed_letter.mimes'    => 'File harus berformat PDF.',
+            'signed_letter.max'      => 'Ukuran file maksimal 5MB.',
+        ]);
+
+        try {
+            $permohonan = $this->service->getPermohonanById($id);
+
+            if ($permohonan->status !== 'approved') {
+                return redirect()->back()->with('error', 'Permohonan tidak dalam status menunggu TTD.');
+            }
+
+            $path = $request->file('signed_letter')
+                ->store('surat-selesai/' . $id, 'public');
+
+            $permohonan->update([
+                'signed_file_path' => $path,
+                'status'           => 'completed',
+                'completed_at'     => now(),
+            ]);
+
+            // Kirim WA notifikasi completed ke pemohon
+            try {
+                $permohonan->fresh()->notify(
+                    new \App\Notifications\PermohonanApprovedWhatsapp($permohonan->fresh())
+                );
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('WA completed notification failed: ' . $e->getMessage());
+            }
+
+            return redirect()
+                ->route('admin.permohonan-surat.show', $id)
+                ->with('success', 'Surat berhasil diupload. Status permohonan sekarang Selesai dan notifikasi telah dikirim ke pemohon.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal upload surat: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Download a specific document attachment.
+     */
+    public function downloadDokumen($id, $dokumenId)
+    {
+        try {
+            $dokumen = PermohonanDokumen::where('permohonan_surat_id', $id)
+                ->findOrFail($dokumenId);
+
+            if (!Storage::disk('public')->exists($dokumen->file_path)) {
+                return redirect()
+                    ->back()
+                    ->with('error', 'File tidak ditemukan di server');
+            }
+
+            return Storage::disk('public')->download(
+                $dokumen->file_path,
+                $dokumen->original_name
+            );
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Dokumen tidak ditemukan');
         }
     }
 }

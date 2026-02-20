@@ -53,6 +53,11 @@ class PermohonanSurat extends Model
         return $this->hasMany(PermohonanApproval::class);
     }
 
+    public function dokumens(): HasMany
+    {
+        return $this->hasMany(PermohonanDokumen::class);
+    }
+
     public function currentApprovalStep(): BelongsTo
     {
         return $this->belongsTo(ApprovalStep::class, 'current_step', 'step_order');

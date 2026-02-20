@@ -45,6 +45,9 @@ class StorePermohonanRequest extends FormRequest
             case 'SKM': // Surat Keterangan Kematian
                 $specificRules = $this->getSkmRules();
                 break;
+            case 'SKTM': // Surat Keterangan Tidak Mampu
+                $specificRules = $this->getSktmRules();
+                break;
             case 'SKU': // Surat Keterangan Usaha (Example)
                 // $specificRules = $this->getSkuRules();
                 break;
@@ -54,6 +57,28 @@ class StorePermohonanRequest extends FormRequest
         }
 
         return array_merge($commonRules, $specificRules);
+    }
+
+    /**
+     * File input names that should be excluded from data_permohonan JSON.
+     */
+    public static function fileFields(): array
+    {
+        return [
+            'foto_ktp',
+            'foto_kk',
+            'surat_pengantar_rt',
+            'foto_rumah',
+            'foto_usaha',
+            'akta_kelahiran',
+            'surat_pernyataan',
+            'surat_bidan',
+            'surat_rs',
+            'akta_pendirian',
+            'ktp_alm',
+            'ktp_ortu',
+            'dokumen_lainnya',
+        ];
     }
 
     private function getSkmRules()
@@ -83,6 +108,44 @@ class StorePermohonanRequest extends FormRequest
             'sebab_kematian' => 'required|string|max:255',
             'tempat_pemakaman' => 'required|string|max:255',
             'hubungan_pelapor' => 'required|string|max:100',
+        ];
+    }
+
+    private function getSktmRules()
+    {
+        return [
+            // Surat Pengantar
+            'nomor_pengantar' => 'required|string|max:50',
+            'tanggal_pengantar' => 'required|date',
+            'rt' => 'required|string|max:10',
+            'rw' => 'required|string|max:10',
+
+            // Data Diri
+            'nama_lengkap' => 'required|string|max:255',
+            'nik_bersangkutan' => 'required|string|size:16',
+            'no_kk' => 'required|string|size:16',
+            'tempat_lahir' => 'required|string|max:100',
+            'tanggal_lahir' => 'required|date',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'agama' => 'required|string',
+            'status_perkawinan' => 'required|string',
+            'pekerjaan' => 'required|string|max:100',
+            'alamat_lengkap' => 'required|string',
+
+            // Keterangan Ekonomi
+            'penghasilan_perbulan' => 'required|numeric|min:0',
+            'jumlah_tanggungan' => 'required|integer|min:0',
+            'kondisi_rumah' => 'required|string',
+
+            // Keperluan
+            'keperluan_sktm' => 'required|string',
+            'keterangan_tambahan' => 'nullable|string|max:500',
+
+            // Dokumen Lampiran
+            'foto_ktp' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'foto_kk' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'surat_pengantar_rt' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'foto_rumah' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ];
     }
 

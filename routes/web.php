@@ -91,6 +91,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('permohonan-surat/{permohonanSurat}/approve', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'approve'])->name('permohonan-surat.approve');
         Route::post('permohonan-surat/{permohonanSurat}/reject', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'reject'])->name('permohonan-surat.reject');
         Route::get('permohonan-surat/{permohonanSurat}/download', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'downloadLetter'])->name('permohonan-surat.download');
+        Route::get('permohonan-surat/{permohonanSurat}/dokumen/{dokumen}/download', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'downloadDokumen'])->name('permohonan-surat.download-dokumen');
+        Route::post('permohonan-surat/{permohonanSurat}/upload-signed', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'uploadSignedLetter'])->name('permohonan-surat.upload-signed');
     });
 });
 
