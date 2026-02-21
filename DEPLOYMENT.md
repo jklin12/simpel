@@ -88,9 +88,9 @@ redis-cli ping
 sudo mkdir -p /var/www
 cd /var/www
 
-git clone -b deploy/stable https://github.com/jklin12/simpel.git simpel
+git clone -b deploy/stable git@github.com:jklin12/simpel.git simpel
 cd simpel
-```
+``` 
 
 ---
 
