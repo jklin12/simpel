@@ -1,5 +1,4 @@
 .git
-.docker
 node_modules
 storage/logs
 storage/framework/cache
