@@ -13,7 +13,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            //MasterLocationSeeder::class,
+            MasterLocationSeeder::class,
             UserRoleSeeder::class,
             NotificationSeeder::class,
         ]);
