@@ -28,8 +28,23 @@ class PermohonanDokumen extends Model
         'akta_pendirian' => 'Akta Pendirian',
         'ktp_alm' => 'KTP Almarhum',
         'ktp_ortu' => 'KTP Orang Tua',
+        // SKTM
+        'surat_pengantar_rtrw'      => 'Surat Pengantar RT/RW',
+        'blangko_pernyataan'        => 'Blangko Pernyataan Bermeterai 10.000',
+        'ktp_kk_bersangkutan'       => 'KTP & KK yang Bersangkutan',
+        'ktp_saksi'                 => 'KTP 2 Orang Saksi',
+        'surat_rekomendasi_sekolah' => 'Surat Pengantar/Rekomendasi Sekolah/Kampus',
+        'bukti_lunas_pbb'           => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+        // SKTMR
+        'sktmr_surat_pengantar'    => 'Surat Pengantar RT/RW Setempat',
+        'sktmr_blangko_pernyataan' => 'Blangko Pernyataan Bermeterai 10.000',
+        'sktmr_ktp_kk'             => 'KTP & KK yang Bersangkutan',
+        'sktmr_ktp_saksi'          => 'KTP 2 Orang Saksi (RT yang sama)',
+        'sktmr_bukti_pbb'          => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+        // Generic
         'dokumen_lainnya' => 'Dokumen Lainnya',
     ];
+
 
     public function permohonanSurat(): BelongsTo
     {

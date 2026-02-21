@@ -178,39 +178,76 @@ class PermohonanSuratService
     }
 
     /**
-     * Generate nomor surat with auto-increment counter
+     * Generate nomor surat with auto-increment counter.
+     * Format per jenis surat:
+     *   - SKTMR : 600.2/{counter}/{RomawiBulan}/{kode_kelurahan}/{tahun}
+     *   - Others: {counter}/{kode_surat}/{kode_kelurahan}/{bulan}/{tahun}
      */
     private function generateNomorSurat($permohonan)
     {
         $jenisSurat = $permohonan->jenisSurat;
-        $kelurahan = $permohonan->kelurahan;
-        $now = Carbon::now();
+        $kelurahan  = $permohonan->kelurahan;
+        $now        = Carbon::now();
 
         // Get or create counter for this month
         $counter = SuratCounter::firstOrCreate(
             [
                 'jenis_surat_id' => $jenisSurat->id,
-                'kelurahan_id' => $kelurahan->id,
-                'tahun' => $now->year,
-                'bulan' => $now->month,
+                'kelurahan_id'   => $kelurahan->id,
+                'tahun'          => $now->year,
+                'bulan'          => $now->month,
             ],
             ['counter' => 0]
         );
 
-        // Increment counter
         $counter->increment('counter');
         $counter->refresh();
 
-        // Format: 001/SKD/KEL-A/II/2026
-        $nomorSurat = sprintf(
-            '%03d/%s/%s/%s/%s',
-            $counter->counter,
-            $jenisSurat->kode,
-            $kelurahan->kode,
-            $now->format('m'),
-            $now->format('Y')
-        );
+        $kodeJenis = strtoupper($jenisSurat->kode ?? '');
+
+        if ($kodeJenis === 'SKTMR') {
+            // Format: 600.2/002/I/KEL.SN/2026
+            $nomorSurat = sprintf(
+                '600.2/%03d/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kelurahan->kode ?? strtoupper($kelurahan->nama),
+                $now->format('Y')
+            );
+        } else {
+            // Format default: 001/SKD/KEL-A/II/2026
+            $nomorSurat = sprintf(
+                '%03d/%s/%s/%s/%s',
+                $counter->counter,
+                $kodeJenis,
+                $kelurahan->kode ?? strtoupper($kelurahan->nama),
+                $this->toRoman($now->month),
+                $now->format('Y')
+            );
+        }
 
         return $nomorSurat;
+    }
+
+    /**
+     * Convert integer month (1-12) to Roman numeral string.
+     */
+    private function toRoman(int $month): string
+    {
+        $map = [
+            1 => 'I',
+            2 => 'II',
+            3 => 'III',
+            4 => 'IV',
+            5 => 'V',
+            6 => 'VI',
+            7 => 'VII',
+            8 => 'VIII',
+            9 => 'IX',
+            10 => 'X',
+            11 => 'XI',
+            12 => 'XII'
+        ];
+        return $map[$month] ?? (string)$month;
     }
 }

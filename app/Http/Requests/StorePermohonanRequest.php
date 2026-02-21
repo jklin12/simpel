@@ -48,6 +48,9 @@ class StorePermohonanRequest extends FormRequest
             case 'SKTM': // Surat Keterangan Tidak Mampu
                 $specificRules = $this->getSktmRules();
                 break;
+            case 'SKTMR': // Surat Keterangan Tidak Memiliki Rumah
+                $specificRules = $this->getSktmrRules();
+                break;
             case 'SKU': // Surat Keterangan Usaha (Example)
                 // $specificRules = $this->getSkuRules();
                 break;
@@ -68,13 +71,19 @@ class StorePermohonanRequest extends FormRequest
             // SKM
             'ktp_alm',
             'ktp_ortu',
-            // SKTM (new)
+            // SKTM
             'surat_pengantar_rtrw',
             'blangko_pernyataan',
             'ktp_kk_bersangkutan',
             'ktp_saksi',
             'surat_rekomendasi_sekolah',
             'bukti_lunas_pbb',
+            // SKTMR
+            'sktmr_surat_pengantar',
+            'sktmr_blangko_pernyataan',
+            'sktmr_ktp_kk',
+            'sktmr_ktp_saksi',
+            'sktmr_bukti_pbb',
             // Legacy / other
             'foto_ktp',
             'foto_kk',
@@ -152,6 +161,41 @@ class StorePermohonanRequest extends FormRequest
             'ktp_saksi'                 => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'surat_rekomendasi_sekolah' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'bukti_lunas_pbb'           => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getSktmrRules()
+    {
+        return [
+            // Data Diri
+            'nama_lengkap'          => 'required|string|max:255',
+            'nik_bersangkutan'      => 'required|string|size:16',
+            'jenis_kelamin'         => 'required|in:Laki-laki,Perempuan',
+            'agama'                 => 'required|string',
+            'tempat_lahir'          => 'required|string|max:100',
+            'tanggal_lahir'         => 'required|date',
+            'status_perkawinan'     => 'required|string',
+            'pekerjaan'             => 'required|string|max:100',
+            'pendidikan_terakhir'   => 'required|string',
+            'alamat_lengkap'        => 'required|string',
+            'keperluan'             => 'required|string|max:255',
+
+            // Surat Pengantar RT/RW
+            'rt'                      => 'required|string|max:10',
+            'rw'                      => 'required|string|max:10',
+            'no_surat_pengantar'      => 'required|string|max:100',
+            'tanggal_surat_pengantar' => 'required|date',
+
+            // Surat Pernyataan
+            'no_surat_pernyataan'      => 'required|string|max:100',
+            'tanggal_surat_pernyataan' => 'required|date',
+
+            // Dokumen Lampiran
+            'sktmr_surat_pengantar'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sktmr_blangko_pernyataan' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sktmr_ktp_kk'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sktmr_ktp_saksi'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sktmr_bukti_pbb'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 

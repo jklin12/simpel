@@ -36,7 +36,7 @@ class ApprovalFlowController extends Controller
     public function create()
     {
         $jenisSurats = JenisSurat::where('is_active', true)->orderBy('nama')->get();
-        $kelurahans = Kelurahan::with('kecamatan')->orderBy('nama')->get();
+        $kelurahans = Kelurahan::where('kecamatan_id', '6372010')->with('kecamatan')->orderBy('nama')->get();
 
         return view('admin.approval-flow.create', compact('jenisSurats', 'kelurahans'));
     }
