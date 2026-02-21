@@ -21,7 +21,7 @@ class TrackingController extends Controller
             'track_token.exists' => 'Kode tracking tidak ditemukan.',
         ]);
 
-        $permohonan = PermohonanSurat::with(['jenisSurat', 'approvals', 'kelurahan'])
+        $permohonan = PermohonanSurat::with(['jenisSurat', 'approvals', 'kelurahan', 'dokumens'])
             ->where('track_token', $request->track_token)
             ->firstOrFail();
 
