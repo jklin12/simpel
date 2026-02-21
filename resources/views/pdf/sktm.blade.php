@@ -228,8 +228,8 @@
         $tglLahir = isset($data['tanggal_lahir'])
         ? \Carbon\Carbon::parse($data['tanggal_lahir'])->translatedFormat('d F Y')
         : '-';
-        $tglPengantar = isset($data['tanggal_pengantar'])
-        ? \Carbon\Carbon::parse($data['tanggal_pengantar'])->translatedFormat('d F Y')
+        $tglPengantar = isset($data['tanggal_surat_pengantar'])
+        ? \Carbon\Carbon::parse($data['tanggal_surat_pengantar'])->translatedFormat('d F Y')
         : '-';
         $tglSurat = $permohonan->tanggal_surat
         ? \Carbon\Carbon::parse($permohonan->tanggal_surat)->translatedFormat('d F Y')
@@ -290,10 +290,10 @@
             Berdasarkan surat pernyataan pemohon tanggal <span class="hl">{{ $tglSurat }}</span>
             dan surat pengantar Ketua RT. <span class="hl">{{ str_pad($data['rt'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
             RW. <span class="hl">{{ str_pad($data['rw'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
-            Nomor: <span class="hl">{{ $data['nomor_pengantar'] ?? '....' }}</span>
+            Nomor: <span class="hl">{{ $data['no_surat_pengantar'] ?? '....' }}</span>
             tanggal <span class="hl">{{ $tglPengantar }}</span>,
-            Kelurahan <span class="hl">{{ $kelurahan->nama }}</span>
-            Kecamatan {{ $kelurahan->kecamatan->nama ?? '-' }}
+            Kelurahan <span class="hl">{{ ucfirst($kelurahan->nama) }}</span>
+            Kecamatan {{ ucfirst($kelurahan->kecamatan->nama) }}
             Pemerintah Kota Banjarbaru dengan ini menerangkan bahwa nama tersebut diatas, tergolong tidak mampu.
         </p>
 

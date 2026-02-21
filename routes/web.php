@@ -34,6 +34,7 @@ Route::post('/pengajuan/ocr', [App\Http\Controllers\PublicPermohonanController::
 // Tracking Routes
 Route::get('/cek-status', [App\Http\Controllers\TrackingController::class, 'index'])->name('tracking.index');
 Route::get('/cek-status/search', [App\Http\Controllers\TrackingController::class, 'search'])->name('tracking.search');
+Route::get('/cek-status/download/{track_token}', [App\Http\Controllers\TrackingController::class, 'downloadSignedLetter'])->name('tracking.download.signed');
 
 
 // Authentication Routes

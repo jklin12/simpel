@@ -150,26 +150,126 @@ class PublicPermohonanController extends Controller
     }
 
     /**
-     * Handle OCR KTP Request.
+     * Handle OCR KTP Request using Claude AI Vision API.
      */
     public function ocrKtp(Request $request)
     {
         $request->validate([
-            'ktp_image' => 'required|image|max:2048', // Max 2MB
+            'ktp_image' => 'required|image|max:5120', // Max 5MB
         ]);
 
-        // Placeholder for OCR Logic
-        // In the future, process the image $request->file('ktp_image') and extract data
+        $apiKey = config('services.claude.api_key');
+        if (!$apiKey) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Claude API key tidak dikonfigurasi.',
+            ], 500);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'OCR processing placeholder. Logic to be implemented.',
-            'data' => [
-                'nik' => null,
-                'nama' => null,
-                'alamat' => null,
-                // Add other fields as needed
-            ]
-        ]);
+        try {
+            $file = $request->file('ktp_image');
+            $imageData = base64_encode(file_get_contents($file->getRealPath()));
+            $mimeType  = $file->getMimeType();
+
+            $prompt = <<<EOT
+Kamu adalah sistem OCR KTP Indonesia. Ekstrak data dari foto KTP ini dan kembalikan HANYA JSON valid (tanpa komentar, tanpa markdown) dengan format berikut:
+{
+  "nik": "string 16 digit atau null",
+  "nama": "string nama lengkap atau null",
+  "tempat_lahir": "string nama kota atau null",
+  "tanggal_lahir": "string format YYYY-MM-DD atau null",
+  "jenis_kelamin": "Laki-laki atau Perempuan atau null",
+  "alamat": "string alamat lengkap atau null"
+}
+
+Aturan penting:
+- tanggal_lahir harus dalam format YYYY-MM-DD (misal: 1995-07-25)
+- Jika ada field yang tidak terbaca, isi null
+- Kembalikan HANYA JSON, jangan ada teks lain sama sekali
+EOT;
+
+            $payload = [
+                'model'      => 'claude-3-haiku-20240307',
+                'max_tokens' => 512,
+                'messages'   => [
+                    [
+                        'role'    => 'user',
+                        'content' => [
+                            [
+                                'type'   => 'image',
+                                'source' => [
+                                    'type'       => 'base64',
+                                    'media_type' => $mimeType,
+                                    'data'       => $imageData,
+                                ],
+                            ],
+                            [
+                                'type' => 'text',
+                                'text' => $prompt,
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
+            $ch = curl_init('https://api.anthropic.com/v1/messages');
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST           => true,
+                CURLOPT_POSTFIELDS     => json_encode($payload),
+                CURLOPT_HTTPHEADER     => [
+                    'x-api-key: ' . $apiKey,
+                    'anthropic-version: 2023-06-01',
+                    'content-type: application/json',
+                ],
+                CURLOPT_TIMEOUT => 30,
+            ]);
+
+            $response   = curl_exec($ch);
+            $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlError  = curl_error($ch);
+            curl_close($ch);
+
+            if ($curlError) {
+                throw new \Exception('cURL error: ' . $curlError);
+            }
+
+            $responseData = json_decode($response, true);
+
+            if ($httpStatus !== 200) {
+                $errorMsg = $responseData['error']['message'] ?? 'Kesalahan API Claude.';
+                throw new \Exception($errorMsg);
+            }
+
+            $rawText = $responseData['content'][0]['text'] ?? '';
+
+            // Bersihkan markdown block jika ada
+            $rawText = preg_replace('/```json\s*|\s*```/', '', trim($rawText));
+
+            $ktpData = json_decode($rawText, true);
+
+            if (json_last_error() !== JSON_ERROR_NONE || !is_array($ktpData)) {
+                throw new \Exception('Gagal mengurai respon OCR dari Claude.');
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'OCR berhasil.',
+                'data'    => [
+                    'nik'           => $ktpData['nik'] ?? null,
+                    'nama'          => $ktpData['nama'] ?? null,
+                    'tempat_lahir'  => $ktpData['tempat_lahir'] ?? null,
+                    'tanggal_lahir' => $ktpData['tanggal_lahir'] ?? null,
+                    'jenis_kelamin' => $ktpData['jenis_kelamin'] ?? null,
+                    'alamat'        => $ktpData['alamat'] ?? null,
+                ],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('OCR KTP Error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal memproses OCR: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

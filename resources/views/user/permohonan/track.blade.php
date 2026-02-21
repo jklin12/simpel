@@ -73,7 +73,7 @@
             </div>
 
             <!-- Timeline History -->
-            <div class="p-6">
+            <div class="p-6 border-b border-gray-100">
                 <h3 class="text-lg font-bold text-gray-900 mb-6">Riwayat Status</h3>
 
                 <div class="flow-root">
@@ -123,6 +123,32 @@
                     </ul>
                 </div>
             </div>
+
+            <!-- Download Surat (hanya tampil jika status completed & file tersedia) -->
+            @if($permohonan->status === 'completed' && $permohonan->signed_file_path)
+            <div class="p-6 bg-green-50 border-t border-green-100">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-green-900 text-sm">Surat Sudah Selesai & Siap Diunduh</p>
+                            <p class="text-xs text-green-700 mt-0.5">File PDF surat yang sudah ditandatangani tersedia untuk diunduh.</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('tracking.download.signed', $permohonan->track_token) }}"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm flex-shrink-0">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Unduh Surat
+                    </a>
+                </div>
+            </div>
+            @endif
 
         </div>
         @endif

@@ -65,6 +65,17 @@ class StorePermohonanRequest extends FormRequest
     public static function fileFields(): array
     {
         return [
+            // SKM
+            'ktp_alm',
+            'ktp_ortu',
+            // SKTM (new)
+            'surat_pengantar_rtrw',
+            'blangko_pernyataan',
+            'ktp_kk_bersangkutan',
+            'ktp_saksi',
+            'surat_rekomendasi_sekolah',
+            'bukti_lunas_pbb',
+            // Legacy / other
             'foto_ktp',
             'foto_kk',
             'surat_pengantar_rt',
@@ -75,8 +86,6 @@ class StorePermohonanRequest extends FormRequest
             'surat_bidan',
             'surat_rs',
             'akta_pendirian',
-            'ktp_alm',
-            'ktp_ortu',
             'dokumen_lainnya',
         ];
     }
@@ -114,38 +123,35 @@ class StorePermohonanRequest extends FormRequest
     private function getSktmRules()
     {
         return [
-            // Surat Pengantar
-            'nomor_pengantar' => 'required|string|max:50',
-            'tanggal_pengantar' => 'required|date',
-            'rt' => 'required|string|max:10',
-            'rw' => 'required|string|max:10',
-
             // Data Diri
-            'nama_lengkap' => 'required|string|max:255',
-            'nik_bersangkutan' => 'required|string|size:16',
-            'no_kk' => 'required|string|size:16',
-            'tempat_lahir' => 'required|string|max:100',
-            'tanggal_lahir' => 'required|date',
-            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'agama' => 'required|string',
-            'status_perkawinan' => 'required|string',
-            'pekerjaan' => 'required|string|max:100',
-            'alamat_lengkap' => 'required|string',
+            'nama_lengkap'          => 'required|string|max:255',
+            'nik_bersangkutan'      => 'required|string|size:16',
+            'jenis_kelamin'         => 'required|in:Laki-laki,Perempuan',
+            'agama'                 => 'required|string',
+            'tempat_lahir'          => 'required|string|max:100',
+            'tanggal_lahir'         => 'required|date',
+            'status_perkawinan'     => 'required|string',
+            'pekerjaan'             => 'required|string|max:100',
+            'alamat_lengkap'        => 'required|string',
+            'keperluan_sktm'        => 'required|string',
 
-            // Keterangan Ekonomi
-            'penghasilan_perbulan' => 'required|numeric|min:0',
-            'jumlah_tanggungan' => 'required|integer|min:0',
-            'kondisi_rumah' => 'required|string',
+            // Surat Pengantar RT/RW
+            'rt'                    => 'required|string|max:10',
+            'rw'                    => 'required|string|max:10',
+            'no_surat_pengantar'    => 'required|string|max:100',
+            'tanggal_surat_pengantar' => 'required|date',
 
-            // Keperluan
-            'keperluan_sktm' => 'required|string',
-            'keterangan_tambahan' => 'nullable|string|max:500',
+            // Surat Pernyataan
+            'no_surat_pernyataan'      => 'required|string|max:100',
+            'tanggal_surat_pernyataan' => 'required|date',
 
             // Dokumen Lampiran
-            'foto_ktp' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'foto_kk' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'surat_pengantar_rt' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
-            'foto_rumah' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048',
+            'surat_pengantar_rtrw'      => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'blangko_pernyataan'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'ktp_kk_bersangkutan'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'ktp_saksi'                 => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'surat_rekomendasi_sekolah' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'bukti_lunas_pbb'           => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
