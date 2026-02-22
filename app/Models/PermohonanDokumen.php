@@ -41,6 +41,12 @@ class PermohonanDokumen extends Model
         'sktmr_ktp_kk'             => 'KTP & KK yang Bersangkutan',
         'sktmr_ktp_saksi'          => 'KTP 2 Orang Saksi (RT yang sama)',
         'sktmr_bukti_pbb'          => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+        // SKBM
+        'skbm_surat_pengantar'     => 'Surat Pengantar RT/RW Setempat',
+        'skbm_blangko_pernyataan'  => 'Blangko Pernyataan Bermeterai 10.000',
+        'skbm_ktp_kk'              => 'KTP & KK yang Bersangkutan',
+        'skbm_ktp_saksi'           => 'KTP 2 Orang Saksi (RT yang sama)',
+        'skbm_bukti_pbb'           => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
         // Generic
         'dokumen_lainnya' => 'Dokumen Lainnya',
     ];

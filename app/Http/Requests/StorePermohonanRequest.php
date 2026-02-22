@@ -51,6 +51,9 @@ class StorePermohonanRequest extends FormRequest
             case 'SKTMR': // Surat Keterangan Tidak Memiliki Rumah
                 $specificRules = $this->getSktmrRules();
                 break;
+            case 'SKBM': // Surat Keterangan Belum Menikah
+                $specificRules = $this->getSkbmRules();
+                break;
             case 'SKU': // Surat Keterangan Usaha (Example)
                 // $specificRules = $this->getSkuRules();
                 break;
@@ -93,6 +96,12 @@ class StorePermohonanRequest extends FormRequest
             'sktmr_ktp_kk',
             'sktmr_ktp_saksi',
             'sktmr_bukti_pbb',
+            // SKBM
+            'skbm_surat_pengantar',
+            'skbm_blangko_pernyataan',
+            'skbm_ktp_kk',
+            'skbm_ktp_saksi',
+            'skbm_bukti_pbb',
             // Legacy / other
             'foto_ktp',
             'foto_kk',
@@ -205,6 +214,40 @@ class StorePermohonanRequest extends FormRequest
             'sktmr_ktp_kk'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sktmr_ktp_saksi'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sktmr_bukti_pbb'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getSkbmRules()
+    {
+        return [
+            // Data Diri
+            'nama_lengkap'          => 'required|string|max:255',
+            'nik_bersangkutan'      => 'required|string|size:16',
+            'jenis_kelamin'         => 'required|in:Laki-laki,Perempuan',
+            'agama'                 => 'required|string',
+            'tempat_lahir'          => 'required|string|max:100',
+            'tanggal_lahir'         => 'required|date',
+            'status_perkawinan'     => 'required|string',
+            'pekerjaan'             => 'required|string|max:100',
+            'alamat_lengkap'        => 'required|string',
+            'keperluan'             => 'required|string|max:255',
+
+            // Surat Pengantar RT/RW
+            'rt'                      => 'required|string|max:10',
+            'rw'                      => 'required|string|max:10',
+            'no_surat_pengantar'      => 'required|string|max:100',
+            'tanggal_surat_pengantar' => 'required|date',
+
+            // Surat Pernyataan
+            'no_surat_pernyataan'      => 'required|string|max:100',
+            'tanggal_surat_pernyataan' => 'required|date',
+
+            // Dokumen Lampiran
+            'skbm_surat_pengantar'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skbm_blangko_pernyataan' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skbm_ktp_kk'             => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skbm_ktp_saksi'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skbm_bukti_pbb'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
