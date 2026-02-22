@@ -56,10 +56,9 @@
         /* TITLE */
         .surat-title {
             text-align: center;
-            margin: 14px 0 4px 0;
+            margin: 14px 0 0 0;
             font-size: 14pt;
-            font-weight: bold;
-            text-decoration: underline;
+            font-weight: bold; 
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -204,14 +203,7 @@
                 <td class="col-label">Nama</td>
                 <td class="col-sep">:</td>
                 <td class="col-value">{{ $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : ($lurah['nama'] ?? 'KEPALA KELURAHAN') }}</td>
-            </tr>
-            @if($kelurahan->lurah_pangkat)
-            <tr>
-                <td class="col-label">Pangkat/Golongan</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">{{ $kelurahan->lurah_pangkat }}{{ $kelurahan->lurah_golongan ? ' / ' . $kelurahan->lurah_golongan : '' }}</td>
-            </tr>
-            @endif
+            </tr> 
             <tr>
                 <td class="col-label">NIP</td>
                 <td class="col-sep">:</td>
