@@ -7,9 +7,7 @@
 <section class="relative bg-white overflow-hidden lg:pt-[110px]">
     <div class="max-w-7xl mx-auto  pt-24">
         <div class="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
-            <svg class="hidden lg:block absolute right-0 inset-y-0 h-full w-48 text-white transform translate-x-1/2" fill="currentColor" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-                <polygon points="50,0 100,0 50,100 0,100" />
-            </svg>
+           
 
             <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-24 lg:px-8 xl:mt-28">
                 <div class="sm:text-center lg:text-left">
@@ -61,7 +59,25 @@
 </section>
 
 <!-- Jenis Surat Section -->
-<section id="buat-surat" class="py-16 bg-white">
+<section id="buat-surat" class="py-16 bg-white" x-data="{
+    modalOpen: false,
+    selectedService: null,
+    kelurahans: {{ $kelurahans->toJson() }},
+    selectedKelurahan: '',
+    agreed: false,
+
+    openModal(service) {
+        this.selectedService = service;
+        this.selectedKelurahan = '';
+        this.agreed = false;
+        this.modalOpen = true;
+    },
+
+    submitApplication() {
+        if (!this.agreed || !this.selectedKelurahan) return;
+        window.location.href = '{{ route('permohonan.create.public') }}?service_id=' + this.selectedService.id + '&kelurahan_id=' + this.selectedKelurahan;
+    }
+}">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-16">
             <h2 class="text-base text-primary-600 font-semibold tracking-wide uppercase">Layanan Kami</h2>
@@ -73,76 +89,130 @@
             </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Card 1 -->
-            <div class="group relative bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="w-14 h-14 bg-primary-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-primary-600 transition-colors">
-                    <svg class="w-8 h-8 text-primary-600 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        @php
+        $cardColors = [
+            'SKTM'  => ['bg' => 'bg-blue-50',   'hover' => 'group-hover:bg-blue-600',   'text' => 'text-blue-600',   'btn' => 'text-blue-600 hover:text-blue-700'],
+            'SKTMR' => ['bg' => 'bg-orange-50',  'hover' => 'group-hover:bg-orange-600', 'text' => 'text-orange-600', 'btn' => 'text-orange-600 hover:text-orange-700'],
+            'SKBM'  => ['bg' => 'bg-purple-50',  'hover' => 'group-hover:bg-purple-600', 'text' => 'text-purple-600', 'btn' => 'text-purple-600 hover:text-purple-700'],
+        ];
+        @endphp
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            @foreach($featuredServices as $service)
+            @php $color = $cardColors[$service->kode] ?? ['bg' => 'bg-primary-50', 'hover' => 'group-hover:bg-primary-600', 'text' => 'text-primary-600', 'btn' => 'text-primary-600 hover:text-primary-700']; @endphp
+            <div class="group relative bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col">
+                <div class="w-14 h-14 {{ $color['bg'] }} rounded-xl flex items-center justify-center mb-6 {{ $color['hover'] }} transition-colors">
+                    <svg class="w-8 h-8 {{ $color['text'] }} group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                 </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Surat Keterangan Domisili</h3>
-                <p class="text-gray-500 text-sm mb-4">Untuk keperluan administrasi kependudukan dan tempat tinggal.</p>
-                <a href="{{ route('login') }}" class="inline-flex items-center text-primary-600 font-semibold hover:text-primary-700">
-                    Ajukan Sekarang <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <span class="inline-block px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-semibold rounded mb-2 w-fit">{{ $service->kode }}</span>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">{{ $service->nama }}</h3>
+                <p class="text-gray-500 text-sm mb-6 flex-1">{{ $service->deskripsi }}</p>
+                <button
+                    @click="openModal({{ $service->toJson() }})"
+                    class="inline-flex items-center {{ $color['btn'] }} font-semibold transition-colors">
+                    Ajukan Sekarang
+                    <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>
-                </a>
+                </button>
             </div>
-
-            <!-- Card 2 -->
-            <div class="group relative bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-orange-600 transition-colors">
-                    <svg class="w-8 h-8 text-orange-600 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">SKCK Pengantar</h3>
-                <p class="text-gray-500 text-sm mb-4">Surat pengantar untuk pembuatan SKCK di kepolisian.</p>
-                <a href="{{ route('login') }}" class="inline-flex items-center text-orange-600 font-semibold hover:text-orange-700">
-                    Ajukan Sekarang <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </a>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="group relative bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-green-600 transition-colors">
-                    <svg class="w-8 h-8 text-green-600 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Surat Kematian</h3>
-                <p class="text-gray-500 text-sm mb-4">Laporan dan keterangan kematian warga untuk akta kematian.</p>
-                <a href="{{ route('login') }}" class="inline-flex items-center text-green-600 font-semibold hover:text-green-700">
-                    Ajukan Sekarang <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </a>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="group relative bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                <div class="w-14 h-14 bg-purple-50 rounded-xl flex items-center justify-center mb-6 group-hover:bg-purple-600 transition-colors">
-                    <svg class="w-8 h-8 text-purple-600 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                    </svg>
-                </div>
-                <h3 class="text-xl font-bold text-gray-900 mb-2">Surat Usaha (SKU)</h3>
-                <p class="text-gray-500 text-sm mb-4">Keterangan memiliki usaha untuk keperluan bank atau izin.</p>
-                <a href="{{ route('login') }}" class="inline-flex items-center text-purple-600 font-semibold hover:text-purple-700">
-                    Ajukan Sekarang <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </a>
-            </div>
+            @endforeach
         </div>
 
         <div class="mt-12 text-center">
             <a href="{{ route('services.index') }}" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                 Lihat Semua Layanan
             </a>
+        </div>
+    </div>
+
+    <!-- Modal Pilih Kelurahan -->
+    <div
+        x-show="modalOpen"
+        style="display: none;"
+        class="fixed inset-0 z-50 overflow-y-auto"
+        role="dialog"
+        aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Overlay -->
+            <div
+                x-show="modalOpen"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+                @click="modalOpen = false"
+                aria-hidden="true"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <!-- Modal Panel -->
+            <div
+                x-show="modalOpen"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 sm:mx-0 sm:h-10 sm:w-10">
+                            <svg class="h-6 w-6 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                Pengajuan <span x-text="selectedService?.nama"></span>
+                            </h3>
+                            <div class="mt-4 space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700">Kelurahan / Desa</label>
+                                    <select x-model="selectedKelurahan" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md">
+                                        <option value="">Pilih Kelurahan</option>
+                                        <template x-for="kelurahan in kelurahans" :key="kelurahan.id">
+                                            <option :value="kelurahan.id" x-text="kelurahan.nama"></option>
+                                        </template>
+                                    </select>
+                                    <p class="mt-1 text-xs text-gray-500">Layanan ini khusus untuk wilayah Kecamatan Landasan Ulin.</p>
+                                </div>
+
+                                <div class="relative flex items-start py-2">
+                                    <div class="flex items-center h-5">
+                                        <input id="home-terms" name="terms" type="checkbox" x-model="agreed" class="focus:ring-primary-500 h-4 w-4 text-primary-600 border-gray-300 rounded">
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label for="home-terms" class="font-medium text-gray-700">Syarat dan Ketentuan</label>
+                                        <p class="text-gray-500">Saya menyetujui syarat dan ketentuan pengajuan surat ini dan menjamin kebenaran data yang diberikan.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button
+                        type="button"
+                        @click="submitApplication()"
+                        :disabled="!agreed || !selectedKelurahan"
+                        class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:ml-3 sm:w-auto sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+                        Lanjut Pengajuan
+                    </button>
+                    <button
+                        type="button"
+                        @click="modalOpen = false"
+                        class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                        Batal
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </section>

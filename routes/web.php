@@ -20,7 +20,12 @@ use App\Http\Controllers\UserController;
 */
 
 Route::get('/', function () {
-    return view('home');
+    $featuredServices = \App\Models\JenisSurat::whereIn('kode', ['SKTM', 'SKTMR', 'SKBM'])
+        ->where('is_active', true)
+        ->orderByRaw("FIELD(kode, 'SKTM', 'SKTMR', 'SKBM')")
+        ->get();
+    $kelurahans = \App\Models\Kelurahan::where('kecamatan_id', '6372010')->get();
+    return view('home', compact('featuredServices', 'kelurahans'));
 })->name('home');
 
 Route::get('/layanan', [App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');

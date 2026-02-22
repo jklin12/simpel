@@ -91,7 +91,7 @@
                 </nav>
 
                 <!-- Auth Buttons -->
-                <div class="hidden lg:flex items-center gap-4">
+                {{--<div class="hidden lg:flex items-center gap-4">
                     @auth
                     <a href="{{ route('dashboard') }}" class="px-5 py-2.5 text-sm font-medium text-white bg-primary-600 rounded-full hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-lg shadow-primary-500/30 transition-all transform hover:-translate-y-0.5">
                         Dashboard
@@ -101,7 +101,7 @@
                         Masuk
                     </a>
                     @endauth
-                </div>
+                </div>--}}
 
                 <!-- Mobile Menu Button -->
                 <div class="flex lg:hidden">
@@ -152,7 +152,7 @@
                         <span class="text-xl font-bold text-gray-900">SiMPEL</span>
                     </div>
                     <p class="text-gray-500 text-sm leading-relaxed mb-6">
-                        Sistem Informasi Pelayanan Administrasi Kelurahan Landasan Ulin. Memudahkan masyarakat dalam pengurusan surat menyurat secara digital.
+                        Sistem Informasi Pelayanan Administrasi Kecamatan Landasan Ulin. Memudahkan masyarakat dalam pengurusan surat menyurat secara digital.
                     </p>
                     <div class="flex gap-4">
                         <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-600 hover:text-white transition-all">

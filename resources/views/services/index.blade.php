@@ -28,7 +28,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
         <h1 class="text-4xl font-extrabold text-white sm:text-5xl mb-4 tracking-tight">Layanan Kami</h1>
         <p class="text-xl text-primary-100 max-w-2xl mx-auto font-medium">
-            Daftar lengkap layanan administrasi surat menyurat yang tersedia di Kelurahan Landasan Ulin.
+            Daftar lengkap layanan administrasi surat menyurat yang tersedia di Kecamatan Landasan Ulin.
         </p>
     </div>
 </section>

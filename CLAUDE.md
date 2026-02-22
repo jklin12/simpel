@@ -1,6 +1,6 @@
 # CLAUDE.md — Simpel Landasan Ulin
 
-Sistem Pelayanan Elektronik Kelurahan Landasan Ulin. Laravel 10 + MySQL + TailwindCSS.
+Sistem Pelayanan Elektronik Kecamatan Landasan Ulin. Laravel 10 + MySQL + TailwindCSS.
 
 ---
 
