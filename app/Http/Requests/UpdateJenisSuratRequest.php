@@ -16,6 +16,24 @@ class UpdateJenisSuratRequest extends FormRequest
     }
 
     /**
+     * Convert comma-separated options strings to arrays before validation.
+     */
+    protected function prepareForValidation()
+    {
+        if ($this->has('required_fields') && is_array($this->required_fields)) {
+            $fields = array_map(function ($field) {
+                if (isset($field['options']) && is_string($field['options'])) {
+                    $field['options'] = $field['options'] !== ''
+                        ? array_map('trim', explode(',', $field['options']))
+                        : null;
+                }
+                return $field;
+            }, $this->required_fields);
+            $this->merge(['required_fields' => $fields]);
+        }
+    }
+
+    /**
      * Get the validation rules that apply to the request.
      */
     public function rules()
@@ -33,7 +51,12 @@ class UpdateJenisSuratRequest extends FormRequest
             ],
             'deskripsi' => 'nullable|string',
             'required_fields' => 'nullable|array',
-            'required_fields.*' => 'string',
+            'required_fields.*.name' => 'required|string|regex:/^[a-z_]+$/',
+            'required_fields.*.label' => 'required|string|max:100',
+            'required_fields.*.type' => 'required|in:text,textarea,date,number,select,file',
+            'required_fields.*.is_required' => 'nullable|boolean',
+            'required_fields.*.options' => 'nullable|array',
+            'required_fields.*.options.*' => 'string',
             'template_path' => 'nullable|string|max:255',
             'is_active' => 'boolean',
         ];

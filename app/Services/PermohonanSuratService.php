@@ -203,24 +203,25 @@ class PermohonanSuratService
         $counter->increment('counter');
         $counter->refresh();
 
-        $kodeJenis = strtoupper($jenisSurat->kode ?? '');
+        $kodeJenis    = strtoupper($jenisSurat->kode ?? '');
+        $kodeKelurahan = strtoupper($kelurahan->akronim ?? $kelurahan->kode ?? $kelurahan->nama);
 
         if ($kodeJenis === 'SKTMR') {
-            // Format: 600.2/002/I/KEL.SN/2026
+            // Format: 600.2/002/I/LU/2026
             $nomorSurat = sprintf(
                 '600.2/%03d/%s/%s/%s',
                 $counter->counter,
                 $this->toRoman($now->month),
-                $kelurahan->kode ?? strtoupper($kelurahan->nama),
+                $kodeKelurahan,
                 $now->format('Y')
             );
         } else {
-            // Format default: 001/SKD/KEL-A/II/2026
+            // Format default: 001/SKD/LU/II/2026
             $nomorSurat = sprintf(
                 '%03d/%s/%s/%s/%s',
                 $counter->counter,
                 $kodeJenis,
-                $kelurahan->kode ?? strtoupper($kelurahan->nama),
+                $kodeKelurahan,
                 $this->toRoman($now->month),
                 $now->format('Y')
             );

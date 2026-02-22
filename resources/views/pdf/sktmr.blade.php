@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: "Times New Roman", Times, serif;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 12pt;
             color: #000;
         }
@@ -71,7 +71,7 @@
         }
 
         .hl {
-            color: #c0392b;
+            color: #000;
             font-weight: bold;
         }
 
@@ -104,7 +104,7 @@
         table.data-table td.col-value-bold {
             width: 55%;
             font-weight: bold;
-            color: #c0392b;
+            color: #000;
         }
 
         /* NARASI */
@@ -136,13 +136,11 @@
         }
 
         .ttd-spacer {
-            height: 70px;
+            height: 8px;
         }
 
         .ttd-nama {
             font-size: 11pt;
-            font-weight: bold;
-            text-decoration: underline;
         }
 
         .ttd-jabatan {
@@ -194,7 +192,7 @@
         {{-- ===== JUDUL ===== --}}
         <div class="surat-title">Surat Keterangan Belum Memiliki Rumah</div>
         <div class="surat-nomor">
-            Nomor : <span class="hl">{{ $permohonan->nomor_surat ?? '600.2/....../...../.........../......' }}</span>
+            Nomor :  {{ $permohonan->nomor_surat ?? '600.2/....../...../.........../......' }} 
         </div>
 
         {{-- ===== PEMBUKA ===== --}}
@@ -205,12 +203,19 @@
             <tr>
                 <td class="col-label">Nama</td>
                 <td class="col-sep">:</td>
-                <td class="col-value-bold">{{ $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : ($lurah['nama'] ?? 'KEPALA KELURAHAN') }}</td>
+                <td class="col-value">{{ $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : ($lurah['nama'] ?? 'KEPALA KELURAHAN') }}</td>
             </tr>
+            @if($kelurahan->lurah_pangkat)
+            <tr>
+                <td class="col-label">Pangkat/Golongan</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $kelurahan->lurah_pangkat }}{{ $kelurahan->lurah_golongan ? ' / ' . $kelurahan->lurah_golongan : '' }}</td>
+            </tr>
+            @endif
             <tr>
                 <td class="col-label">NIP</td>
                 <td class="col-sep">:</td>
-                <td class="col-value-bold">{{ $kelurahan->lurah_nip ?? ($lurah['nip'] ?? '-') }}</td>
+                <td class="col-value">{{ $kelurahan->lurah_nip ?? ($lurah['nip'] ?? '-') }}</td>
             </tr>
             <tr>
                 <td class="col-label">Jabatan</td>
@@ -242,7 +247,7 @@
             <tr>
                 <td class="col-label">Nama</td>
                 <td class="col-sep">:</td>
-                <td class="col-value-bold">{{ strtoupper($data['nama_lengkap'] ?? $permohonan->nama_pemohon) }}</td>
+                <td class="col-value">{{ strtoupper($data['nama_lengkap'] ?? $permohonan->nama_pemohon) }}</td>
             </tr>
             <tr>
                 <td class="col-label">NIK</td>
@@ -288,16 +293,16 @@
             <tr>
                 <td class="col-label">Keperluan Untuk</td>
                 <td class="col-sep">:</td>
-                <td class="col-value-bold">{{ $data['keperluan'] ?? '-' }}</td>
+                <td class="col-value">{{ $data['keperluan'] ?? '-' }}</td>
             </tr>
         </table>
 
         {{-- ===== NARASI ===== --}}
         <p class="narasi" style="margin-top:10px;">
-            Berdasarkan surat pengantar Ketua RT. <span class="hl">{{ $rtPad }}</span>
-            RW. <span class="hl">{{ $rwPad }}</span>
-            Nomor: <span class="hl">{{ $data['no_surat_pengantar'] ?? '....' }}</span>
-            tanggal <span class="hl">{{ $tglPengantar }}</span>,
+            Berdasarkan surat pengantar Ketua RT.  {{ $rtPad }} 
+            RW. {{ $rwPad }} 
+            Nomor: {{ $data['no_surat_pengantar'] ?? '....' }} 
+            tanggal {{ $tglPengantar }},
             dan surat pernyataan pemohon bahwa yang namanya tersebut diatas belum memiliki rumah/tempat tinggal sendiri.
         </p>
 
@@ -313,11 +318,15 @@
                 <td class="ttd-right-cell">
                     <p>Banjarbaru, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
                     <p>a.n Camat Landasan Ulin</p>
-                    <p>Lurah <span class="hl">{{ ucfirst($kelurahan->nama) }}</span></p>
+                    <p>Lurah  {{ ucwords(strtolower($kelurahan->nama)) }}</p>
+                    <div class="ttd-spacer"></div>
+                    @if(isset($qrBase64))
+                    <img src="data:image/png;base64,{{ $qrBase64 }}" style="width:60px;height:60px;" alt="QR Status"> 
+                    @endif
                     <div class="ttd-spacer"></div>
                     <div class="ttd-nama">{{ $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : ($lurah['nama'] ?? '____________________') }}</div>
-                    @if($kelurahan->lurah_pangkat ?? null)
-                    <div class="ttd-jabatan">{{ $kelurahan->lurah_pangkat }}</div>
+                    @if($kelurahan->lurah_pangkat)
+                    <div class="ttd-jabatan">{{ $kelurahan->lurah_pangkat }}{{ $kelurahan->lurah_golongan ? ' / ' . $kelurahan->lurah_golongan : '' }}</div>
                     @endif
                     <div class="ttd-nip">NIP. {{ $kelurahan->lurah_nip ?? ($lurah['nip'] ?? '-') }}</div>
                 </td>

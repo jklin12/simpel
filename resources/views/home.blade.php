@@ -18,7 +18,7 @@
                         <span class="block text-primary-600 xl:inline">Mudah & Terpercaya</span>
                     </h1>
                     <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                        Selamat datang di Portal Layanan Administrasi Kelurahan Landasan Ulin. Kami berkomitmen memberikan pelayanan prima bagi seluruh warga.
+                        Selamat datang di Portal Layanan Administrasi Kecamatan Landasan Ulin. Kami berkomitmen memberikan pelayanan prima bagi seluruh warga.
                     </p>
                     <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                         <div class="rounded-md shadow">

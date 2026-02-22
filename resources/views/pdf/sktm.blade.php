@@ -13,7 +13,7 @@
         }
 
         body {
-            font-family: "Times New Roman", Times, serif;
+            font-family: Arial, Helvetica, sans-serif;
             font-size: 12pt;
             color: #000;
         }
@@ -103,7 +103,7 @@
         table.data-table td.col-value-bold {
             width: 55%;
             font-weight: bold;
-            color: #1a5276;
+            color: #000;
         }
 
         /* NARASI */
@@ -115,7 +115,7 @@
         }
 
         .narasi .hl {
-            color: #1a5276;
+            color: #000;
             font-weight: bold;
         }
 
@@ -207,6 +207,13 @@
                 <td class="col-sep">:</td>
                 <td class="col-value-bold">{{ $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : ($lurah['nama'] ?? 'KEPALA KELURAHAN') }}</td>
             </tr>
+            @if($kelurahan->lurah_pangkat)
+            <tr>
+                <td class="col-label">Pangkat/Golongan</td>
+                <td class="col-sep">:</td>
+                <td class="col-value-bold">{{ $kelurahan->lurah_pangkat }}{{ $kelurahan->lurah_golongan ? ' / ' . $kelurahan->lurah_golongan : '' }}</td>
+            </tr>
+            @endif
             <tr>
                 <td class="col-label">NIP</td>
                 <td class="col-sep">:</td>
@@ -315,8 +322,15 @@
                     <p>Banjarbaru, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
                     <p>Lurah {{ $kelurahan->nama }}</p>
                     <div class="ttd-spacer"></div>
-                    <div class="ttd-nama">{{ $lurah['nama'] ?? '____________________' }}</div>
-                    <div class="ttd-nip">NIP. {{ $lurah['nip'] ?? '-' }}</div>
+                    @if(isset($qrBase64))
+                    <img src="data:image/png;base64,{{ $qrBase64 }}" style="width:60px;height:60px;" alt="QR Status">
+                    <p style="font-size:7pt; color:#555; margin:2px 0 4px 0;">Scan cek status surat</p>
+                    @endif
+                    <div class="ttd-nama">{{ $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : ($lurah['nama'] ?? '____________________') }}</div>
+                    @if($kelurahan->lurah_pangkat)
+                    <div class="ttd-nip">{{ $kelurahan->lurah_pangkat }}{{ $kelurahan->lurah_golongan ? ' / ' . $kelurahan->lurah_golongan : '' }}</div>
+                    @endif
+                    <div class="ttd-nip">NIP. {{ $kelurahan->lurah_nip ?? ($lurah['nip'] ?? '-') }}</div>
                 </td>
             </tr>
         </table>

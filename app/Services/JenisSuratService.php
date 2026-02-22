@@ -63,6 +63,23 @@ class JenisSuratService
             // Handle is_active checkbox
             $data['is_active'] = $data['is_active'] ?? false;
 
+            // Transform required_fields
+            if (isset($data['required_fields']) && is_array($data['required_fields'])) {
+                $data['required_fields'] = collect($data['required_fields'])
+                    ->filter(fn($f) => !empty($f['name']))
+                    ->map(function ($f) {
+                        $f['is_required'] = filter_var($f['is_required'] ?? false, FILTER_VALIDATE_BOOLEAN);
+                        if (($f['type'] ?? '') !== 'select' || empty($f['options'])) {
+                            $f['options'] = null;
+                        } else {
+                            $f['options'] = array_values(array_filter($f['options'], fn($o) => $o !== ''));
+                        }
+                        return $f;
+                    })
+                    ->values()
+                    ->toArray();
+            }
+
             // Create jenis surat
             $jenisSurat = $this->repository->create($data);
 
@@ -100,6 +117,25 @@ class JenisSuratService
 
             // Handle is_active checkbox
             $data['is_active'] = $data['is_active'] ?? false;
+
+            // Transform required_fields
+            if (isset($data['required_fields']) && is_array($data['required_fields'])) {
+                $data['required_fields'] = collect($data['required_fields'])
+                    ->filter(fn($f) => !empty($f['name']))
+                    ->map(function ($f) {
+                        $f['is_required'] = filter_var($f['is_required'] ?? false, FILTER_VALIDATE_BOOLEAN);
+                        if (($f['type'] ?? '') !== 'select' || empty($f['options'])) {
+                            $f['options'] = null;
+                        } else {
+                            $f['options'] = array_values(array_filter($f['options'], fn($o) => $o !== ''));
+                        }
+                        return $f;
+                    })
+                    ->values()
+                    ->toArray();
+            } elseif (array_key_exists('required_fields', $data)) {
+                $data['required_fields'] = [];
+            }
 
             // Update jenis surat
             $jenisSurat = $this->repository->update($id, $data);

@@ -123,10 +123,20 @@ class PermohonanSuratController extends Controller
                     ->with('info', "Template PDF untuk surat {$permohonan->jenisSurat->nama} belum tersedia.");
             }
 
+            // Generate QR code sebagai base64 PNG untuk embed di PDF
+            $trackUrl = route('tracking.search', ['track_token' => $permohonan->track_token]);
+            $qrBase64 = base64_encode(
+                \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
+                    ->size(120)
+                    ->margin(1)
+                    ->generate($trackUrl)
+            );
+
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($pdfView, [
                 'permohonan' => $permohonan,
                 'kelurahan'  => $kelurahan,
                 'lurah'      => $lurah,
+                'qrBase64'   => $qrBase64,
             ]);
 
             $pdf->setPaper('a4', 'portrait');
@@ -135,7 +145,7 @@ class PermohonanSuratController extends Controller
                 ? str_replace('/', '-', $permohonan->nomor_surat) . '.pdf'
                 : $permohonan->nomor_permohonan . '.pdf';
 
-            return $pdf->download($filename);
+            return $pdf->stream($filename);
         } catch (\Exception $e) {
             return redirect()
                 ->back()

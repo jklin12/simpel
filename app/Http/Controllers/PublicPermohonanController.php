@@ -52,10 +52,15 @@ class PublicPermohonanController extends Controller
             $service = JenisSurat::findOrFail($request->jenis_surat_id);
 
             // Filter out non-data fields AND file fields for JSON storage
-            $excludeFields = array_merge(
+            $dynamicFileNames = collect($service->required_fields ?? [])
+                ->filter(fn($f) => ($f['type'] ?? '') === 'file')
+                ->pluck('name')
+                ->toArray();
+            $excludeFields = array_unique(array_merge(
                 ['_token', 'jenis_surat_id', 'kelurahan_id', 'pemohon_nama', 'pemohon_nik', 'pemohon_phone', 'pemohon_alamat'],
-                StorePermohonanRequest::fileFields()
-            );
+                StorePermohonanRequest::fileFields(),
+                $dynamicFileNames
+            ));
             $dataPermohonan = $request->except($excludeFields);
 
             // Generate Nomor Permohonan: REG/YYYYMMDD/RANDOM
@@ -126,6 +131,15 @@ class PublicPermohonanController extends Controller
     private function handleFileUploads(StorePermohonanRequest $request, PermohonanSurat $permohonan): void
     {
         $fileFields = StorePermohonanRequest::fileFields();
+
+        // Merge dynamic file fields from required_fields
+        $jenisSurat = $permohonan->jenisSurat;
+        $dynamicFileFields = collect($jenisSurat->required_fields ?? [])
+            ->filter(fn($f) => ($f['type'] ?? '') === 'file')
+            ->pluck('name')
+            ->toArray();
+        $fileFields = array_unique(array_merge($fileFields, $dynamicFileFields));
+
         $labels = PermohonanDokumen::JENIS_DOKUMEN;
 
         foreach ($fileFields as $field) {

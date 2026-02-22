@@ -55,7 +55,16 @@ class StorePermohonanRequest extends FormRequest
                 // $specificRules = $this->getSkuRules();
                 break;
             default:
-                // Default rules or empty
+                if ($jenisSurat->required_fields) {
+                    foreach ($jenisSurat->required_fields as $field) {
+                        $specificRules[$field['name']] = match($field['type']) {
+                            'file'   => ($field['is_required'] ? 'required' : 'nullable') . '|file|mimes:jpg,jpeg,png,pdf|max:5120',
+                            'date'   => ($field['is_required'] ? 'required' : 'nullable') . '|date',
+                            'number' => ($field['is_required'] ? 'required' : 'nullable') . '|numeric',
+                            default  => ($field['is_required'] ? 'required' : 'nullable') . '|string|max:1000',
+                        };
+                    }
+                }
                 break;
         }
 
