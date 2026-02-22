@@ -87,12 +87,14 @@
                 <td class="px-6 py-4 text-sm">
                     @if($permohonan->status == 'pending')
                     <span class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">Pending</span>
-                    @elseif($permohonan->status == 'in_review')
-                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">Sedang Diproses</span>
+                    @elseif($permohonan->status == 'approved')
+                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">Diterima</span>
                     @elseif($permohonan->status == 'completed')
                     <span class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-700">Selesai</span>
                     @elseif($permohonan->status == 'rejected')
                     <span class="px-2 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">Ditolak</span>
+                    @else
+                    <span class="px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-700">{{ ucfirst($permohonan->status) }}</span>
                     @endif
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600">

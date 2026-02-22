@@ -216,13 +216,12 @@ class PermohonanSuratService
                 $now->format('Y')
             );
         } else {
-            // Format default: 001/SKD/LU/II/2026
+            // 400.9/002/I/KEL.SN/2026
             $nomorSurat = sprintf(
-                '%03d/%s/%s/%s/%s',
+                '400.2/%03d/%s/%s/%s',
                 $counter->counter,
-                $kodeJenis,
-                $kodeKelurahan,
                 $this->toRoman($now->month),
+                $kodeKelurahan,
                 $now->format('Y')
             );
         }
