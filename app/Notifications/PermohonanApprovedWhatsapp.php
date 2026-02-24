@@ -30,11 +30,12 @@ class PermohonanApprovedWhatsapp extends Notification
         // Jika sudah completed (final approval)
         if ($p->status === 'completed') {
             return "Halo {$p->nama_pemohon},\n\n" .
-                "✅ Permohonan surat *{$p->jenisSurat->nama}* Anda telah *SELESAI* diproses.\n\n" .
+                "✅ Permohonan surat *{$p->jenisSurat->nama}* Anda telah *SELESAI* diproses dan ditandatangai secara elektronik.\n\n" .
                 "Nomor Surat: *{$p->nomor_surat}*\n" .
                 "Tanggal Surat: {$p->tanggal_surat->format('d/m/Y')}\n\n" .
-                "Silakan datang ke kantor kelurahan untuk mengambil surat Anda.\n\n" .
-                "Kode Tracking: *{$p->track_token}*\n" .
+                "Silahkan download file surat pian melalui link\n" .
+                route('tracking.index') . " dan masukkan Kode Tracking: *{$p->track_token}*\n\n" .
+                "Atau jika kesulitan, Silakan datang ke kantor kelurahan untuk mengambil surat Anda.\n\n" .
                 "Terima kasih.";
         }
 
