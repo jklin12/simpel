@@ -60,7 +60,7 @@ class StorePermohonanRequest extends FormRequest
             default:
                 if ($jenisSurat->required_fields) {
                     foreach ($jenisSurat->required_fields as $field) {
-                        $specificRules[$field['name']] = match($field['type']) {
+                        $specificRules[$field['name']] = match ($field['type']) {
                             'file'   => ($field['is_required'] ? 'required' : 'nullable') . '|file|mimes:jpg,jpeg,png,pdf|max:5120',
                             'date'   => ($field['is_required'] ? 'required' : 'nullable') . '|date',
                             'number' => ($field['is_required'] ? 'required' : 'nullable') . '|numeric',
@@ -161,6 +161,7 @@ class StorePermohonanRequest extends FormRequest
             'pekerjaan'             => 'required|string|max:100',
             'alamat_lengkap'        => 'required|string',
             'keperluan_sktm'        => 'required|string',
+            'keterangan_sktm'       => 'required|string',
 
             // Surat Pengantar RT/RW
             'rt'                    => 'required|string|max:10',
@@ -169,7 +170,7 @@ class StorePermohonanRequest extends FormRequest
             'tanggal_surat_pengantar' => 'required|date',
 
             // Surat Pernyataan
-            'no_surat_pernyataan'      => 'required|string|max:100',
+            //'no_surat_pernyataan'      => 'required|string|max:100',
             'tanggal_surat_pernyataan' => 'required|date',
 
             // Dokumen Lampiran
@@ -205,7 +206,7 @@ class StorePermohonanRequest extends FormRequest
             'tanggal_surat_pengantar' => 'required|date',
 
             // Surat Pernyataan
-            'no_surat_pernyataan'      => 'required|string|max:100',
+            //'no_surat_pernyataan'      => 'required|string|max:100',
             'tanggal_surat_pernyataan' => 'required|date',
 
             // Dokumen Lampiran
@@ -239,7 +240,7 @@ class StorePermohonanRequest extends FormRequest
             'tanggal_surat_pengantar' => 'required|date',
 
             // Surat Pernyataan
-            'no_surat_pernyataan'      => 'required|string|max:100',
+            //'no_surat_pernyataan'      => 'required|string|max:100',
             'tanggal_surat_pernyataan' => 'required|date',
 
             // Dokumen Lampiran

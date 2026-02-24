@@ -61,7 +61,7 @@ class PublicPermohonanController extends Controller
                 StorePermohonanRequest::fileFields(),
                 $dynamicFileNames
             ));
-            $dataPermohonan = $request->except($excludeFields);
+            $dataPermohonan = array_map(fn($v) => is_string($v) ? strtoupper($v) : $v, $request->except($excludeFields));
 
             // Generate Nomor Permohonan: REG/YYYYMMDD/RANDOM
             $nomorPermohonan = 'REG/' . date('Ymd') . '/' . strtoupper(Str::random(5));

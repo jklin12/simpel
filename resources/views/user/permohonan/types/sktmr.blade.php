@@ -165,12 +165,7 @@
                     Blangko Surat Pernyataan
                 </h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">No. Surat Pernyataan <span class="text-red-500">*</span></label>
-                        <input type="text" name="no_surat_pernyataan" value="{{ old('no_surat_pernyataan') }}" placeholder="Contoh: 001/SP/I/2026" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('no_surat_pernyataan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-6"> 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Surat Pernyataan <span class="text-red-500">*</span></label>
                         <input type="date" name="tanggal_surat_pernyataan" value="{{ old('tanggal_surat_pernyataan') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
