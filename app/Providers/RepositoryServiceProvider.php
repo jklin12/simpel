@@ -25,6 +25,12 @@ class RepositoryServiceProvider extends ServiceProvider
         \App\Repositories\Contracts\PermohonanSuratRepositoryInterface::class =>
         \App\Repositories\PermohonanSuratRepository::class,
 
+        // Portal Kecamatan
+        \App\Repositories\Contracts\PortalBeritaRepositoryInterface::class =>
+        \App\Repositories\PortalBeritaRepository::class,
+
+        \App\Repositories\Contracts\PortalDataKelurahanRepositoryInterface::class =>
+        \App\Repositories\PortalDataKelurahanRepository::class,
         // Add more repositories here as needed
         // \App\Repositories\Contracts\ProductRepositoryInterface::class => 
         //     \App\Repositories\ProductRepository::class,

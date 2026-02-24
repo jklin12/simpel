@@ -107,3 +107,25 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/api/location/kecamatan/{kabupatenId}', [App\Http\Controllers\LocationHelperController::class, 'getKecamatan']);
     Route::get('/api/location/kelurahan/{kecamatanId}', [App\Http\Controllers\LocationHelperController::class, 'getKelurahan']);
 });
+
+// =============================================================================
+// Portal Kecamatan — Publik (tanpa login)
+// =============================================================================
+Route::prefix('portal')->name('portal.')->group(function () {
+    Route::get('/', [App\Http\Controllers\Web\PortalPublikController::class, 'index'])->name('home');
+    Route::get('/berita', [App\Http\Controllers\Web\PortalPublikController::class, 'berita'])->name('berita');
+    Route::get('/berita/{slug}', [App\Http\Controllers\Web\PortalPublikController::class, 'beritaDetail'])->name('berita.detail');
+    Route::get('/peta', [App\Http\Controllers\Web\PortalPublikController::class, 'peta'])->name('peta');
+    Route::get('/api/peta-data', [App\Http\Controllers\Web\PortalPublikController::class, 'petaData'])->name('peta.data');
+});
+
+// =============================================================================
+// Portal Kecamatan — Admin (harus login + role kecamatan atau super_admin)
+// =============================================================================
+Route::middleware(['auth', 'role:kecamatan|super_admin'])
+    ->prefix('admin/portal')
+    ->name('admin.portal.')
+    ->group(function () {
+        Route::resource('berita', App\Http\Controllers\Web\PortalBeritaAdminController::class);
+        Route::resource('data-kelurahan', App\Http\Controllers\Web\PortalDataKelurahanAdminController::class);
+    });

@@ -35,6 +35,39 @@
                 </a>
             </div>
 
+            {{-- Portal Kecamatan Group (kecamatan & super_admin) --}}
+            @hasanyrole('kecamatan|super_admin')
+            <div class="pt-4">
+                <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Portal Kecamatan</p>
+
+                <div x-data="{ open: {{ request()->routeIs('admin.portal.*') ? 'true' : 'false' }} }">
+                    <button @click="open = !open" type="button"
+                        class="w-full flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group justify-between {{ request()->routeIs('admin.portal.*') ? 'bg-blue-50 text-blue-600' : '' }}">
+                        <div class="flex items-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 transition-colors group-hover:text-blue-600 {{ request()->routeIs('admin.portal.*') ? 'text-blue-600' : '' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                            </svg>
+                            <span class="font-medium">Portal</span>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transition-transform duration-200" :class="{ 'rotate-180': open }" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                    </button>
+
+                    <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="px-4 py-2 space-y-1">
+                        <a href="{{ route('admin.portal.berita.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 {{ request()->routeIs('admin.portal.berita*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.portal.berita*') ? 'bg-blue-600' : 'bg-gray-400' }}"></span>
+                            Berita & Pengumuman
+                        </a>
+                        <a href="{{ route('admin.portal.data-kelurahan.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 {{ request()->routeIs('admin.portal.data-kelurahan*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.portal.data-kelurahan*') ? 'bg-blue-600' : 'bg-gray-400' }}"></span>
+                            Data Kelurahan
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endhasanyrole
+
             @role('super_admin')
             <!-- Master Data Group -->
             <div class="pt-4">
