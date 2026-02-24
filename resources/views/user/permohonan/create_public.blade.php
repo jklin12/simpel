@@ -65,9 +65,9 @@
 
             <!-- Dynamic Fields Based on Letter Type -->
             @if(View::exists('user.permohonan.types.' . strtolower($service->kode)))
-                @include('user.permohonan.types.' . strtolower($service->kode))
+            @include('user.permohonan.types.' . strtolower($service->kode))
             @elseif($service->required_fields && count($service->required_fields) > 0)
-                @include('user.permohonan.types.dynamic', ['fields' => $service->required_fields])
+            @include('user.permohonan.types.dynamic', ['fields' => $service->required_fields])
             @endif
 
             <!-- Submit Button -->
@@ -83,7 +83,45 @@
     </div>
 </div>
 
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<style>
+    .ts-control {
+        border-radius: 0.5rem;
+        border-color: #d1d5db;
+        background-color: #f9fafb;
+        padding: 0.75rem 1rem;
+        font-family: inherit;
+        font-size: 1rem;
+        line-height: 1.5rem;
+        min-height: 50px;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .ts-control.focus {
+        background-color: #ffffff;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 1px #3b82f6;
+    }
+
+    .ts-wrapper.single .ts-control:after {
+        right: 1rem;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectPekerjaan = document.querySelector('.select2-pekerjaan');
+        if (selectPekerjaan) {
+            new TomSelect(selectPekerjaan, {
+                create: true,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: "Pilih atau Ketik Pekerjaan Baru"
+            });
+        }
+    });
 </script>
 @if(session('error'))
 <script>

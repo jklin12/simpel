@@ -57,7 +57,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Agama <span class="text-red-500">*</span></label>
-                            <select name="agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select x-ref="agamaSelect" name="agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="">Pilih Agama</option>
                                 <option value="Islam" {{ old('agama') == 'Islam' ? 'selected' : '' }}>Islam</option>
                                 <option value="Kristen" {{ old('agama') == 'Kristen' ? 'selected' : '' }}>Kristen</option>
@@ -86,7 +86,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Status Perkawinan <span class="text-red-500">*</span></label>
-                            <select name="status_perkawinan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select x-ref="statusPerkawinanSelect" name="status_perkawinan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="">Pilih Status Perkawinan</option>
                                 <option value="Belum Kawin" {{ old('status_perkawinan') == 'Belum Kawin' ? 'selected' : '' }}>Belum Kawin</option>
                                 <option value="Kawin" {{ old('status_perkawinan') == 'Kawin' ? 'selected' : '' }}>Kawin</option>
@@ -97,7 +97,12 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan <span class="text-red-500">*</span></label>
-                            <input type="text" name="pekerjaan" value="{{ old('pekerjaan') }}" placeholder="Contoh: Petani / Buruh / Tidak Bekerja" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select name="pekerjaan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4 select2-pekerjaan" required>
+                                <option value="">Pilih Pekerjaan</option>
+                                @foreach($pekerjaanList ?? [] as $pekerjaan)
+                                <option value="{{ $pekerjaan }}" {{ old('pekerjaan') == $pekerjaan ? 'selected' : '' }}>{{ $pekerjaan }}</option>
+                                @endforeach
+                            </select>
                             @error('pekerjaan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
@@ -252,6 +257,7 @@
                         tempat_lahir: '{{ old("tempat_lahir") }}',
                         tanggal_lahir: '{{ old("tanggal_lahir") }}',
                         alamat: '{{ old("alamat_lengkap") }}',
+                        keterangan_sktm: '{{ old("keterangan_sktm") }}',
                         loading: false,
                         statusMsg: '',
                         statusOk: true,
@@ -290,6 +296,44 @@
                                     if (d.jenis_kelamin) {
                                         this.$nextTick(() => {
                                             this.$refs.jenisKelaminSelect.value = d.jenis_kelamin;
+                                        });
+                                    }
+                                    if (d.agama) {
+                                        this.$nextTick(() => {
+                                            let agamaTitleCase = d.agama.charAt(0).toUpperCase() + d.agama.slice(1).toLowerCase();
+                                            this.$refs.agamaSelect.value = agamaTitleCase;
+                                        });
+                                    }
+                                    if (d.status_perkawinan) {
+                                        this.$nextTick(() => {
+                                            const normalizedStatus = d.status_perkawinan.toLowerCase();
+                                            let selectedStatus = '';
+                                            if (normalizedStatus.includes('belum kawin')) selectedStatus = 'Belum Kawin';
+                                            else if (normalizedStatus.includes('cerai mati')) selectedStatus = 'Cerai Mati';
+                                            else if (normalizedStatus.includes('cerai hidup')) selectedStatus = 'Cerai Hidup';
+                                            else if (normalizedStatus.includes('kawin')) selectedStatus = 'Kawin';
+
+                                            if (selectedStatus) {
+                                                this.$refs.statusPerkawinanSelect.value = selectedStatus;
+                                            }
+                                        });
+                                    }
+                                    if (d.pekerjaan) {
+                                        this.$nextTick(() => {
+                                            const ts = document.querySelector('.select2-pekerjaan').tomselect;
+                                            if (ts) {
+                                                // Convert to Title Case to match job list if possible, or Add New
+                                                let jobTitleCase = d.pekerjaan.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                                                if (d.pekerjaan.toUpperCase() === 'PNS') jobTitleCase = 'PNS (Pegawai Negeri Sipil)';
+                                                else if (d.pekerjaan.toUpperCase() === 'TNI') jobTitleCase = 'TNI (Tentara Nasional Indonesia)';
+                                                else if (d.pekerjaan.toUpperCase() === 'POLRI') jobTitleCase = 'POLRI';
+
+                                                ts.addOption({
+                                                    value: jobTitleCase,
+                                                    text: jobTitleCase
+                                                });
+                                                ts.setValue(jobTitleCase);
+                                            }
                                         });
                                     }
                                     this.statusOk = true;

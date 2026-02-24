@@ -35,7 +35,9 @@ class PublicPermohonanController extends Controller
         $service = JenisSurat::findOrFail($serviceId);
         $kelurahan = Kelurahan::findOrFail($kelurahanId);
 
-        return view('user.permohonan.create_public', compact('service', 'kelurahan'));
+        $pekerjaanList = \App\Models\Pekerjaan::orderBy('nama')->pluck('nama')->toArray();
+
+        return view('user.permohonan.create_public', compact('service', 'kelurahan', 'pekerjaanList'));
     }
 
     /**
@@ -193,12 +195,16 @@ Kamu adalah sistem OCR KTP Indonesia. Ekstrak data dari foto KTP ini dan kembali
   "tempat_lahir": "string nama kota atau null",
   "tanggal_lahir": "string format YYYY-MM-DD atau null",
   "jenis_kelamin": "Laki-laki atau Perempuan atau null",
-  "alamat": "string alamat lengkap atau null"
+  "alamat": "string alamat lengkap atau null",
+  "agama": "string agama atau null",
+  "status_perkawinan": "Belum Kawin / Kawin / Cerai Hidup / Cerai Mati atau null",
+  "pekerjaan": "string pekerjaan atau null"
 }
 
 Aturan penting:
 - tanggal_lahir harus dalam format YYYY-MM-DD (misal: 1995-07-25)
-- Jika ada field yang tidak terbaca, isi null
+- Untuk jenis_kelamin, agama, status_perkawinan, dan pekerjaan usahakan tebak dengan sebaik mungkin jika agak buram.
+- Jika ada field yang sama sekali tidak terbaca, isi null
 - Kembalikan HANYA JSON, jangan ada teks lain sama sekali
 EOT;
 
@@ -270,12 +276,15 @@ EOT;
                 'success' => true,
                 'message' => 'OCR berhasil.',
                 'data'    => [
-                    'nik'           => $ktpData['nik'] ?? null,
-                    'nama'          => $ktpData['nama'] ?? null,
-                    'tempat_lahir'  => $ktpData['tempat_lahir'] ?? null,
-                    'tanggal_lahir' => $ktpData['tanggal_lahir'] ?? null,
-                    'jenis_kelamin' => $ktpData['jenis_kelamin'] ?? null,
-                    'alamat'        => $ktpData['alamat'] ?? null,
+                    'nik'               => $ktpData['nik'] ?? null,
+                    'nama'              => $ktpData['nama'] ?? null,
+                    'tempat_lahir'      => $ktpData['tempat_lahir'] ?? null,
+                    'tanggal_lahir'     => $ktpData['tanggal_lahir'] ?? null,
+                    'jenis_kelamin'     => $ktpData['jenis_kelamin'] ?? null,
+                    'alamat'            => $ktpData['alamat'] ?? null,
+                    'agama'             => $ktpData['agama'] ?? null,
+                    'status_perkawinan' => $ktpData['status_perkawinan'] ?? null,
+                    'pekerjaan'         => $ktpData['pekerjaan'] ?? null,
                 ],
             ]);
         } catch (\Exception $e) {

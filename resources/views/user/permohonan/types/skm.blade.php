@@ -63,7 +63,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin</label>
-                            <select name="jk_jenazah" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select x-ref="jenisKelaminSelect" name="jk_jenazah" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="">Pilih Jenis Kelamin</option>
                                 <option value="L" {{ old('jk_jenazah') == 'L' ? 'selected' : '' }}>Laki-laki</option>
                                 <option value="P" {{ old('jk_jenazah') == 'P' ? 'selected' : '' }}>Perempuan</option>
@@ -91,7 +91,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Agama</label>
-                            <select name="agama_jenazah" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select x-ref="agamaSelect" name="agama_jenazah" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="Islam" {{ old('agama_jenazah') == 'Islam' ? 'selected' : '' }}>Islam</option>
                                 <option value="Kristen" {{ old('agama_jenazah') == 'Kristen' ? 'selected' : '' }}>Kristen</option>
                                 <option value="Katolik" {{ old('agama_jenazah') == 'Katolik' ? 'selected' : '' }}>Katolik</option>
@@ -103,7 +103,12 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan Terakhir</label>
-                            <input type="text" name="pekerjaan_jenazah" value="{{ old('pekerjaan_jenazah') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select name="pekerjaan_jenazah" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4 select2-pekerjaan" required>
+                                <option value="">Pilih Pekerjaan</option>
+                                @foreach($pekerjaanList ?? [] as $pekerjaan)
+                                <option value="{{ $pekerjaan }}" {{ old('pekerjaan_jenazah') == $pekerjaan ? 'selected' : '' }}>{{ $pekerjaan }}</option>
+                                @endforeach
+                            </select>
                             @error('pekerjaan_jenazah') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
@@ -214,6 +219,38 @@
                                     // Populate placeholder data
                                     if (result.data.nama) this.nama = result.data.nama;
                                     if (result.data.nik) this.nik = result.data.nik;
+                                    if (result.data.tempat_lahir) this.tempat_lahir = result.data.tempat_lahir;
+                                    if (result.data.tanggal_lahir) this.tanggal_lahir = result.data.tanggal_lahir;
+                                    if (result.data.alamat) this.alamat = result.data.alamat;
+                                    if (result.data.jenis_kelamin) {
+                                        this.$nextTick(() => {
+                                            const jk = result.data.jenis_kelamin.toLowerCase() === 'laki-laki' ? 'L' : 'P';
+                                            this.$refs.jenisKelaminSelect.value = jk;
+                                        });
+                                    }
+                                    if (result.data.agama) {
+                                        this.$nextTick(() => {
+                                            let agamaTitleCase = result.data.agama.charAt(0).toUpperCase() + result.data.agama.slice(1).toLowerCase();
+                                            this.$refs.agamaSelect.value = agamaTitleCase;
+                                        });
+                                    }
+                                    if (result.data.pekerjaan) {
+                                        this.$nextTick(() => {
+                                            const ts = document.querySelector('.select2-pekerjaan').tomselect;
+                                            if (ts) {
+                                                let jobTitleCase = result.data.pekerjaan.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                                                if (result.data.pekerjaan.toUpperCase() === 'PNS') jobTitleCase = 'PNS (Pegawai Negeri Sipil)';
+                                                else if (result.data.pekerjaan.toUpperCase() === 'TNI') jobTitleCase = 'TNI (Tentara Nasional Indonesia)';
+                                                else if (result.data.pekerjaan.toUpperCase() === 'POLRI') jobTitleCase = 'POLRI';
+
+                                                ts.addOption({
+                                                    value: jobTitleCase,
+                                                    text: jobTitleCase
+                                                });
+                                                ts.setValue(jobTitleCase);
+                                            }
+                                        });
+                                    }
                                 }
                             } catch (error) {
                                 console.error('OCR Error:', error);
