@@ -16,20 +16,12 @@ class StorePermohonanRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
-     */
-    public function rules(): array
-    {
         $commonRules = [
             'jenis_surat_id' => 'required|exists:jenis_surats,id',
             'kelurahan_id' => 'required|exists:m_kelurahans,id',
 
-            'pemohon_nama' => 'required|string|max:255',
-            'pemohon_nik' => 'required|string|size:16',
-            'pemohon_phone' => 'required|string|max:20',
-            'pemohon_alamat' => 'required|string|max:255',
+            // removed pemohon_nama, pemohon_nik, pemohon_phone, pemohon_alamat
+            // because they will be mapped in the controller dynamically
         ];
 
         // Fetch Type based on ID
@@ -143,7 +135,13 @@ class StorePermohonanRequest extends FormRequest
             'tempat_meninggal' => 'required|string|max:255',
             'sebab_kematian' => 'required|string|max:255',
             'tempat_pemakaman' => 'required|string|max:255',
+
+            // Pelapor
+            'nama_pelapor' => 'required|string|max:255',
+            'nik_pelapor' => 'required|string|size:16',
+            'alamat_pelapor' => 'required|string',
             'hubungan_pelapor' => 'required|string|max:100',
+            'no_wa' => 'required|string|max:20',
         ];
     }
 
@@ -160,6 +158,7 @@ class StorePermohonanRequest extends FormRequest
             'status_perkawinan'     => 'required|string',
             'pekerjaan'             => 'required|string|max:100',
             'alamat_lengkap'        => 'required|string',
+            'no_wa'                 => 'required|string|max:20',
             'keperluan_sktm'        => 'required|string',
             'keterangan_sktm'       => 'required|string',
 
@@ -197,6 +196,7 @@ class StorePermohonanRequest extends FormRequest
             'pekerjaan'             => 'required|string|max:100',
             'pendidikan_terakhir'   => 'required|string',
             'alamat_lengkap'        => 'required|string',
+            'no_wa'                 => 'required|string|max:20',
             'keperluan'             => 'required|string|max:255',
 
             // Surat Pengantar RT/RW

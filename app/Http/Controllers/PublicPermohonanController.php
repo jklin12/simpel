@@ -53,13 +53,37 @@ class PublicPermohonanController extends Controller
             $trackToken = strtoupper(Str::random(10));
             $service = JenisSurat::findOrFail($request->jenis_surat_id);
 
+            // Evaluate pemohon data based on jenis_surat_id
+            $namaPemohon = '';
+            $nikPemohon = '';
+            $phonePemohon = '';
+            $alamatPemohon = '';
+
+            switch (strtoupper($service->kode)) {
+                case 'SKM':
+                    $namaPemohon = $request->nama_pelapor;
+                    $nikPemohon = $request->nik_pelapor;
+                    $phonePemohon = $request->no_wa;
+                    $alamatPemohon = $request->alamat_pelapor;
+                    break;
+                case 'SKTM':
+                case 'SKTMR':
+                case 'SKBM':
+                default:
+                    $namaPemohon = $request->nama_lengkap;
+                    $nikPemohon = $request->nik_bersangkutan;
+                    $phonePemohon = $request->no_wa;
+                    $alamatPemohon = $request->alamat_lengkap;
+                    break;
+            }
+
             // Filter out non-data fields AND file fields for JSON storage
             $dynamicFileNames = collect($service->required_fields ?? [])
                 ->filter(fn($f) => ($f['type'] ?? '') === 'file')
                 ->pluck('name')
                 ->toArray();
             $excludeFields = array_unique(array_merge(
-                ['_token', 'jenis_surat_id', 'kelurahan_id', 'pemohon_nama', 'pemohon_nik', 'pemohon_phone', 'pemohon_alamat'],
+                ['_token', 'jenis_surat_id', 'kelurahan_id'],
                 StorePermohonanRequest::fileFields(),
                 $dynamicFileNames
             ));
@@ -75,10 +99,10 @@ class PublicPermohonanController extends Controller
                 'jenis_surat_id' => $request->jenis_surat_id,
                 'kelurahan_id' => $request->kelurahan_id,
                 'created_by_user_id' => auth()->id(), // Nullable now in migration
-                'nama_pemohon' => $request->pemohon_nama,
-                'nik_pemohon' => $request->pemohon_nik,
-                'phone_pemohon' => $request->pemohon_phone,
-                'alamat_pemohon' => $request->pemohon_alamat,
+                'nama_pemohon' => $namaPemohon,
+                'nik_pemohon' => $nikPemohon,
+                'phone_pemohon' => $phonePemohon,
+                'alamat_pemohon' => $alamatPemohon,
                 'data_permohonan' => $dataPermohonan, // Casted to array/json in model
                 'keperluan' => 'Permohonan ' . $service->nama,
                 'status' => 'pending',
