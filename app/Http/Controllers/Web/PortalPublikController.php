@@ -10,13 +10,16 @@ class PortalPublikController extends Controller
 {
     protected $beritaService;
     protected $dataService;
+    protected $strukturService;
 
     public function __construct(
         PortalBeritaService $beritaService,
-        PortalDataKelurahanService $dataService
+        PortalDataKelurahanService $dataService,
+        \App\Services\PortalStrukturOrganisasiService $strukturService
     ) {
-        $this->beritaService = $beritaService;
-        $this->dataService   = $dataService;
+        $this->beritaService   = $beritaService;
+        $this->dataService     = $dataService;
+        $this->strukturService = $strukturService;
     }
 
     /**
@@ -73,5 +76,14 @@ class PortalPublikController extends Controller
             'success' => true,
             'data'    => $data,
         ]);
+    }
+
+    /**
+     * Halaman Struktur Organisasi (UI Bagan)
+     */
+    public function strukturOrganisasi()
+    {
+        $strukturTree = $this->strukturService->getTreeData();
+        return view('portal.struktur-organisasi', compact('strukturTree'));
     }
 }

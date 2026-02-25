@@ -117,6 +117,7 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/berita/{slug}', [App\Http\Controllers\Web\PortalPublikController::class, 'beritaDetail'])->name('berita.detail');
     Route::get('/peta', [App\Http\Controllers\Web\PortalPublikController::class, 'peta'])->name('peta');
     Route::get('/api/peta-data', [App\Http\Controllers\Web\PortalPublikController::class, 'petaData'])->name('peta.data');
+    Route::get('/struktur-organisasi', [App\Http\Controllers\Web\PortalPublikController::class, 'strukturOrganisasi'])->name('struktur-organisasi');
 });
 
 // =============================================================================
@@ -128,4 +129,5 @@ Route::middleware(['auth', 'role:kecamatan|super_admin'])
     ->group(function () {
         Route::resource('berita', App\Http\Controllers\Web\PortalBeritaAdminController::class);
         Route::resource('data-kelurahan', App\Http\Controllers\Web\PortalDataKelurahanAdminController::class);
+        Route::resource('struktur-organisasi', App\Http\Controllers\Web\PortalStrukturOrganisasiAdminController::class);
     });

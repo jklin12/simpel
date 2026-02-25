@@ -31,9 +31,9 @@ class RepositoryServiceProvider extends ServiceProvider
 
         \App\Repositories\Contracts\PortalDataKelurahanRepositoryInterface::class =>
         \App\Repositories\PortalDataKelurahanRepository::class,
-        // Add more repositories here as needed
-        // \App\Repositories\Contracts\ProductRepositoryInterface::class => 
-        //     \App\Repositories\ProductRepository::class,
+
+        \App\Repositories\Contracts\PortalStrukturOrganisasiRepositoryInterface::class =>
+        \App\Repositories\PortalStrukturOrganisasiRepository::class,
     ];
 
     /**
