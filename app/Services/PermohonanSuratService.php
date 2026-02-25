@@ -41,6 +41,42 @@ class PermohonanSuratService
     }
 
     /**
+     * Update data_permohonan secara langsung.
+     */
+    public function updateDataPermohonan($id, array $data)
+    {
+        DB::beginTransaction();
+        try {
+            $permohonan = $this->repository->find($id);
+
+            // Allow update as long as it's not completed or rejected yet
+            if (in_array($permohonan->status, ['completed', 'rejected'])) {
+                throw new \Exception('Surat sudah selesai atau ditolak, tidak bisa diubah.');
+            }
+
+            // Update allowed fields
+            $permohonan->update([
+                'nama_pemohon'   => $data['nama_pemohon'] ?? $permohonan->nama_pemohon,
+                'nik_pemohon'    => $data['nik_pemohon'] ?? $permohonan->nik_pemohon,
+                'alamat_pemohon' => $data['alamat_pemohon'] ?? $permohonan->alamat_pemohon,
+                'phone_pemohon'  => $data['phone_pemohon'] ?? $permohonan->phone_pemohon,
+                'keperluan'      => $data['keperluan'] ?? $permohonan->keperluan,
+                'data_permohonan' => array_merge(
+                    is_array($permohonan->data_permohonan) ? $permohonan->data_permohonan : [],
+                    $data['data_permohonan'] ?? []
+                )
+            ]);
+
+            DB::commit();
+            return $permohonan->fresh();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update data_permohonan: ' . $e->getMessage());
+            throw new \Exception('Gagal mengubah data permohonan: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Approve permohonan at current step
      */
     public function approvePermohonan($id, $userId, $catatan = null)
