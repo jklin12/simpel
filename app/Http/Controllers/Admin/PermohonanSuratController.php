@@ -42,6 +42,7 @@ class PermohonanSuratController extends Controller
     {
         try {
             $permohonanSurat = $this->service->getPermohonanById($id);
+            dd($permohonanSurat->data_permohonan);
             $permohonanSurat->load('dokumens'); // Eager load documents
             $approvals = $permohonanSurat->approvals()->orderBy('step_order')->get();
 

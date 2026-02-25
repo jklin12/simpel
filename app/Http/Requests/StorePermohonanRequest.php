@@ -46,6 +46,9 @@ class StorePermohonanRequest extends FormRequest
             case 'SKBM': // Surat Keterangan Belum Menikah
                 $specificRules = $this->getSkbmRules();
                 break;
+            case 'SKP': // Surat Keterangan Penghasilan
+                $specificRules = $this->getSkpRules();
+                break;
             case 'SKU': // Surat Keterangan Usaha (Example)
                 // $specificRules = $this->getSkuRules();
                 break;
@@ -98,6 +101,12 @@ class StorePermohonanRequest extends FormRequest
             'skbm_ktp_kk',
             'skbm_ktp_saksi',
             'skbm_bukti_pbb',
+            // SKP
+            'skp_surat_pengantar',
+            'skp_blangko_pernyataan',
+            'skp_ktp_kk',
+            'skp_ktp_saksi',
+            'skp_bukti_pbb',
             // Legacy / other
             'foto_ktp',
             'foto_kk',
@@ -227,6 +236,39 @@ class StorePermohonanRequest extends FormRequest
             'sktmr_ktp_kk'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sktmr_ktp_saksi'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sktmr_bukti_pbb'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getSkpRules()
+    {
+        return [
+            // Data Diri
+            'nama_lengkap' => 'required|string|max:255',
+            'nik_bersangkutan' => 'required|string|size:16',
+            'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
+            'agama' => 'required|string',
+            'tempat_lahir' => 'required|string',
+            'tanggal_lahir' => 'required|date',
+            'status_perkawinan' => 'required|string|in:Belum Kawin,Kawin,Cerai Hidup,Cerai Mati',
+            'pekerjaan' => 'required|string',
+            'pendidikan_terakhir' => 'required|string',
+            'alamat_lengkap' => 'required|string',
+            'no_wa' => 'required|string|max:20',
+            'jumlah_penghasilan' => 'required|string', // atau numeric, tapi formnya mungkin bisa text / format ribuan
+            'keperluan' => 'required|string',
+
+            // Surat Pengantar
+            'rt' => 'required|string',
+            'rw' => 'required|string',
+            'no_surat_pengantar' => 'required|string',
+            'tanggal_surat_pengantar' => 'required|date',
+
+            // Lampiran
+            'skp_surat_pengantar' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'skp_blangko_pernyataan' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'skp_ktp_kk' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'skp_ktp_saksi' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'skp_bukti_pbb' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ];
     }
 
