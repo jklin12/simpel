@@ -198,6 +198,24 @@ class PublicPermohonanController extends Controller
             'ktp_image' => 'required|image|max:5120', // Max 5MB
         ]);
 
+        // Mock data for local development to save Claude API tokens
+        if (app()->environment('local')) {
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'nik' => '637201' . rand(1000000000, 9999999999), // Random 16 digits
+                    'nama' => 'MOCK ' . \Illuminate\Support\Str::random(10),
+                    'tempat_lahir' => 'BANJARBARU',
+                    'tanggal_lahir' => '1995-05-15',
+                    'jenis_kelamin' => rand(0, 1) ? 'Laki-laki' : 'Perempuan',
+                    'alamat' => 'JL. RAYA PUSAKA NO. 123, RT 01 RW 02, KEL. GUNTUNG P., KEC. BANJARBARU',
+                    'agama' => 'ISLAM',
+                    'status_perkawinan' => 'BELUM KAWIN',
+                    'pekerjaan' => 'KARYAWAN SWASTA'
+                ]
+            ]);
+        }
+
         $apiKey = config('services.claude.api_key');
         if (!$apiKey) {
             return response()->json([
