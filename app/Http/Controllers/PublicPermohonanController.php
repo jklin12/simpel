@@ -64,7 +64,7 @@ class PublicPermohonanController extends Controller
                     $namaPemohon = $request->nama_pelapor;
                     $nikPemohon = $request->nik_pelapor;
                     $phonePemohon = $request->no_wa;
-                    $alamatPemohon = $request->alamat_pelapor;
+                    $alamatPemohon = $request->alamat_pelapor ?? '';
                     break;
                 case 'SKTM':
                 case 'SKTMR':

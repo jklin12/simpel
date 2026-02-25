@@ -180,11 +180,6 @@
                         <input type="text" name="nik_pelapor" value="{{ old('nik_pelapor') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" maxlength="16" required>
                         @error('nik_pelapor') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Lengkap Pelapor <span class="text-red-500">*</span></label>
-                        <textarea name="alamat_pelapor" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('alamat_pelapor') }}</textarea>
-                        @error('alamat_pelapor') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Hubungan dengan Jenazah <span class="text-red-500">*</span></label>
                         <input type="text" name="hubungan_pelapor" value="{{ old('hubungan_pelapor') }}" placeholder="Suami / Istri / Anak / Kerabat" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
@@ -195,6 +190,74 @@
                         <input type="text" name="no_wa" value="{{ old('no_wa') }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         <p class="mt-1 text-xs text-blue-600">*Nomor ini akan digunakan sebagai nomor kontak pemohon.</p>
                         @error('no_wa') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian 5: Upload Berkas Pendukung -->
+
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mt-6">
+                <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">5</span>
+                    Upload Berkas Pendukung
+                </h2>
+
+                <div class="bg-amber-50 border border-amber-100 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-amber-700">
+                        <strong>Catatan:</strong> Upload dokumen dalam format JPG, PNG, atau PDF. Maksimal 5MB per file. File yang digabung harap dijadikan 1 file PDF.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Surat Pengantar RT/RW Setempat <span class="text-red-500">*</span>
+                        </label>
+                        <input type="file" name="skm_surat_pengantar" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('skm_surat_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Blangko Pernyataan bermeterai 10.000 <span class="text-red-500">*</span>
+                        </label>
+                        <input type="file" name="skm_blangko_pernyataan" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('skm_blangko_pernyataan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            KTP dan KK Pemohon <span class="text-red-500">*</span>
+                            <span class="ml-1 text-xs text-gray-500 font-normal">(Dijadikan 1 File)</span>
+                        </label>
+                        <input type="file" name="skm_ktp_kk_pemohon" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('skm_ktp_kk_pemohon') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            KTP dan KK yang Meninggal <span class="text-red-500">*</span>
+                            <span class="ml-1 text-xs text-gray-500 font-normal">(Dijadikan 1 File)</span>
+                        </label>
+                        <input type="file" name="skm_ktp_kk_meninggal" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('skm_ktp_kk_meninggal') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            KTP 2 orang saksi (RT yang sama) <span class="text-red-500">*</span>
+                            <span class="ml-1 text-xs text-gray-500 font-normal">(Dijadikan 1 File)</span>
+                        </label>
+                        <input type="file" name="skm_ktp_saksi" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('skm_ktp_saksi') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Bukti Tanda Lunas PBB-P2 Tahun Berjalan <span class="text-red-500">*</span>
+                        </label>
+                        <input type="file" name="skm_bukti_pbb" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('skm_bukti_pbb') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>

@@ -73,8 +73,12 @@ class StorePermohonanRequest extends FormRequest
     {
         return [
             // SKM
-            'ktp_alm',
-            'ktp_ortu',
+            'skm_surat_pengantar',
+            'skm_blangko_pernyataan',
+            'skm_ktp_kk_pemohon',
+            'skm_ktp_kk_meninggal',
+            'skm_ktp_saksi',
+            'skm_bukti_pbb',
             // SKTM
             'surat_pengantar_rtrw',
             'blangko_pernyataan',
@@ -139,9 +143,17 @@ class StorePermohonanRequest extends FormRequest
             // Pelapor
             'nama_pelapor' => 'required|string|max:255',
             'nik_pelapor' => 'required|string|size:16',
-            'alamat_pelapor' => 'required|string',
+            'alamat_pelapor' => 'nullable|string',
             'hubungan_pelapor' => 'required|string|max:100',
             'no_wa' => 'required|string|max:20',
+
+            // Dokumen Lampiran
+            'skm_surat_pengantar'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skm_blangko_pernyataan' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skm_ktp_kk_pemohon'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skm_ktp_kk_meninggal'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skm_ktp_saksi'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skm_bukti_pbb'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 

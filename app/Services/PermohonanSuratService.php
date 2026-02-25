@@ -206,7 +206,16 @@ class PermohonanSuratService
         $kodeJenis    = strtoupper($jenisSurat->kode ?? '');
         $kodeKelurahan = strtoupper($kelurahan->akronim ?? $kelurahan->kode ?? $kelurahan->nama);
 
-        if ($kodeJenis === 'SKTMR') {
+        if ($kodeJenis === 'SKM') {
+            // Format: 400.12.3.1/002/I/KEL.SN/2026
+            $nomorSurat = sprintf(
+                '400.12.3.1/%03d/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
+        } elseif ($kodeJenis === 'SKTMR') {
             // Format: 600.2/002/I/LU/2026
             $nomorSurat = sprintf(
                 '600.2/%03d/%s/%s/%s',
