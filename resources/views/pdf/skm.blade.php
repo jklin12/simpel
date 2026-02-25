@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Surat Keterangan Kematian</title>
+    <title>Surat Keterangan Tidak Mampu</title>
     <style>
         * {
             margin: 0;
@@ -14,12 +14,43 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 11pt;
+            font-size: 12pt;
             color: #000;
         }
 
         .page {
-            padding: 1.5cm 2cm 2cm 2.5cm;
+            padding: 1cm 2cm 3.5cm 2cm;
+        }
+
+        /* FOOTER */
+        .footer {
+            position: fixed;
+            bottom: 1cm;
+            left: 2cm;
+            right: 2cm;
+            font-size: 7pt;
+            color: #333;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            font-family: Arial, sans-serif;
+        }
+
+        .footer-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-list li {
+            margin-bottom: 2px;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .footer-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
         }
 
         /* HEADER */
@@ -53,14 +84,18 @@
             margin-top: 2px;
         }
 
+        /* CENTER */
+        .center {
+            text-align: center;
+        }
+
         /* TITLE */
         .surat-title {
             text-align: center;
-            margin: 14px 0 0 0;
-            font-size: 14pt;
+            margin: 14px 0 0px 0;
+            font-size: 13pt;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .surat-nomor {
@@ -79,11 +114,11 @@
         table.data-table td {
             font-size: 11pt;
             vertical-align: top;
-            padding: 2px 0;
+            padding: 1.5px 0;
         }
 
         table.data-table td.col-label {
-            width: 25%;
+            width: 42%;
         }
 
         table.data-table td.col-sep {
@@ -92,18 +127,13 @@
         }
 
         table.data-table td.col-value {
-            width: 72%;
+            width: 55%;
         }
 
-        .section-label {
+        table.data-table td.col-value-bold {
+            width: 55%;
             font-weight: bold;
-            margin-top: 5px;
-            margin-bottom: 5px;
-            font-size: 11pt;
-        }
-
-        .col-value-indent {
-            display: inline-block;
+            color: #000;
         }
 
         /* NARASI */
@@ -111,16 +141,18 @@
             font-size: 11pt;
             text-align: justify;
             margin-bottom: 10px;
-            line-height: 1.5;
+        }
+
+        .narasi .hl {
+            color: #000;
+            font-weight: bold;
         }
 
         /* PENUTUP */
         .penutup {
             font-size: 11pt;
             text-align: justify;
-            margin-bottom: 20px;
-            line-height: 1.5;
-            margin-top: 10px;
+            margin-bottom: 10px;
         }
 
         /* TTD */
@@ -131,9 +163,8 @@
         }
 
         .ttd-right-cell {
-            text-align: left;
-            padding-left: 60%;
-            width: 100%;
+            text-align: center;
+            width: 50%;
             font-size: 11pt;
         }
 
@@ -160,11 +191,13 @@
 
         {{-- ===== HEADER ===== --}}
         @if($kelurahan->kop_surat_path && file_exists(storage_path('app/public/' . $kelurahan->kop_surat_path)))
+        {{-- Gunakan gambar kop surat langsung --}}
         <div style="border-bottom: 4px solid #000; padding-bottom: 6px; margin-bottom: 6px; text-align: center;">
             <img src="{{ storage_path('app/public/' . $kelurahan->kop_surat_path) }}"
                 style="width: 100%; max-height: 100px; object-fit: contain;" alt="Kop Surat">
         </div>
         @else
+        {{-- Fallback: header teks --}}
         <table class="header-table">
             <tr>
                 <td style="width:80px; text-align:center; vertical-align:middle;">
@@ -183,10 +216,11 @@
         </table>
         @endif
 
+
         {{-- ===== JUDUL ===== --}}
         <div class="surat-title">Surat Keterangan Kematian</div>
         <div class="surat-nomor">
-            Nomor : {{ $permohonan->nomor_surat ?? '......../..........' }}
+            Nomor : <strong>{{ $permohonan->nomor_surat ?? '......../..........' }}</strong>
         </div>
 
         {{-- ===== PEMBUKA ===== --}}
@@ -272,13 +306,12 @@
                 <td class="col-sep">:</td>
                 <td class="col-value">{{ $data['pekerjaan_jenazah'] ?? '-' }}</td>
             </tr>
-        </table>
 
-        {{-- DETAIL KEMATIAN --}}
-        <table class="data-table" style="margin-top:10px;">
+
+            {{-- DETAIL KEMATIAN --}}
             <tr>
                 <td class="col-label" style="font-weight: bold;">Telah Meninggal Pada</td>
-                <td class="col-sep" style="font-weight: bold;">:</td>
+                <td class="col-sep" style="font-weight: bold;"></td>
                 <td class="col-value"></td>
             </tr>
             <tr>
@@ -302,17 +335,15 @@
                 <td class="col-value">{{ $data['sebab_kematian'] ?? '-' }}</td>
             </tr>
             <tr>
-                <td class="col-label">Dimakamkan di-</td>
+                <td class="col-label">Dimakamkan di</td>
                 <td class="col-sep">:</td>
                 <td class="col-value">{{ $data['tempat_pemakaman'] ?? '-' }}</td>
             </tr>
-        </table>
 
-        {{-- DATA PELAPOR --}}
-        <table class="data-table" style="margin-top:10px;">
+            {{-- DATA PELAPOR --}}
             <tr>
                 <td class="col-label" style="font-weight: bold;">Pelapor</td>
-                <td class="col-sep" style="font-weight: bold;">:</td>
+                <td class="col-sep" style="font-weight: bold;"></td>
                 <td class="col-value"></td>
             </tr>
             <tr>
@@ -336,6 +367,9 @@
             Demikian surat keterangan kematian ini diberikan untuk dapat dipergunakan sebagaimana mestinya.
         </p>
 
+
+
+
         {{-- ===== TANDA TANGAN ===== --}}
         <table class="ttd-table">
             <tr>
@@ -346,9 +380,7 @@
                     <p>Lurah {{ ucwords(strtolower($kelurahan->nama)) }}</p>
                     <div class="ttd-spacer"></div>
                     @if(isset($qrBase64))
-                    <img src="data:image/png;base64,{{ $qrBase64 }}" style="width:60px;height:60px; margin-top:5px; margin-bottom:5px;" alt="QR Status">
-                    @else
-                    <br><br><br><br>
+                    <img src="data:image/png;base64,{{ $qrBase64 }}" style="width:60px;height:60px;" alt="QR Status">
                     @endif
                     <div class="ttd-spacer"></div>
                     <div class="ttd-nama">{{ $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : ($lurah['nama'] ?? '____________________') }}</div>
@@ -360,6 +392,14 @@
             </tr>
         </table>
 
+    </div>
+
+    <div class="footer">
+        <ul class="footer-list">
+            <li>UU ITE No 11 Tahun 2008 Pasal 5 Ayat 1 "Informasi Elektronik dan/atau Dokumen Elektronik dan/atau hasil cetaknya merupakan alat bukti hukum yang sah"</li>
+            <li>Dokumen ini telah ditandatangani secara elektronik menggunakan sertifikat elektronik yang diterbitkan BSRe</li>
+            <li>Dicetak dengan SiMPEL</li>
+        </ul>
     </div>
 </body>
 
