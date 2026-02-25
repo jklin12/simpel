@@ -107,8 +107,7 @@
         /* DATA TABLE */
         table.data-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 6px;
+            border-collapse: collapse; 
         }
 
         table.data-table td {
@@ -151,8 +150,7 @@
         /* PENUTUP */
         .penutup {
             font-size: 11pt;
-            text-align: justify;
-            margin-bottom: 10px;
+            text-align: justify; 
         }
 
         /* TTD */
@@ -259,7 +257,7 @@
         @endphp
 
         {{-- NARASI PENGANTAR --}}
-        <p class="narasi" style="margin-top:10px;">
+        <p class="narasi" style="margin-top:5px;">
             Berdasarkan surat pengantar Ketua RT. <span>{{ str_pad($data['rt'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
             RW. <span>{{ str_pad($data['rw'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
             Nomor: <span>{{ $data['nomor_pengantar'] ?? '....' }}</span>
