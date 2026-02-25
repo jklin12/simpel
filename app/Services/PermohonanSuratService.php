@@ -224,6 +224,15 @@ class PermohonanSuratService
                 $kodeKelurahan,
                 $now->format('Y')
             );
+        } elseif ($kodeJenis === 'SKP') {
+            // Format: 500/002/I/LU/2026
+            $nomorSurat = sprintf(
+                '500/%03d/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
         } elseif ($kodeJenis === 'SKBM') {
             // Format: 400.12/002/I/LU/2026
             $nomorSurat = sprintf(
@@ -234,9 +243,9 @@ class PermohonanSuratService
                 $now->format('Y')
             );
         } else {
-            // 400.2/002/I/KEL.SN/2026
+            // 002/I/KEL.SN/2026
             $nomorSurat = sprintf(
-                '400.2/%03d/%s/%s/%s',
+                '%03d/%s/%s/%s',
                 $counter->counter,
                 $this->toRoman($now->month),
                 $kodeKelurahan,
