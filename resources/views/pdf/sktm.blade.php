@@ -278,7 +278,7 @@
             <tr>
                 <td class="col-label">Tempat/Tanggal Lahir</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . $tglLahir }}</td>
+                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . strtoupper($tglLahir) }}</td>
             </tr>
             <tr>
                 <td class="col-label">Alamat</td>
@@ -327,7 +327,7 @@
 
         <p class="narasi">
             Adapun surat keterangan tidak mampu ini dibuat untuk keperluan
-            <span>{{ $data['keperluan_sktm'] ?? '-' }}</span>@if(!empty($data['keterangan_sktm'])), {{ $data['keterangan_sktm'] }}@endif.
+            <span>{{ $data['keperluan_sktm'] ?? '-' }}</span>@if(!empty($data['keterangan_sktm'])), {{ ucfirst(strtolower($data['keterangan_sktm'])) }}@endif.
         </p>
 
         <p class="penutup">

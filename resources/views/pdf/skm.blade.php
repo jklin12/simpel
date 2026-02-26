@@ -107,7 +107,7 @@
         /* DATA TABLE */
         table.data-table {
             width: 100%;
-            border-collapse: collapse; 
+            border-collapse: collapse;
         }
 
         table.data-table td {
@@ -150,7 +150,7 @@
         /* PENUTUP */
         .penutup {
             font-size: 11pt;
-            text-align: justify; 
+            text-align: justify;
         }
 
         /* TTD */
@@ -282,7 +282,7 @@
             <tr>
                 <td class="col-label">Tempat/Tanggal Lahir</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ ($data['tempat_lahir_jenazah'] ?? '-') . ', ' . $tglLahirJenazah }}</td>
+                <td class="col-value">{{ ($data['tempat_lahir_jenazah'] ?? '-') . ', ' . strtoupper($tglLahirJenazah) }}</td>
             </tr>
             <tr>
                 <td class="col-label">Alamat</td>
@@ -315,7 +315,7 @@
             <tr>
                 <td class="col-label">Hari/Tanggal Meninggal</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['hari_meninggal'] ?? '-' }}, {{ $tglMeninggal }}</td>
+                <td class="col-value">{{ $data['hari_meninggal'] ?? '-' }}, {{ strtoupper($tglMeninggal) }}</td>
             </tr>
             <tr>
                 <td class="col-label">Pukul</td>

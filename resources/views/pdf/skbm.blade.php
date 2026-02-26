@@ -265,7 +265,7 @@
             <tr>
                 <td class="col-label">Tempat/Tanggal Lahir</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . $tglLahir }}</td>
+                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . strtoupper($tglLahir) }}</td>
             </tr>
             <tr>
                 <td class="col-label">Alamat</td>
