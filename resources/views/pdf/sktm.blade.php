@@ -320,8 +320,8 @@
             RW. <span>{{ str_pad($data['rw'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
             Nomor: <span>{{ $data['no_surat_pengantar'] ?? '....' }}</span>
             tanggal <span>{{ $tglPengantar }}</span>,
-            Kelurahan <span>{{ ucfirst($kelurahan->nama) }}</span>
-            Kecamatan {{ ucfirst($kelurahan->kecamatan->nama) }}
+            Kelurahan <span>{{ ucfirst(strtolower($kelurahan->nama)) }}</span>
+            Kecamatan {{ ucfirst(strtolower($kelurahan->kecamatan->nama)) }}
             Pemerintah Kota Banjarbaru dengan ini menerangkan bahwa nama tersebut diatas, tergolong tidak mampu.
         </p>
 

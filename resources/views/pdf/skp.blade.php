@@ -220,7 +220,7 @@
 
 
         {{-- ===== JUDUL ===== --}}
-        <div class="surat-title">Surat Keterangan Belum Memiliki Rumah</div>
+        <div class="surat-title">Surat Keterangan Penghasilan</div>
         <div class="surat-nomor">
             Nomor : {{ $permohonan->nomor_surat ?? '600.2/....../...../.........../......' }}
         </div>

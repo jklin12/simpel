@@ -117,9 +117,30 @@
                             </select>
                             @error('pendidikan_terakhir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah Penghasilan <span class="text-red-500">*</span></label>
-                            <input type="text" name="jumlah_penghasilan" value="{{ old('jumlah_penghasilan') }}" placeholder="Contoh: Rp 3.000.000 / Bulan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <div x-data="{
+                            penghasilan: '{{ old('jumlah_penghasilan') }}',
+                            formatRupiah(value) {
+                                let number_string = value.replace(/[^,\d]/g, '').toString(),
+                                    split = number_string.split(','),
+                                    sisa = split[0].length % 3,
+                                    rupiah = split[0].substr(0, sisa),
+                                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+                                
+                                if(ribuan){
+                                    separator = sisa ? '.' : '';
+                                    rupiah += separator + ribuan.join('.');
+                                }
+                                return rupiah;
+                            }
+                        }">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah Penghasilan per Bulan <span class="text-red-500">*</span></label>
+                            <div class="relative rounded-lg shadow-sm flex">
+                                <span class="inline-flex items-center px-4 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-500 sm:text-sm font-medium">
+                                    Rp.
+                                </span>
+                                <input type="text" x-model="penghasilan" @input="penghasilan = formatRupiah($event.target.value)" name="jumlah_penghasilan" placeholder="3.000.000" class="flex-1 w-full rounded-none rounded-r-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Angka saja, cont: 3000000</p>
                             @error('jumlah_penghasilan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                     </div>

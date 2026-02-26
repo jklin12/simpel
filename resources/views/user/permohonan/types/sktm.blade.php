@@ -119,11 +119,19 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Keperluan SKTM <span class="text-red-500">*</span></label>
                         <select name="keperluan_sktm" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                             <option value="">Pilih Keperluan</option>
-                            <option value="Beasiswa Pendidikan" {{ old('keperluan_sktm') == 'Beasiswa Pendidikan' ? 'selected' : '' }}>Beasiswa Pendidikan</option>
-                            <option value="Keringanan Biaya Pendidikan" {{ old('keperluan_sktm') == 'Keringanan Biaya Pendidikan' ? 'selected' : '' }}>Keringanan Biaya Pendidikan</option>
-                            <option value="Bantuan Biaya Kesehatan" {{ old('keperluan_sktm') == 'Bantuan Biaya Kesehatan' ? 'selected' : '' }}>Bantuan Biaya Kesehatan</option>
-                            <option value="Bantuan Sosial" {{ old('keperluan_sktm') == 'Bantuan Sosial' ? 'selected' : '' }}>Bantuan Sosial</option>
-                            <option value="Keringanan Biaya Pengobatan" {{ old('keperluan_sktm') == 'Keringanan Biaya Pengobatan' ? 'selected' : '' }}>Keringanan Biaya Pengobatan</option>
+                            <option value="Pengajuan Beasiswa Pendidikan" {{ old('keperluan_sktm') == 'Pengajuan Beasiswa Pendidikan' ? 'selected' : '' }}>Pengajuan Beasiswa Pendidikan</option>
+                            <option value="Persyaratan pendaftaran Sekolah" {{ old('keperluan_sktm') == 'Persyaratan pendaftaran Sekolah' ? 'selected' : '' }}>Persyaratan pendaftaran Sekolah</option>
+                            <option value="Persyaratan pendaftaran Kuliah" {{ old('keperluan_sktm') == 'Persyaratan pendaftaran Kuliah' ? 'selected' : '' }}>Persyaratan pendaftaran Kuliah</option>
+                            <option value="Keringanan atau pembebasan biaya pendidikan" {{ old('keperluan_sktm') == 'Keringanan atau pembebasan biaya pendidikan' ? 'selected' : '' }}>Keringanan atau pembebasan biaya pendidikan</option>
+                            <option value="Bantuan keringanan SPP" {{ old('keperluan_sktm') == 'Bantuan keringanan SPP' ? 'selected' : '' }}>Bantuan keringanan SPP</option>
+                            <option value="Bantuan biaya kesehatan" {{ old('keperluan_sktm') == 'Bantuan biaya kesehatan' ? 'selected' : '' }}>Bantuan biaya kesehatan</option>
+                            <option value="Mendapatkan layanan pengobatan gratis" {{ old('keperluan_sktm') == 'Mendapatkan layanan pengobatan gratis' ? 'selected' : '' }}>Mendapatkan layanan pengobatan gratis</option>
+                            <option value="Pengurusan BPJS Kesehatan" {{ old('keperluan_sktm') == 'Pengurusan BPJS Kesehatan' ? 'selected' : '' }}>Pengurusan BPJS Kesehatan</option>
+                            <option value="Keringanan biaya operasi atau perawatan khusus" {{ old('keperluan_sktm') == 'Keringanan biaya operasi atau perawatan khusus' ? 'selected' : '' }}>Keringanan biaya operasi atau perawatan khusus</option>
+                            <option value="Persyaratan bantuan sosial" {{ old('keperluan_sktm') == 'Persyaratan bantuan sosial' ? 'selected' : '' }}>Persyaratan bantuan sosial</option>
+                            <option value="Pengajuan bantuan modal usaha" {{ old('keperluan_sktm') == 'Pengajuan bantuan modal usaha' ? 'selected' : '' }}>Pengajuan bantuan modal usaha</option>
+                            <option value="Pengajuan bantuan perbaikan rumah" {{ old('keperluan_sktm') == 'Pengajuan bantuan perbaikan rumah' ? 'selected' : '' }}>Pengajuan bantuan perbaikan rumah</option>
+                            <option value="Persyaratan mendapatkan layanan hukum" {{ old('keperluan_sktm') == 'Persyaratan mendapatkan layanan hukum' ? 'selected' : '' }}>Persyaratan mendapatkan layanan hukum</option>
                             <option value="Lainnya" {{ old('keperluan_sktm') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                         </select>
                         @error('keperluan_sktm') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror

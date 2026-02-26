@@ -152,7 +152,16 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Penyebab Kematian</label>
-                        <input type="text" name="sebab_kematian" value="{{ old('sebab_kematian') }}" placeholder="Sakit / Kecelakaan / Lainnya" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <select name="sebab_kematian" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <option value="">Pilih Penyebab Kematian</option>
+                            <option value="Sakit" {{ old('sebab_kematian') == 'Sakit' ? 'selected' : '' }}>Sakit</option>
+                            <option value="Usia Tua" {{ old('sebab_kematian') == 'Usia Tua' ? 'selected' : '' }}>Usia Tua</option>
+                            <option value="Kecelakaan" {{ old('sebab_kematian') == 'Kecelakaan' ? 'selected' : '' }}>Kecelakaan</option>
+                            <option value="Bunuh Diri" {{ old('sebab_kematian') == 'Bunuh Diri' ? 'selected' : '' }}>Bunuh Diri</option>
+                            <option value="Wabah Penyakit" {{ old('sebab_kematian') == 'Wabah Penyakit' ? 'selected' : '' }}>Wabah Penyakit</option>
+                            <option value="Kriminalitas" {{ old('sebab_kematian') == 'Kriminalitas' ? 'selected' : '' }}>Kriminalitas</option>
+                            <option value="Lainnya" {{ old('sebab_kematian') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
+                        </select>
                         @error('sebab_kematian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
@@ -182,7 +191,16 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Hubungan dengan Jenazah <span class="text-red-500">*</span></label>
-                        <input type="text" name="hubungan_pelapor" value="{{ old('hubungan_pelapor') }}" placeholder="Suami / Istri / Anak / Kerabat" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <select name="hubungan_pelapor" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <option value="">Pilih Hubungan</option>
+                            <option value="Ayah" {{ old('hubungan_pelapor') == 'Ayah' ? 'selected' : '' }}>Ayah</option>
+                            <option value="Ibu" {{ old('hubungan_pelapor') == 'Ibu' ? 'selected' : '' }}>Ibu</option>
+                            <option value="Suami" {{ old('hubungan_pelapor') == 'Suami' ? 'selected' : '' }}>Suami</option>
+                            <option value="Istri" {{ old('hubungan_pelapor') == 'Istri' ? 'selected' : '' }}>Istri</option>
+                            <option value="Anak Kandung" {{ old('hubungan_pelapor') == 'Anak Kandung' ? 'selected' : '' }}>Anak Kandung</option>
+                            <option value="Saudara Kandung" {{ old('hubungan_pelapor') == 'Saudara Kandung' ? 'selected' : '' }}>Saudara Kandung</option>
+                            <option value="Kerabat" {{ old('hubungan_pelapor') == 'Kerabat' ? 'selected' : '' }}>Kerabat</option>
+                        </select>
                         @error('hubungan_pelapor') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
