@@ -309,7 +309,7 @@
                             alert('Memproses KTP Jenazah...');
 
                             try {
-                                let response = await fetch('<?= route('permohonan.ocr') ?>', {
+                                let response = await fetch('<?= route('layanan.surat.ocr') ?>', {
                                     method: 'POST',
                                     body: formData
                                 });

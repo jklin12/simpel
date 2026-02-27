@@ -55,13 +55,13 @@
                         </svg>
                         Ajukan Surat
                     </a>
-                    <a href="{{ route('tracking.index') }}" class="inline-flex items-center gap-2 px-7 py-4 bg-cyan-400/20 border border-cyan-300/40 text-white font-bold rounded-2xl hover:bg-cyan-400/30 transition-all hover:-translate-y-0.5 text-sm">
+                    <a href="{{ route('layanan.surat.tracking') }}" class="inline-flex items-center gap-2 px-7 py-4 bg-cyan-400/20 border border-cyan-300/40 text-white font-bold rounded-2xl hover:bg-cyan-400/30 transition-all hover:-translate-y-0.5 text-sm">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                         </svg>
                         Cek Status
                     </a>
-                    <a href="{{ route('portal.peta') }}" class="inline-flex items-center gap-2 px-7 py-4 bg-white/10 border border-white/20 text-white font-bold rounded-2xl hover:bg-white/20 transition-all hover:-translate-y-0.5 text-sm">
+                    <a href="{{ route('peta.index') }}" class="inline-flex items-center gap-2 px-7 py-4 bg-white/10 border border-white/20 text-white font-bold rounded-2xl hover:bg-white/20 transition-all hover:-translate-y-0.5 text-sm">
                         🗺️ Peta Wilayah
                     </a>
                 </div>
@@ -113,7 +113,7 @@
             <h2 class="text-3xl font-extrabold text-gray-900">Akses Layanan Kami</h2>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <a href="{{ route('home') }}#buat-surat" class="feature-hover group relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 border border-blue-100 hover:border-primary-300">
+            <a href="{{route('layanan.index')}}" class="feature-hover group relative overflow-hidden bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 border border-blue-100 hover:border-primary-300">
                 <div class="feature-icon w-16 h-16 bg-primary-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-primary-200">
                     <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -123,7 +123,7 @@
                 <p class="text-gray-500 text-sm leading-relaxed">Buat permohonan surat secara online. Tidak perlu datang ke kantor, antrian, atau mengisi formulir kertas.</p>
                 <div class="mt-5 text-primary-600 font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">Mulai Sekarang <span>→</span></div>
             </a>
-            <a href="{{ route('tracking.index') }}" class="feature-hover group relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 border border-green-100 hover:border-green-400">
+            <a href="{{ route('layanan.surat.tracking') }}" class="feature-hover group relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 border border-green-100 hover:border-green-400">
                 <div class="feature-icon w-16 h-16 bg-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-emerald-200">
                     <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
@@ -133,7 +133,7 @@
                 <p class="text-gray-500 text-sm leading-relaxed">Pantau perkembangan permohonan surat Anda secara realtime. Tidak perlu bolak-balik ke kantor.</p>
                 <div class="mt-5 text-emerald-600 font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">Lacak Sekarang <span>→</span></div>
             </a>
-            <a href="{{ route('portal.peta') }}" class="feature-hover group relative overflow-hidden bg-gradient-to-br from-orange-50 to-amber-100 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 border border-orange-100 hover:border-orange-400">
+            <a href="{{ route('peta.index') }}" class="feature-hover group relative overflow-hidden bg-gradient-to-br from-orange-50 to-amber-100 rounded-3xl p-8 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 border border-orange-100 hover:border-orange-400">
                 <div class="feature-icon w-16 h-16 bg-orange-500 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-orange-200">
                     <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -155,12 +155,12 @@
                 <p class="text-primary-600 font-semibold text-xs uppercase tracking-widest mb-2">Informasi Terkini</p>
                 <h2 class="text-3xl font-extrabold text-gray-900">Berita &amp; Pengumuman</h2>
             </div>
-            <a href="{{ route('portal.berita') }}" class="hidden sm:flex items-center gap-2 text-sm font-semibold text-white bg-primary-600 px-4 py-2 rounded-full hover:bg-primary-700 transition-all">Lihat Semua →</a>
+            <a href="{{ route('berita.index') }}" class="hidden sm:flex items-center gap-2 text-sm font-semibold text-white bg-primary-600 px-4 py-2 rounded-full hover:bg-primary-700 transition-all">Lihat Semua →</a>
         </div>
         @if($beritaTerbaru->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             @foreach($beritaTerbaru as $berita)
-            <a href="{{ route('portal.berita.detail', $berita->slug) }}" class="group block bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 shadow-sm">
+            <a href="{{ route('berita.detail', $berita->slug) }}" class="group block bg-white border border-gray-100 rounded-3xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300 shadow-sm">
                 <div class="h-48 bg-gradient-to-br from-primary-100 to-cyan-100 overflow-hidden">
                     @if($berita->thumbnail)
                     <img src="{{ asset('storage/' . $berita->thumbnail) }}" alt="{{ $berita->judul }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">

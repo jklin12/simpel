@@ -96,7 +96,7 @@
         <div class="mt-14 bg-gradient-to-br from-primary-600 to-primary-800 rounded-3xl p-8 text-center text-white">
             <h3 class="text-xl font-bold mb-2">Tidak menemukan jawaban?</h3>
             <p class="text-primary-200 text-sm mb-6">Hubungi kami langsung atau kunjungi kantor kecamatan pada jam operasional.</p>
-            <a href="{{ route('portal.home') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-all text-sm shadow-lg">
+            <a href="{{ route('home') }}" class="inline-flex items-center gap-2 px-6 py-3 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-all text-sm shadow-lg">
                 ← Kembali ke Beranda
             </a>
         </div>

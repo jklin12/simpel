@@ -42,7 +42,7 @@
             <a href="{{ route('home') }}" class="px-8 py-4 bg-yellow-400 text-gray-900 font-bold rounded-2xl hover:bg-yellow-300 transition-all hover:-translate-y-1 transform shadow-lg shadow-yellow-400/30 text-sm">
                 🗒️ Ajukan Surat Sekarang
             </a>
-            <a href="{{ route('portal.berita') }}" class="px-8 py-4 glass-card text-white font-semibold rounded-2xl hover:bg-white/20 transition-all hover:-translate-y-1 transform text-sm">
+            <a href="{{ route('berita.index') }}" class="px-8 py-4 glass-card text-white font-semibold rounded-2xl hover:bg-white/20 transition-all hover:-translate-y-1 transform text-sm">
                 📰 Baca Berita
             </a>
         </div>
@@ -71,7 +71,7 @@
 <section class="bg-white py-12 -mt-1">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            <a href="{{ route('home') }}#buat-surat" class="group relative bg-gradient-to-br from-primary-600 to-primary-800 text-white rounded-2xl p-7 overflow-hidden hover:-translate-y-1 transition-all shadow-lg shadow-primary-200 hover:shadow-xl">
+            <a href="{{route('layanan.index')}}" class="group relative bg-gradient-to-br from-primary-600 to-primary-800 text-white rounded-2xl p-7 overflow-hidden hover:-translate-y-1 transition-all shadow-lg shadow-primary-200 hover:shadow-xl">
                 <div class="absolute -right-5 -bottom-5 w-28 h-28 bg-white/10 rounded-full"></div>
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,7 +81,7 @@
                 <h3 class="font-bold text-lg mb-1">Ajukan Surat</h3>
                 <p class="text-white/70 text-sm">Online tanpa antre, cepat & transparan</p>
             </a>
-            <a href="{{ route('tracking.index') }}" class="group relative bg-gradient-to-br from-emerald-500 to-teal-700 text-white rounded-2xl p-7 overflow-hidden hover:-translate-y-1 transition-all shadow-lg shadow-emerald-200 hover:shadow-xl">
+            <a href="{{ route('layanan.surat.tracking') }}" class="group relative bg-gradient-to-br from-emerald-500 to-teal-700 text-white rounded-2xl p-7 overflow-hidden hover:-translate-y-1 transition-all shadow-lg shadow-emerald-200 hover:shadow-xl">
                 <div class="absolute -right-5 -bottom-5 w-28 h-28 bg-white/10 rounded-full"></div>
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -91,7 +91,7 @@
                 <h3 class="font-bold text-lg mb-1">Cek Status</h3>
                 <p class="text-white/70 text-sm">Lacak permohonan surat secara realtime</p>
             </a>
-            <a href="{{ route('portal.peta') }}" class="group relative bg-gradient-to-br from-orange-500 to-rose-600 text-white rounded-2xl p-7 overflow-hidden hover:-translate-y-1 transition-all shadow-lg shadow-orange-200 hover:shadow-xl">
+            <a href="{{ route('peta.index') }}" class="group relative bg-gradient-to-br from-orange-500 to-rose-600 text-white rounded-2xl p-7 overflow-hidden hover:-translate-y-1 transition-all shadow-lg shadow-orange-200 hover:shadow-xl">
                 <div class="absolute -right-5 -bottom-5 w-28 h-28 bg-white/10 rounded-full"></div>
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -113,13 +113,13 @@
                 <p class="text-primary-600 font-semibold text-xs uppercase tracking-widest mb-2">Informasi Terkini</p>
                 <h2 class="text-4xl font-extrabold text-gray-900">Berita &amp; Pengumuman</h2>
             </div>
-            <a href="{{ route('portal.berita') }}" class="hidden md:flex items-center gap-2 text-sm font-semibold text-primary-600 hover:text-primary-700 border border-primary-200 px-4 py-2 rounded-full hover:bg-primary-50 transition-all">Lihat Semua →</a>
+            <a href="{{ route('berita.index') }}" class="hidden md:flex items-center gap-2 text-sm font-semibold text-primary-600 hover:text-primary-700 border border-primary-200 px-4 py-2 rounded-full hover:bg-primary-50 transition-all">Lihat Semua →</a>
         </div>
         @if($beritaTerbaru->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
             {{-- Featured large card --}}
             @php $first = $beritaTerbaru->first(); @endphp
-            <a href="{{ route('portal.berita.detail', $first->slug) }}" class="group md:col-span-3 block bg-white rounded-3xl overflow-hidden hover:shadow-2xl transition-all">
+            <a href="{{ route('berita.detail', $first->slug) }}" class="group md:col-span-3 block bg-white rounded-3xl overflow-hidden hover:shadow-2xl transition-all">
                 <div class="h-72 bg-gradient-to-br from-primary-100 to-primary-300 overflow-hidden">
                     @if($first->thumbnail)
                     <img src="{{ asset('storage/' . $first->thumbnail) }}" alt="{{ $first->judul }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
@@ -141,7 +141,7 @@
             {{-- Smaller cards --}}
             <div class="md:col-span-2 flex flex-col gap-5">
                 @foreach($beritaTerbaru->skip(1)->take(2) as $berita)
-                <a href="{{ route('portal.berita.detail', $berita->slug) }}" class="group flex gap-4 items-start bg-white rounded-2xl p-4 hover:shadow-lg transition-all">
+                <a href="{{ route('berita.detail', $berita->slug) }}" class="group flex gap-4 items-start bg-white rounded-2xl p-4 hover:shadow-lg transition-all">
                     <div class="w-20 h-20 shrink-0 bg-gradient-to-br from-primary-100 to-primary-200 rounded-xl overflow-hidden">
                         @if($berita->thumbnail)
                         <img src="{{ asset('storage/' . $berita->thumbnail) }}" alt="{{ $berita->judul }}" class="w-full h-full object-cover">

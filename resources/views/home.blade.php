@@ -7,7 +7,7 @@
 <section class="relative bg-white overflow-hidden lg:pt-[110px]">
     <div class="max-w-7xl mx-auto  pt-24">
         <div class="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
-           
+
 
             <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-24 lg:px-8 xl:mt-28">
                 <div class="sm:text-center lg:text-left">
@@ -20,7 +20,7 @@
                     </p>
                     <div class="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                         <div class="rounded-md shadow">
-                            <a href="#buat-surat" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10 transition-transform transform hover:-translate-y-1">
+                            <a href="{{route('layanan.index')}}" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 md:py-4 md:text-lg md:px-10 transition-transform transform hover:-translate-y-1">
                                 Buat Surat Sekarang
                             </a>
                         </div>
@@ -75,7 +75,7 @@
 
     submitApplication() {
         if (!this.agreed || !this.selectedKelurahan) return;
-        window.location.href = '{{ route('permohonan.create.public') }}?service_id=' + this.selectedService.id + '&kelurahan_id=' + this.selectedKelurahan;
+        window.location.href = '{{ route('layanan.surat.ajukan') }}?service_id=' + this.selectedService.id + '&kelurahan_id=' + this.selectedKelurahan;
     }
 }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -91,9 +91,9 @@
 
         @php
         $cardColors = [
-            'SKTM'  => ['bg' => 'bg-blue-50',   'hover' => 'group-hover:bg-blue-600',   'text' => 'text-blue-600',   'btn' => 'text-blue-600 hover:text-blue-700'],
-            'SKTMR' => ['bg' => 'bg-orange-50',  'hover' => 'group-hover:bg-orange-600', 'text' => 'text-orange-600', 'btn' => 'text-orange-600 hover:text-orange-700'],
-            'SKBM'  => ['bg' => 'bg-purple-50',  'hover' => 'group-hover:bg-purple-600', 'text' => 'text-purple-600', 'btn' => 'text-purple-600 hover:text-purple-700'],
+        'SKTM' => ['bg' => 'bg-blue-50', 'hover' => 'group-hover:bg-blue-600', 'text' => 'text-blue-600', 'btn' => 'text-blue-600 hover:text-blue-700'],
+        'SKTMR' => ['bg' => 'bg-orange-50', 'hover' => 'group-hover:bg-orange-600', 'text' => 'text-orange-600', 'btn' => 'text-orange-600 hover:text-orange-700'],
+        'SKBM' => ['bg' => 'bg-purple-50', 'hover' => 'group-hover:bg-purple-600', 'text' => 'text-purple-600', 'btn' => 'text-purple-600 hover:text-purple-700'],
         ];
         @endphp
 
@@ -122,7 +122,7 @@
         </div>
 
         <div class="mt-12 text-center">
-            <a href="{{ route('services.index') }}" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+            <a href="{{ route('layanan.index') }}" class="inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-base font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
                 Lihat Semua Layanan
             </a>
         </div>

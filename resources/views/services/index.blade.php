@@ -51,7 +51,7 @@
     submitApplication() {
         if (!this.agreed) return;
         // Redirect to public application form
-        window.location.href = '{{ route('permohonan.create.public') }}?service_id=' + this.selectedService.id + '&kelurahan_id=' + this.selectedKelurahan;
+        window.location.href = '{{ route('layanan.surat.ajukan') }}?service_id=' + this.selectedService.id + '&kelurahan_id=' + this.selectedKelurahan;
     }
 }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

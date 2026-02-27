@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Layanan;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\JenisSurat;
 use App\Models\Kelurahan;
@@ -18,7 +19,7 @@ use App\Notifications\PermohonanBaruNotification;
 use App\Notifications\PermohonanCreatedWhatsapp;
 use Illuminate\Support\Facades\Log;
 
-class PublicPermohonanController extends Controller
+class PermohonanController extends Controller
 {
     /**
      * Show the application form.

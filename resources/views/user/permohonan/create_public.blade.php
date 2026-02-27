@@ -25,7 +25,7 @@
         </div>
 
         <!-- Form -->
-        <form action="{{ route('permohonan.store.public') }}" method="POST" class="space-y-8" enctype="multipart/form-data">
+        <form action="{{ route('layanan.surat.store') }}" method="POST" class="space-y-8" enctype="multipart/form-data">
             @csrf
             <input type="hidden" name="jenis_surat_id" value="{{ $service->id }}">
             <input type="hidden" name="kelurahan_id" value="{{ $kelurahan->id }}">
@@ -41,7 +41,7 @@
 
             <!-- Submit Button -->
             <div class="flex justify-end pt-4">
-                <a href="{{ route('services.index') }}" class="mr-4 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
+                <a href="{{ route('layanan.index') }}" class="mr-4 px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors">
                     Kembali
                 </a>
                 <button type="submit" class="px-8 py-3 bg-primary-600 rounded-lg text-white font-bold hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-lg shadow-primary-500/30 transition-transform transform hover:-translate-y-1">

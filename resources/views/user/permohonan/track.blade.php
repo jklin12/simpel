@@ -11,7 +11,7 @@
             <h1 class="text-2xl font-bold text-gray-900 mb-2">Cek Status Permohonan</h1>
             <p class="text-gray-500 mb-8">Masukkan kode tracking yang Anda dapatkan saat pengajuan.</p>
 
-            <form action="{{ route('tracking.search') }}" method="GET" class="max-w-md mx-auto">
+            <form action="{{ route('layanan.surat.tracking.search') }}" method="GET" class="max-w-md mx-auto">
                 <div class="flex gap-2">
                     <input type="text" name="track_token" value="{{ request('track_token') }}" placeholder="Contoh: TRX12345678" class="flex-1 rounded-lg border-gray-300 focus:ring-primary-500 focus:border-primary-500 uppercase tracking-widest text-center font-bold" required>
                     <button type="submit" class="px-6 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors">
@@ -268,7 +268,7 @@
                             <p class="text-xs text-green-700 mt-0.5">File PDF surat yang sudah ditandatangani tersedia untuk diunduh.</p>
                         </div>
                     </div>
-                    <a href="{{ route('tracking.download.signed', $permohonan->track_token) }}"
+                    <a href="{{ route('layanan.surat.tracking.download', $permohonan->track_token) }}"
                         class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm flex-shrink-0">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />

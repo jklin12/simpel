@@ -52,7 +52,7 @@
                                 </h1>
                                 <p class="text-blue-100 text-lg mb-8 leading-relaxed max-w-lg">Akses informasi wilayah, berita terbaru, peta sebaran fasilitas, serta layanan administrasi surat menyurat secara online.</p>
                                 <div class="flex flex-wrap gap-4">
-                                    <a href="{{ route('portal.berita') }}" class="px-7 py-3.5 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-all shadow-lg hover:-translate-y-0.5 text-sm">Baca Berita →</a>
+                                    <a href="{{ route('berita.index') }}" class="px-7 py-3.5 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-all shadow-lg hover:-translate-y-0.5 text-sm">Baca Berita →</a>
                                     <a href="{{ route('home') }}" class="px-7 py-3.5 bg-yellow-400 text-gray-900 font-bold rounded-xl hover:bg-yellow-300 transition-all hover:-translate-y-0.5 text-sm">Ajukan Surat</a>
                                 </div>
                             </div>
@@ -74,8 +74,8 @@
                             <h1 class="text-5xl font-extrabold leading-tight mb-6">Dekat dengan<br><span class="text-yellow-300">Masyarakat,</span><br>Mudah Diakses</h1>
                             <p class="text-emerald-100 text-lg mb-8 leading-relaxed">Layanan cepat untuk warga — pengajuan surat, cek status, dan informasi wilayah tersedia 24 jam.</p>
                             <div class="flex flex-wrap gap-4">
-                                <a href="{{ route('tracking.index') }}" class="px-7 py-3.5 bg-white text-emerald-800 font-bold rounded-xl hover:bg-green-50 transition-all hover:-translate-y-0.5 text-sm">Cek Status Surat</a>
-                                <a href="{{ route('portal.peta') }}" class="px-7 py-3.5 bg-white/20 text-white font-bold rounded-xl border border-white/30 hover:bg-white/30 transition-all hover:-translate-y-0.5 text-sm">Lihat Peta →</a>
+                                <a href="{{ route('layanan.surat.tracking') }}" class="px-7 py-3.5 bg-white text-emerald-800 font-bold rounded-xl hover:bg-green-50 transition-all hover:-translate-y-0.5 text-sm">Cek Status Surat</a>
+                                <a href="{{ route('peta.index') }}" class="px-7 py-3.5 bg-white/20 text-white font-bold rounded-xl border border-white/30 hover:bg-white/30 transition-all hover:-translate-y-0.5 text-sm">Lihat Peta →</a>
                             </div>
                         </div>
                     </div>
@@ -96,7 +96,7 @@
                             <h1 class="text-5xl font-extrabold leading-tight mb-6">Temukan Lokasi<br><span class="text-yellow-200">Penting</span><br>di Kecamatan</h1>
                             <p class="text-rose-100 text-lg mb-8 leading-relaxed">Lokasi Ketua RT, RW, fasilitas umum, tempat ibadah, dan lebih dari puluhan titik penting tersedia di peta interaktif kami.</p>
                             <div class="flex flex-wrap gap-4">
-                                <a href="{{ route('portal.peta') }}" class="px-7 py-3.5 bg-white text-rose-700 font-bold rounded-xl hover:bg-rose-50 transition-all hover:-translate-y-0.5 text-sm">Buka Peta Wilayah →</a>
+                                <a href="{{ route('peta.index') }}" class="px-7 py-3.5 bg-white text-rose-700 font-bold rounded-xl hover:bg-rose-50 transition-all hover:-translate-y-0.5 text-sm">Buka Peta Wilayah →</a>
                             </div>
                         </div>
                     </div>
@@ -131,9 +131,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             @foreach([
-            [route('home').'#buat-surat', 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'Ajukan Surat', 'Online tanpa antre'],
-            [route('tracking.index'), 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4', 'Cek Status', 'Lacak permohonan'],
-            [route('portal.peta'), 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7', 'Peta Wilayah', 'Lokasi penting'],
+            [route('layanan.surat.ajukan'), 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', 'Ajukan Surat', 'Online tanpa antre'],
+            [route('layanan.surat.tracking'), 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4', 'Cek Status', 'Lacak permohonan'],
+            [route('peta.index'), 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7', 'Peta Wilayah', 'Lokasi penting'],
             ] as [$url, $icon, $title, $sub])
             <a href="{{ $url }}" class="flex items-center gap-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 rounded-2xl px-6 py-4 transition-all">
                 <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
@@ -159,12 +159,12 @@
                 <p class="text-primary-600 font-semibold text-xs uppercase tracking-widest mb-2">Informasi Terkini</p>
                 <h2 class="text-3xl font-extrabold text-gray-900">Berita &amp; Pengumuman</h2>
             </div>
-            <a href="{{ route('portal.berita') }}" class="text-primary-600 font-medium hover:text-primary-700 text-sm border-b border-primary-600 pb-0.5">Lihat Semua →</a>
+            <a href="{{ route('berita.index') }}" class="text-primary-600 font-medium hover:text-primary-700 text-sm border-b border-primary-600 pb-0.5">Lihat Semua →</a>
         </div>
         @if($beritaTerbaru->count() > 0)
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             @foreach($beritaTerbaru as $berita)
-            <a href="{{ route('portal.berita.detail', $berita->slug) }}" class="group block bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <a href="{{ route('berita.detail', $berita->slug) }}" class="group block bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                 <div class="h-48 bg-gradient-to-br from-primary-100 to-primary-200 overflow-hidden">
                     @if($berita->thumbnail)
                     <img src="{{ asset('storage/' . $berita->thumbnail) }}" alt="{{ $berita->judul }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">

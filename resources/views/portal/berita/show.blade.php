@@ -7,9 +7,9 @@
 <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white pt-[110px] pb-12">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="flex items-center gap-2 text-primary-200 text-sm mb-4 flex-wrap">
-            <a href="{{ route('portal.home') }}" class="hover:text-white">Portal</a>
+            <a href="{{ route('home') }}" class="hover:text-white">Portal</a>
             <span>/</span>
-            <a href="{{ route('portal.berita') }}" class="hover:text-white">Berita</a>
+            <a href="{{ route('berita.index') }}" class="hover:text-white">Berita</a>
             <span>/</span>
             <span class="text-white font-medium">{{ Str::limit($berita->judul, 40) }}</span>
         </nav>
@@ -33,7 +33,7 @@
             </article>
 
             <div class="mt-8 pt-6 border-t border-gray-100">
-                <a href="{{ route('portal.berita') }}" class="inline-flex items-center gap-2 text-primary-600 font-medium hover:text-primary-700">
+                <a href="{{ route('berita.index') }}" class="inline-flex items-center gap-2 text-primary-600 font-medium hover:text-primary-700">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
                     </svg>
@@ -48,7 +48,7 @@
             <div class="space-y-4">
                 @foreach($beritaLainnya as $item)
                 @if($item->id !== $berita->id)
-                <a href="{{ route('portal.berita.detail', $item->slug) }}" class="flex gap-3 group">
+                <a href="{{ route('berita.detail', $item->slug) }}" class="flex gap-3 group">
                     <div class="w-16 h-16 rounded-lg bg-primary-100 overflow-hidden shrink-0">
                         @if($item->thumbnail)
                         <img src="{{ asset('storage/' . $item->thumbnail) }}" class="w-full h-full object-cover">

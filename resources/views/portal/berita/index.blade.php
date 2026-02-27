@@ -8,7 +8,7 @@
 <div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white pt-[110px] pb-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="flex items-center gap-2 text-primary-200 text-sm mb-4">
-            <a href="{{ route('portal.home') }}" class="hover:text-white">Portal</a>
+            <a href="{{ route('home') }}" class="hover:text-white">Portal</a>
             <span>/</span>
             <span class="text-white font-medium">Berita</span>
         </nav>
@@ -22,7 +22,7 @@
     @if($beritas->count() > 0)
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
         @foreach($beritas as $berita)
-        <a href="{{ route('portal.berita.detail', $berita->slug) }}" class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+        <a href="{{ route('berita.detail', $berita->slug) }}" class="group block bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div class="h-48 bg-gradient-to-br from-primary-100 to-primary-200 overflow-hidden">
                 @if($berita->thumbnail)
                 <img src="{{ asset('storage/' . $berita->thumbnail) }}" alt="{{ $berita->judul }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
