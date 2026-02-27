@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Web;
+namespace App\Http\Controllers\Admin\Portal;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePortalBeritaRequest;
@@ -8,7 +8,7 @@ use App\Http\Requests\UpdatePortalBeritaRequest;
 use App\Services\PortalBeritaService;
 use Illuminate\Http\Request;
 
-class PortalBeritaAdminController extends Controller
+class BeritaController extends Controller
 {
     protected $service;
 

@@ -1,12 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Auth\ProfileController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\RoleController;
-use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,8 +26,8 @@ Route::get('/', function () {
     return view('home', compact('featuredServices', 'kelurahans'));
 })->name('home');
 
-Route::get('/layanan', [App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');
-Route::get('/api/kelurahans/{kecamatanId}', [App\Http\Controllers\ServiceController::class, 'getKelurahans'])->name('api.kelurahans');
+Route::get('/layanan', [App\Http\Controllers\Web\ServiceController::class, 'index'])->name('services.index');
+Route::get('/api/kelurahans/{kecamatanId}', [App\Http\Controllers\Web\ServiceController::class, 'getKelurahans'])->name('api.kelurahans');
 
 // Public Permohonan Routes
 Route::get('/pengajuan/create', [App\Http\Controllers\PublicPermohonanController::class, 'create'])->name('permohonan.create.public');
@@ -72,42 +70,42 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin Only Routes
     Route::middleware(['role:super_admin'])->prefix('admin')->name('admin.')->group(function () {
-        Route::resource('users', App\Http\Controllers\Admin\UserController::class);
-        Route::resource('roles', RoleController::class);
-        Route::resource('permissions', App\Http\Controllers\PermissionController::class);
+        Route::resource('users', App\Http\Controllers\Admin\AccessControl\UserController::class);
+        Route::resource('roles', App\Http\Controllers\Admin\AccessControl\RoleController::class);
+        Route::resource('permissions', App\Http\Controllers\Admin\AccessControl\PermissionController::class);
 
         // Master Data
         Route::prefix('master')->name('master.')->group(function () {
-            Route::resource('kabupaten', App\Http\Controllers\KabupatenController::class);
-            Route::resource('kecamatan', App\Http\Controllers\KecamatanController::class);
-            Route::resource('kelurahan', App\Http\Controllers\KelurahanController::class);
+            Route::resource('kabupaten', App\Http\Controllers\Admin\Master\KabupatenController::class);
+            Route::resource('kecamatan', App\Http\Controllers\Admin\Master\KecamatanController::class);
+            Route::resource('kelurahan', App\Http\Controllers\Admin\Master\KelurahanController::class);
         });
 
         // Letter Management
-        Route::resource('jenis-surat', App\Http\Controllers\Admin\JenisSuratController::class);
-        Route::resource('approval-flow', App\Http\Controllers\Admin\ApprovalFlowController::class);
-        Route::get('surat-counter', [App\Http\Controllers\Admin\SuratCounterController::class, 'index'])->name('surat-counter.index');
-        Route::patch('surat-counter/{suratCounter}/reset', [App\Http\Controllers\Admin\SuratCounterController::class, 'reset'])->name('surat-counter.reset');
+        Route::resource('jenis-surat', App\Http\Controllers\Admin\Surat\JenisSuratController::class);
+        Route::resource('approval-flow', App\Http\Controllers\Admin\Surat\ApprovalFlowController::class);
+        Route::get('surat-counter', [App\Http\Controllers\Admin\Surat\SuratCounterController::class, 'index'])->name('surat-counter.index');
+        Route::patch('surat-counter/{suratCounter}/reset', [App\Http\Controllers\Admin\Surat\SuratCounterController::class, 'reset'])->name('surat-counter.reset');
     });
 
     // Permohonan Surat Management (All authenticated users)
     Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
-        Route::get('permohonan-surat', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'index'])->name('permohonan-surat.index');
-        Route::get('permohonan-surat/{permohonanSurat}', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'show'])->name('permohonan-surat.show');
-        Route::get('permohonan-surat/{permohonanSurat}/edit', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'edit'])->name('permohonan-surat.edit');
-        Route::put('permohonan-surat/{permohonanSurat}', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'update'])->name('permohonan-surat.update');
-        Route::post('permohonan-surat/{permohonanSurat}/approve', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'approve'])->name('permohonan-surat.approve');
-        Route::post('permohonan-surat/{permohonanSurat}/reject', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'reject'])->name('permohonan-surat.reject');
-        Route::get('permohonan-surat/{permohonanSurat}/download', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'downloadLetter'])->name('permohonan-surat.download');
-        Route::get('permohonan-surat/{permohonanSurat}/dokumen/{dokumen}/download', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'downloadDokumen'])->name('permohonan-surat.download-dokumen');
-        Route::post('permohonan-surat/{permohonanSurat}/upload-signed', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'uploadSignedLetter'])->name('permohonan-surat.upload-signed');
+        Route::get('permohonan-surat', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'index'])->name('permohonan-surat.index');
+        Route::get('permohonan-surat/{permohonanSurat}', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'show'])->name('permohonan-surat.show');
+        Route::get('permohonan-surat/{permohonanSurat}/edit', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'edit'])->name('permohonan-surat.edit');
+        Route::put('permohonan-surat/{permohonanSurat}', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'update'])->name('permohonan-surat.update');
+        Route::post('permohonan-surat/{permohonanSurat}/approve', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'approve'])->name('permohonan-surat.approve');
+        Route::post('permohonan-surat/{permohonanSurat}/reject', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'reject'])->name('permohonan-surat.reject');
+        Route::get('permohonan-surat/{permohonanSurat}/download', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'downloadLetter'])->name('permohonan-surat.download');
+        Route::get('permohonan-surat/{permohonanSurat}/dokumen/{dokumen}/download', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'downloadDokumen'])->name('permohonan-surat.download-dokumen');
+        Route::post('permohonan-surat/{permohonanSurat}/upload-signed', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'uploadSignedLetter'])->name('permohonan-surat.upload-signed');
     });
 });
 
 // Location Helper Routes (API)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/api/location/kecamatan/{kabupatenId}', [App\Http\Controllers\LocationHelperController::class, 'getKecamatan']);
-    Route::get('/api/location/kelurahan/{kecamatanId}', [App\Http\Controllers\LocationHelperController::class, 'getKelurahan']);
+    Route::get('/api/location/kecamatan/{kabupatenId}', [App\Http\Controllers\Api\LocationHelperController::class, 'getKecamatan']);
+    Route::get('/api/location/kelurahan/{kecamatanId}', [App\Http\Controllers\Api\LocationHelperController::class, 'getKelurahan']);
 });
 
 // =============================================================================
@@ -129,7 +127,7 @@ Route::middleware(['auth', 'role:kecamatan|super_admin'])
     ->prefix('admin/portal')
     ->name('admin.portal.')
     ->group(function () {
-        Route::resource('berita', App\Http\Controllers\Web\PortalBeritaAdminController::class);
-        Route::resource('data-kelurahan', App\Http\Controllers\Web\PortalDataKelurahanAdminController::class);
-        Route::resource('struktur-organisasi', App\Http\Controllers\Web\PortalStrukturOrganisasiAdminController::class);
+        Route::resource('berita', App\Http\Controllers\Admin\Portal\BeritaController::class);
+        Route::resource('data-kelurahan', App\Http\Controllers\Admin\Portal\DataKelurahanController::class);
+        Route::resource('struktur-organisasi', App\Http\Controllers\Admin\Portal\StrukturOrganisasiController::class);
     });

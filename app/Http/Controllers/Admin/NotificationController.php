@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,10 +15,10 @@ class NotificationController extends Controller
     public function markAsRead($id)
     {
         $notification = Auth::user()->notifications()->where('id', $id)->first();
-       
+
         if ($notification) {
             $notification->markAsRead();
-            
+
             // Redirect to the link in the notification or default to dashboard
             return redirect(route('dashboard'));
         }

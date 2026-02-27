@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Web;
+namespace App\Http\Controllers\Admin\Portal;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePortalStrukturOrganisasiRequest;
@@ -8,7 +8,7 @@ use App\Http\Requests\UpdatePortalStrukturOrganisasiRequest;
 use App\Services\PortalStrukturOrganisasiService;
 use Illuminate\Http\Request;
 
-class PortalStrukturOrganisasiAdminController extends Controller
+class StrukturOrganisasiController extends Controller
 {
     protected $service;
 

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin\Master;
 
+use App\Http\Controllers\Controller;
 use App\Models\Kelurahan;
 use App\Models\Kecamatan;
 use Illuminate\Http\Request;
@@ -43,7 +44,7 @@ class KelurahanController extends Controller
             'lurah_nama'    => 'nullable|string|max:255',
             'lurah_nip'     => 'nullable|string|max:50',
             'lurah_pangkat' => 'nullable|string|max:100',
-            'lurah_golongan'=> 'nullable|string|max:20',
+            'lurah_golongan' => 'nullable|string|max:20',
             'alamat'        => 'nullable|string|max:500',
             'telp'          => 'nullable|string|max:20',
             'kop_surat'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
@@ -78,7 +79,7 @@ class KelurahanController extends Controller
             'lurah_nama'    => 'nullable|string|max:255',
             'lurah_nip'     => 'nullable|string|max:50',
             'lurah_pangkat' => 'nullable|string|max:100',
-            'lurah_golongan'=> 'nullable|string|max:20',
+            'lurah_golongan' => 'nullable|string|max:20',
             'alamat'        => 'nullable|string|max:500',
             'telp'          => 'nullable|string|max:20',
             'kop_surat'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',

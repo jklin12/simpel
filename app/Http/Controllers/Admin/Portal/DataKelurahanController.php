@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Web;
+namespace App\Http\Controllers\Admin\Portal;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StorePortalDataKelurahanRequest;
@@ -10,7 +10,7 @@ use App\Models\Kelurahan;
 use App\Services\PortalDataKelurahanService;
 use Illuminate\Http\Request;
 
-class PortalDataKelurahanAdminController extends Controller
+class DataKelurahanController extends Controller
 {
     protected $service;
 

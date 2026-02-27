@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin\Master;
 
+use App\Http\Controllers\Controller;
 use App\Models\Kabupaten;
 use Illuminate\Http\Request;
 
