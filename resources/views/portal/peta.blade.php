@@ -131,7 +131,15 @@
                     <p x-show="selected && selected.kelurahan" class="text-xs text-gray-400 mb-2" x-text="selected && selected.kelurahan ? 'Kel. ' + selected.kelurahan : ''"></p>
                     <p x-show="selected && selected.alamat" class="text-sm text-gray-600 mb-1" x-text="selected ? selected.alamat : ''"></p>
                     <p x-show="selected && selected.keterangan" class="text-sm text-gray-500 italic" x-text="selected ? selected.keterangan : ''"></p>
-                    <div class="mt-3 pt-3 border-t border-gray-100 text-xs text-gray-300" x-text="selected ? selected.lat + ', ' + selected.lng : ''"></div>
+                    <div class="mt-3 pt-3 flex items-center justify-between border-t border-gray-100">
+                        <div class="text-xs text-gray-300" x-text="selected ? selected.lat + ', ' + selected.lng : ''"></div>
+                        <a x-show="selected" :href="'https://www.google.com/maps/dir/?api=1&destination=' + selected.lat + ',' + selected.lng" target="_blank" class="text-xs font-semibold px-3 py-1.5 bg-primary-50 text-primary-600 rounded-lg hover:bg-primary-100 transition-colors flex items-center gap-1">
+                            <span>Petunjuk Arah</span>
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -202,8 +210,7 @@
                 this.markerGroups = {};
 
                 const toRender = kategori === 'all' ?
-                    Object.entries(this.allData) :
-                    [
+                    Object.entries(this.allData) : [
                         [kategori, this.allData[kategori]]
                     ].filter(([, v]) => v);
 
@@ -238,7 +245,8 @@
                             `<div style="font-family:system-ui,sans-serif">
                             <div style="font-weight:700;font-size:14px;margin-bottom:2px">${item.nama}</div>
                             <div style="font-size:11px;color:#6366f1;margin-bottom:4px">${info.label}</div>
-                            ${item.alamat ? `<div style="font-size:12px;color:#4b5563">${item.alamat}</div>` : ''}
+                            ${item.alamat ? `<div style="font-size:12px;color:#4b5563;margin-bottom:6px">${item.alamat}</div>` : ''}
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}" target="_blank" style="display:inline-block;padding:4px 8px;background:#eef2ff;color:#4f46e5;border-radius:4px;text-decoration:none;font-size:11px;font-weight:600;margin-top:2px;">Google Maps ↗</a>
                          </div>`
                         );
 

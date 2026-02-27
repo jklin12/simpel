@@ -49,8 +49,8 @@ class PortalDataKelurahan extends Model
     public static function labelKategori(): array
     {
         return [
-            'rw'                  => 'Rukun Warga (RW)',
-            'rt'                  => 'Rukun Tetangga (RT)',
+            'rw'                  => 'Ketua RW',
+            'rt'                  => 'Ketua RT',
             'lpm'                 => 'Lembaga Pemberdayaan Masyarakat',
             'tempat_ibadah'       => 'Tempat Ibadah',
             'pemakaman'           => 'Tempat Pemakaman',
