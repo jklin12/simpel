@@ -1,6 +1,6 @@
 # 🚀 Panduan Deploy — SIMPEL Landasan Ulin
 
-> **Branch:** `deploy/stable` · **OS:** Ubuntu 22.04 LTS
+> **Branch Policy:** Gunakan Branch Versioning (misal `deploy/v1.0.0`) · **OS:** Ubuntu 22.04 LTS
 > **Stack:** PHP 8.2 · Nginx · MySQL · Redis · Supervisor
 
 ---
@@ -9,7 +9,7 @@
 
 - Server Ubuntu 22.04 LTS (fresh install)
 - Akses root / sudo
-- Domain sudah diarahkan ke IP server
+- Domain sudah diarahkan ke IP server (Termasuk Subdomain Admin, misal: `simpel.id` & `admin.simpel.id`)
 
 ---
 
@@ -88,16 +88,22 @@ redis-cli ping
 sudo mkdir -p /var/www
 cd /var/www
 
-git clone -b deploy/stable git@github.com:jklin12/simpel.git simpel
+# Clone repository utama
+git clone git@github.com:jklin12/simpel.git simpel
 cd simpel
+
+# Pindah ke branch versioning yang baru (contoh v1.0.0)
+git checkout deploy/v1.0.0
 ``` 
 
 ---
 
-## Step 6 — Install Dependencies
+## Step 6 — Install Dependencies & Frontend
 
 ```bash
 composer install --optimize-autoloader --no-dev
+npm install
+npm run build
 ```
 
 ---
@@ -109,13 +115,18 @@ cp .env.example .env
 nano .env
 ```
 
-Isi bagian berikut:
+Isi bagian berikut. Perhatikan pembagian sesi (session) antar domain utama dan subdomain admin:
 
 ```env
 APP_NAME="SIMPEL Landasan Ulin"
 APP_ENV=production
 APP_DEBUG=false
-APP_URL=https://domain-anda.id
+APP_URL=https://simpel.id
+
+# Konfigurasi Domain Utama dan Subdomain Admin
+SESSION_DOMAIN=".simpel.id"       # Tambahkan TITIK (.) di awal agar sesi (login) bisa dibagi
+ADMIN_DOMAIN="admin.simpel.id"    # Nama subdomain untuk login ke halaman admin
+SESSION_SECURE_COOKIE=true        # Disarankan karena environment production harus SSL
 
 # Database
 DB_CONNECTION=mysql
@@ -175,16 +186,22 @@ sudo chmod -R 775 /var/www/simpel/storage /var/www/simpel/bootstrap/cache
 
 ---
 
-## Step 10 — Konfigurasi Nginx
+## Step 10 — Konfigurasi Nginx (Domain & Subdomain)
 
 ```bash
 sudo nano /etc/nginx/sites-available/simpel
 ```
 
+Daftarkan **Subdomain** dan **Domain** di file konfigurasi virtual host yang sama:
+
 ```nginx
 server {
     listen 80;
-    server_name domain-anda.id www.domain-anda.id;
+    
+    # Daftarkan domain utama dan subdomain admin bersamaan
+    server_name simpel.id admin.simpel.id;
+    
+    # Selalu arahkan document root ke satu titik public Laravel
     root /var/www/simpel/public;
     index index.php;
 
@@ -217,7 +234,9 @@ sudo systemctl reload nginx
 
 ```bash
 sudo apt install -y certbot python3-certbot-nginx
-sudo certbot --nginx -d domain-anda.id -d www.domain-anda.id
+
+# Buat SSL untuk kedua domain sekaligus
+sudo certbot --nginx -d simpel.id -d admin.simpel.id
 
 # Verifikasi auto-renew
 sudo certbot renew --dry-run
@@ -268,14 +287,15 @@ php artisan migrate:status           # Semua migrasi Ran
 ls -la /var/www/simpel/public/storage  # Storage symlink
 ```
 
-Buka browser → `https://domain-anda.id` ✅
+Buka browser → `https://simpel.id` dan `https://admin.simpel.id` ✅
 
 ---
 
 ## Checklist Go-Live
 
 - [ ] `APP_DEBUG=false` dan `APP_ENV=production` di `.env`
-- [ ] SSL aktif, HTTP redirect ke HTTPS
+- [ ] SSL aktif, HTTP redirect ke HTTPS (untuk 2 domain)
+- [ ] Session membagikan `.namadomain.id`
 - [ ] Semua migrasi berstatus **Ran**
 - [ ] Queue worker berjalan (`supervisorctl status`)
 - [ ] Upload file berhasil tersimpan
@@ -284,15 +304,48 @@ Buka browser → `https://domain-anda.id` ✅
 
 ---
 
-## Update / Re-deploy
+## Update / Re-deploy Aplikasi
+
+Saat ingin melakukan upgrade *version*, gunakan *flow* berikut:
 
 ```bash
 cd /var/www/simpel
 
-git pull origin deploy/stable
+# Ambil branch versi terbaru (contohnya sekarang naik v1.1.0)
+git fetch origin
+git checkout deploy/v1.1.0
+
+# Update dependensi & frontend
 composer install --optimize-autoloader --no-dev
+npm install && npm run build
+
+# Clear Laravel Cache & Jalankan Migrasi
 php artisan migrate --force
 php artisan optimize:clear
 php artisan optimize
+
+# Restart queue untuk refresh code yg jalan di background
+sudo supervisorctl restart simpel-queue:*
+```
+
+---
+
+## 🛠️ Rollback Darurat
+Jika saat menjalankan versi baru terdapat error kritikal di Production, jalankan step berikut untuk kembali ke versi stabil sebelumnya:
+
+```bash
+cd /var/www/simpel
+
+# Kembali ke branch terdahulu (misal deploy/stable atau versi sblmnya v0.9.0)
+git checkout deploy/stable
+
+# Sesuaikan/restore dependencies yg lama
+composer install --optimize-autoloader --no-dev
+
+# Bersihkan cache Laravel
+php artisan optimize:clear
+php artisan optimize
+
+# Restart Queue Server
 sudo supervisorctl restart simpel-queue:*
 ```
