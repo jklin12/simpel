@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Surat Keterangan Belum Menikah</title>
+    <title>Surat Keterangan Tidak Mampu</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,38 @@
         }
 
         .page {
-            padding: 1.5cm 2cm 2cm 2.5cm;
+            padding: 1cm 2cm 3.5cm 2cm;
+        }
+
+        /* FOOTER */
+        .footer {
+            position: fixed;
+            bottom: 1cm;
+            left: 2cm;
+            right: 2cm;
+            font-size: 7pt;
+            color: #333;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            font-family: Arial, sans-serif;
+        }
+
+        .footer-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-list li {
+            margin-bottom: 2px;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .footer-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
         }
 
         /* HEADER */
@@ -53,14 +84,18 @@
             margin-top: 2px;
         }
 
+        /* CENTER */
+        .center {
+            text-align: center;
+        }
+
         /* TITLE */
         .surat-title {
             text-align: center;
-            margin: 14px 0 0 0;
-            font-size: 14pt;
+            margin: 14px 0 0px 0;
+            font-size: 13pt;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
         .surat-nomor {
@@ -69,16 +104,10 @@
             margin-bottom: 14px;
         }
 
-        .hl {
-            color: #000;
-            font-weight: bold;
-        }
-
         /* DATA TABLE */
         table.data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 6px;
         }
 
         table.data-table td {
@@ -100,20 +129,28 @@
             width: 55%;
         }
 
+        table.data-table td.col-value-bold {
+            width: 55%;
+            font-weight: bold;
+            color: #000;
+        }
+
         /* NARASI */
         .narasi {
             font-size: 11pt;
             text-align: justify;
             margin-bottom: 10px;
-            line-height: 1.7;
+        }
+
+        .narasi .hl {
+            color: #000;
+            font-weight: bold;
         }
 
         /* PENUTUP */
         .penutup {
             font-size: 11pt;
             text-align: justify;
-            margin-bottom: 20px;
-            line-height: 1.7;
         }
 
         /* TTD */
@@ -144,37 +181,6 @@
         .section-margin {
             margin: 8px 0 4px 0;
         }
-
-        /* FOOTER */
-        .footer {
-            position: fixed;
-            bottom: 1cm;
-            left: 2cm;
-            right: 2cm;
-            font-size: 7pt;
-            color: #333;
-            border-top: 1px solid #000;
-            padding-top: 5px;
-            font-family: Arial, sans-serif;
-        }
-
-        .footer-list {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-list li {
-            margin-bottom: 2px;
-            position: relative;
-            padding-left: 12px;
-        }
-
-        .footer-list li:before {
-            content: "•";
-            position: absolute;
-            left: 0;
-        }
     </style>
 </head>
 
@@ -183,11 +189,13 @@
 
         {{-- ===== HEADER ===== --}}
         @if($kelurahan->kop_surat_path && file_exists(storage_path('app/public/' . $kelurahan->kop_surat_path)))
+        {{-- Gunakan gambar kop surat langsung --}}
         <div style="border-bottom: 4px solid #000; padding-bottom: 6px; margin-bottom: 6px; text-align: center;">
             <img src="{{ storage_path('app/public/' . $kelurahan->kop_surat_path) }}"
                 style="width: 100%; max-height: 100px; object-fit: contain;" alt="Kop Surat">
         </div>
         @else
+        {{-- Fallback: header teks --}}
         <table class="header-table">
             <tr>
                 <td style="width:80px; text-align:center; vertical-align:middle;">
@@ -206,8 +214,9 @@
         </table>
         @endif
 
+
         {{-- ===== JUDUL ===== --}}
-        <div class="surat-title">Surat Keterangan Belum Menikah</div>
+        <div class="surat-title">Surat Keterangan Kematian</div>
         <div class="surat-nomor">
             Nomor : <strong>{{ $permohonan->nomor_surat ?? '......../..........' }}</strong>
         </div>
@@ -234,93 +243,130 @@
             </tr>
         </table>
 
-        {{-- MENERANGKAN --}}
-        <p class="section-margin" style="font-size:11pt;">Menerangkan bahwa &nbsp;:</p>
-
-        {{-- DATA PEMOHON --}}
         @php
         $data = $permohonan->data_permohonan ?? [];
-        $tglLahir = isset($data['tanggal_lahir'])
-        ? \Carbon\Carbon::parse($data['tanggal_lahir'])->translatedFormat('d F Y')
+        $tglLahirJenazah = isset($data['tanggal_lahir_jenazah'])
+        ? \Carbon\Carbon::parse($data['tanggal_lahir_jenazah'])->translatedFormat('d F Y')
         : '-';
-        $tglPengantar = isset($data['tanggal_surat_pengantar'])
-        ? \Carbon\Carbon::parse($data['tanggal_surat_pengantar'])->translatedFormat('d F Y')
+        $tglPengantar = isset($data['tanggal_pengantar'])
+        ? \Carbon\Carbon::parse($data['tanggal_pengantar'])->translatedFormat('d F Y')
         : '-';
-        $tglSurat = $permohonan->tanggal_surat
-        ? \Carbon\Carbon::parse($permohonan->tanggal_surat)->translatedFormat('d F Y')
-        : \Carbon\Carbon::now()->translatedFormat('d F Y');
+        $tglMeninggal = isset($data['tanggal_meninggal'])
+        ? \Carbon\Carbon::parse($data['tanggal_meninggal'])->translatedFormat('d F Y')
+        : '-';
         @endphp
 
+        {{-- NARASI PENGANTAR --}}
+        <p class="narasi" style="margin-top:5px;">
+            Berdasarkan surat pengantar Ketua RT. <span>{{ str_pad($data['rt'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
+            RW. <span>{{ str_pad($data['rw'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
+            Nomor: <span>{{ $data['nomor_pengantar'] ?? '....' }}</span>
+            tanggal <span>{{ $tglPengantar }}</span>,
+            Kelurahan <span>{{ ucwords(strtolower($kelurahan->nama)) }}</span>,
+            Kecamatan <span>{{ ucwords(strtolower($kelurahan->kecamatan->nama ?? 'Landasan Ulin')) }}</span>
+            Pemerintah Kota Banjarbaru dengan ini menerangkan bahwa:
+        </p>
+
+        {{-- DATA JENAZAH --}}
         <table class="data-table">
             <tr>
                 <td class="col-label">Nama</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['nama_lengkap'] ?? $permohonan->nama_pemohon }}</td>
+                <td class="col-value">{{ strtoupper($data['nama_jenazah'] ?? $permohonan->nama_pemohon ?? '-') }}</td>
             </tr>
             <tr>
                 <td class="col-label">NIK</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['nik_bersangkutan'] ?? $permohonan->nik_pemohon }}</td>
+                <td class="col-value">{{ $data['nik_jenazah'] ?? '-' }}</td>
             </tr>
             <tr>
                 <td class="col-label">Tempat/Tanggal Lahir</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . strtoupper($tglLahir) }}</td>
+                <td class="col-value">{{ ($data['tempat_lahir_jenazah'] ?? '-') . ', ' . strtoupper($tglLahirJenazah) }}</td>
             </tr>
             <tr>
                 <td class="col-label">Alamat</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">
-                    {{ $data['alamat_lengkap'] ?? $permohonan->alamat_pemohon }}
-                    RT. {{ $data['rt'] ?? '-' }} RW. {{ $data['rw'] ?? '-' }}
-                    Kel. {{ $kelurahan->nama }}
-                    Kec. {{ $kelurahan->kecamatan->nama ?? '-' }}
-                    Kota Banjarbaru
-                </td>
+                <td class="col-value">{{ $data['alamat_jenazah'] ?? '-' }}</td>
             </tr>
             <tr>
                 <td class="col-label">Jenis Kelamin</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['jenis_kelamin'] ?? '-' }}</td>
+                <td class="col-value">{{ ($data['jk_jenazah'] ?? '') == 'L' ? 'Laki-laki' : (($data['jk_jenazah'] ?? '') == 'P' ? 'Perempuan' : '-') }}</td>
             </tr>
             <tr>
                 <td class="col-label">Agama</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['agama'] ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="col-label">Status Perkawinan</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['status_perkawinan'] ?? '-' }}</td>
+                <td class="col-value">{{ $data['agama_jenazah'] ?? '-' }}</td>
             </tr>
             <tr>
                 <td class="col-label">Pekerjaan</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['pekerjaan'] ?? '-' }}</td>
+                <td class="col-value">{{ $data['pekerjaan_jenazah'] ?? '-' }}</td>
+            </tr>
+
+
+            {{-- DETAIL KEMATIAN --}}
+            <tr>
+                <td class="col-label" style="font-weight: bold;">Telah Meninggal Pada</td>
+                <td class="col-sep" style="font-weight: bold;"></td>
+                <td class="col-value"></td>
+            </tr>
+            <tr>
+                <td class="col-label">Hari/Tanggal Meninggal</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['hari_meninggal'] ?? '-' }}, {{ strtoupper($tglMeninggal) }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Pukul</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['pukul_meninggal'] ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Tempat</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['tempat_meninggal'] ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Disebabkan</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['sebab_kematian'] ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Dimakamkan di</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['tempat_pemakaman'] ?? '-' }}</td>
+            </tr>
+
+            {{-- DATA PELAPOR --}}
+            <tr>
+                <td class="col-label" style="font-weight: bold;">Pelapor</td>
+                <td class="col-sep" style="font-weight: bold;"></td>
+                <td class="col-value"></td>
+            </tr>
+            <tr>
+                <td class="col-label">Nama</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ strtoupper($data['nama_pelapor'] ?? '-') }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">NIK</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['nik_pelapor'] ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Hub Dengan yang meninggal</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['hubungan_pelapor'] ?? '-' }}</td>
             </tr>
         </table>
 
-        {{-- ===== NARASI ===== --}}
-        <p class="narasi" style="margin-top:10px;">
-            Berdasarkan surat pernyataan pemohon tanggal <span>{{ $tglSurat }}</span>
-            dan surat pengantar Ketua RT. <span>{{ str_pad($data['rt'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
-            RW. <span>{{ str_pad($data['rw'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
-            Nomor: <span>{{ $data['no_surat_pengantar'] ?? '....' }}</span>
-            tanggal <span>{{ $tglPengantar }}</span>,
-            Kelurahan <span>{{ ucfirst($kelurahan->nama) }}</span>
-            Kecamatan <span>{{ ucfirst($kelurahan->kecamatan->nama) }}</span>
-            Pemerintah Kota Banjarbaru dengan ini menerangkan bahwa nama tersebut diatas, <span>belum pernah kawin</span>.
-        </p>
-
-        <p class="narasi">
-            Adapun surat keterangan belum menikah ini dibuat untuk keperluan
-            <span>{{ $data['keperluan'] ?? '-' }}</span>.
-        </p>
-
         <p class="penutup">
-            Demikian surat keterangan belum menikah ini diberikan untuk dapat dipergunakan
-            sebagaimana mestinya.
+            Demikian surat keterangan kematian ini diberikan untuk dapat dipergunakan sebagaimana mestinya.
         </p>
+
+
+
 
         {{-- ===== TANDA TANGAN ===== --}}
         <table class="ttd-table">
@@ -345,6 +391,7 @@
         </table>
 
     </div>
+
     <div class="footer">
         <ul class="footer-list">
             <li>UU ITE No 11 Tahun 2008 Pasal 5 Ayat 1 "Informasi Elektronik dan/atau Dokumen Elektronik dan/atau hasil cetaknya merupakan alat bukti hukum yang sah"</li>

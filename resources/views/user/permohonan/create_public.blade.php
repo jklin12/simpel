@@ -30,44 +30,13 @@
             <input type="hidden" name="jenis_surat_id" value="{{ $service->id }}">
             <input type="hidden" name="kelurahan_id" value="{{ $kelurahan->id }}">
 
-            <!-- Bagian 0: Data Pemohon -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8" x-data="{ nama: '{{ old('pemohon_nama') }}', nik: '{{ old('pemohon_nik') }}' }">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">0</span>
-                        Data Pemohon
-                    </h2>
-                </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
-                        <input type="text" x-model="nama" name="pemohon_nama" value="{{ old('pemohon_nama') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('pemohon_nama') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">NIK</label>
-                        <input type="text" x-model="nik" name="pemohon_nik" value="{{ old('pemohon_nik') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" maxlength="16" required>
-                        @error('pemohon_nik') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
-                    <div class="col-span-1 md:col-span-2">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Lengkap</label>
-                        <textarea name="pemohon_alamat" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('pemohon_alamat') }}</textarea>
-                        @error('pemohon_alamat') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">No. WhatsApp / HP</label>
-                        <input type="text" name="pemohon_phone" value="{{ old('pemohon_phone') }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('pemohon_phone') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
-                </div>
-            </div>
 
             <!-- Dynamic Fields Based on Letter Type -->
             @if(View::exists('user.permohonan.types.' . strtolower($service->kode)))
-                @include('user.permohonan.types.' . strtolower($service->kode))
+            @include('user.permohonan.types.' . strtolower($service->kode))
             @elseif($service->required_fields && count($service->required_fields) > 0)
-                @include('user.permohonan.types.dynamic', ['fields' => $service->required_fields])
+            @include('user.permohonan.types.dynamic', ['fields' => $service->required_fields])
             @endif
 
             <!-- Submit Button -->
@@ -83,7 +52,45 @@
     </div>
 </div>
 
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<style>
+    .ts-control {
+        border-radius: 0.5rem;
+        border-color: #d1d5db;
+        background-color: #f9fafb;
+        padding: 0.75rem 1rem;
+        font-family: inherit;
+        font-size: 1rem;
+        line-height: 1.5rem;
+        min-height: 50px;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+
+    .ts-control.focus {
+        background-color: #ffffff;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 1px #3b82f6;
+    }
+
+    .ts-wrapper.single .ts-control:after {
+        right: 1rem;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectPekerjaan = document.querySelector('.select2-pekerjaan');
+        if (selectPekerjaan) {
+            new TomSelect(selectPekerjaan, {
+                create: true,
+                sortField: {
+                    field: "text",
+                    direction: "asc"
+                },
+                placeholder: "Pilih atau Ketik Pekerjaan Baru"
+            });
+        }
+    });
 </script>
 @if(session('error'))
 <script>

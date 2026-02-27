@@ -35,7 +35,9 @@ class PublicPermohonanController extends Controller
         $service = JenisSurat::findOrFail($serviceId);
         $kelurahan = Kelurahan::findOrFail($kelurahanId);
 
-        return view('user.permohonan.create_public', compact('service', 'kelurahan'));
+        $pekerjaanList = \App\Models\Pekerjaan::orderBy('nama')->pluck('nama')->toArray();
+
+        return view('user.permohonan.create_public', compact('service', 'kelurahan', 'pekerjaanList'));
     }
 
     /**
@@ -51,17 +53,41 @@ class PublicPermohonanController extends Controller
             $trackToken = strtoupper(Str::random(10));
             $service = JenisSurat::findOrFail($request->jenis_surat_id);
 
+            // Evaluate pemohon data based on jenis_surat_id
+            $namaPemohon = '';
+            $nikPemohon = '';
+            $phonePemohon = '';
+            $alamatPemohon = '';
+
+            switch (strtoupper($service->kode)) {
+                case 'SKM':
+                    $namaPemohon = $request->nama_pelapor;
+                    $nikPemohon = $request->nik_pelapor;
+                    $phonePemohon = $request->no_wa;
+                    $alamatPemohon = $request->alamat_pelapor ?? '';
+                    break;
+                case 'SKTM':
+                case 'SKTMR':
+                case 'SKBM':
+                default:
+                    $namaPemohon = $request->nama_lengkap;
+                    $nikPemohon = $request->nik_bersangkutan;
+                    $phonePemohon = $request->no_wa;
+                    $alamatPemohon = $request->alamat_lengkap;
+                    break;
+            }
+
             // Filter out non-data fields AND file fields for JSON storage
             $dynamicFileNames = collect($service->required_fields ?? [])
                 ->filter(fn($f) => ($f['type'] ?? '') === 'file')
                 ->pluck('name')
                 ->toArray();
             $excludeFields = array_unique(array_merge(
-                ['_token', 'jenis_surat_id', 'kelurahan_id', 'pemohon_nama', 'pemohon_nik', 'pemohon_phone', 'pemohon_alamat'],
+                ['_token', 'jenis_surat_id', 'kelurahan_id'],
                 StorePermohonanRequest::fileFields(),
                 $dynamicFileNames
             ));
-            $dataPermohonan = $request->except($excludeFields);
+            $dataPermohonan = array_map(fn($v) => is_string($v) ? strtoupper($v) : $v, $request->except($excludeFields));
 
             // Generate Nomor Permohonan: REG/YYYYMMDD/RANDOM
             $nomorPermohonan = 'REG/' . date('Ymd') . '/' . strtoupper(Str::random(5));
@@ -73,10 +99,10 @@ class PublicPermohonanController extends Controller
                 'jenis_surat_id' => $request->jenis_surat_id,
                 'kelurahan_id' => $request->kelurahan_id,
                 'created_by_user_id' => auth()->id(), // Nullable now in migration
-                'nama_pemohon' => $request->pemohon_nama,
-                'nik_pemohon' => $request->pemohon_nik,
-                'phone_pemohon' => $request->pemohon_phone,
-                'alamat_pemohon' => $request->pemohon_alamat,
+                'nama_pemohon' => $namaPemohon,
+                'nik_pemohon' => $nikPemohon,
+                'phone_pemohon' => $phonePemohon,
+                'alamat_pemohon' => $alamatPemohon,
                 'data_permohonan' => $dataPermohonan, // Casted to array/json in model
                 'keperluan' => 'Permohonan ' . $service->nama,
                 'status' => 'pending',
@@ -172,6 +198,24 @@ class PublicPermohonanController extends Controller
             'ktp_image' => 'required|image|max:5120', // Max 5MB
         ]);
 
+        // Mock data for local development to save Claude API tokens
+        if (app()->environment('local')) {
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'nik' => '637201' . rand(1000000000, 9999999999), // Random 16 digits
+                    'nama' => 'MOCK ' . \Illuminate\Support\Str::random(10),
+                    'tempat_lahir' => 'BANJARBARU',
+                    'tanggal_lahir' => '1995-05-15',
+                    'jenis_kelamin' => rand(0, 1) ? 'Laki-laki' : 'Perempuan',
+                    'alamat' => 'JL. RAYA PUSAKA NO. 123, RT 01 RW 02, KEL. GUNTUNG P., KEC. BANJARBARU',
+                    'agama' => 'ISLAM',
+                    'status_perkawinan' => 'BELUM KAWIN',
+                    'pekerjaan' => 'KARYAWAN SWASTA'
+                ]
+            ]);
+        }
+
         $apiKey = config('services.claude.api_key');
         if (!$apiKey) {
             return response()->json([
@@ -193,12 +237,16 @@ Kamu adalah sistem OCR KTP Indonesia. Ekstrak data dari foto KTP ini dan kembali
   "tempat_lahir": "string nama kota atau null",
   "tanggal_lahir": "string format YYYY-MM-DD atau null",
   "jenis_kelamin": "Laki-laki atau Perempuan atau null",
-  "alamat": "string alamat lengkap atau null"
+  "alamat": "string alamat lengkap atau null",
+  "agama": "string agama atau null",
+  "status_perkawinan": "Belum Kawin / Kawin / Cerai Hidup / Cerai Mati atau null",
+  "pekerjaan": "string pekerjaan atau null"
 }
 
 Aturan penting:
 - tanggal_lahir harus dalam format YYYY-MM-DD (misal: 1995-07-25)
-- Jika ada field yang tidak terbaca, isi null
+- Untuk jenis_kelamin, agama, status_perkawinan, dan pekerjaan usahakan tebak dengan sebaik mungkin jika agak buram.
+- Jika ada field yang sama sekali tidak terbaca, isi null
 - Kembalikan HANYA JSON, jangan ada teks lain sama sekali
 EOT;
 
@@ -270,12 +318,15 @@ EOT;
                 'success' => true,
                 'message' => 'OCR berhasil.',
                 'data'    => [
-                    'nik'           => $ktpData['nik'] ?? null,
-                    'nama'          => $ktpData['nama'] ?? null,
-                    'tempat_lahir'  => $ktpData['tempat_lahir'] ?? null,
-                    'tanggal_lahir' => $ktpData['tanggal_lahir'] ?? null,
-                    'jenis_kelamin' => $ktpData['jenis_kelamin'] ?? null,
-                    'alamat'        => $ktpData['alamat'] ?? null,
+                    'nik'               => $ktpData['nik'] ?? null,
+                    'nama'              => $ktpData['nama'] ?? null,
+                    'tempat_lahir'      => $ktpData['tempat_lahir'] ?? null,
+                    'tanggal_lahir'     => $ktpData['tanggal_lahir'] ?? null,
+                    'jenis_kelamin'     => $ktpData['jenis_kelamin'] ?? null,
+                    'alamat'            => $ktpData['alamat'] ?? null,
+                    'agama'             => $ktpData['agama'] ?? null,
+                    'status_perkawinan' => $ktpData['status_perkawinan'] ?? null,
+                    'pekerjaan'         => $ktpData['pekerjaan'] ?? null,
                 ],
             ]);
         } catch (\Exception $e) {

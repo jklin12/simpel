@@ -1,5 +1,5 @@
             <!-- Bagian 1: Data Diri yang Bersangkutan -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8" x-data="ocrSkbmHandler()">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8" x-data="ocrSktmHandler()">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
                         <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">1</span>
@@ -32,13 +32,6 @@
                     :class="statusOk ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'"
                     class="mb-4 text-sm border rounded-lg px-4 py-2" style="display:none"></div>
 
-                <div class="mb-6 flex items-center gap-2 bg-blue-50 p-4 rounded-lg border border-blue-100">
-                    <input type="checkbox" id="sama_dengan_pemohon" x-model="samaDenganPemohon" @change="syncPemohon()" class="w-5 h-5 text-primary-600 bg-white border-gray-300 rounded focus:ring-primary-500">
-                    <label for="sama_dengan_pemohon" class="text-sm font-medium text-blue-900 cursor-pointer">
-                        Gunakan data yang sama dengan Data Pemohon
-                    </label>
-                </div>
-
                 <div class="grid grid-cols-1 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
@@ -46,10 +39,12 @@
                         @error('nama_lengkap') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">NIK <span class="text-red-500">*</span></label>
-                        <input type="text" x-model="nik" name="nik_bersangkutan" value="{{ old('nik_bersangkutan') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" maxlength="16" required>
-                        @error('nik_bersangkutan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    <div class="grid grid-cols-1 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">NIK <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="nik" name="nik_bersangkutan" value="{{ old('nik_bersangkutan') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" maxlength="16" required>
+                            @error('nik_bersangkutan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -66,12 +61,9 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Agama <span class="text-red-500">*</span></label>
                             <select x-ref="agamaSelect" name="agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="">Pilih Agama</option>
-                                <option value="Islam" {{ old('agama') == 'Islam' ? 'selected' : '' }}>Islam</option>
-                                <option value="Kristen" {{ old('agama') == 'Kristen' ? 'selected' : '' }}>Kristen</option>
-                                <option value="Katolik" {{ old('agama') == 'Katolik' ? 'selected' : '' }}>Katolik</option>
-                                <option value="Hindu" {{ old('agama') == 'Hindu' ? 'selected' : '' }}>Hindu</option>
-                                <option value="Buddha" {{ old('agama') == 'Buddha' ? 'selected' : '' }}>Buddha</option>
-                                <option value="Konghucu" {{ old('agama') == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
+                                @foreach(['Islam', 'Kristen', 'Katolik', 'Hindu', 'Buddha', 'Konghucu'] as $agama)
+                                <option value="{{ $agama }}" {{ old('agama') == $agama ? 'selected' : '' }}>{{ $agama }}</option>
+                                @endforeach
                             </select>
                             @error('agama') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
@@ -114,6 +106,45 @@
                         </div>
                     </div>
 
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pendidikan Terakhir <span class="text-red-500">*</span></label>
+                            <select name="pendidikan_terakhir" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                                <option value="">Pilih Pendidikan Terakhir</option>
+                                @foreach(['Tidak Sekolah','SD','SMP','SMA','DI','DII','DIII','DIV','S1','S2','S3'] as $pend)
+                                <option value="{{ $pend }}" {{ old('pendidikan_terakhir') == $pend ? 'selected' : '' }}>{{ $pend }}</option>
+                                @endforeach
+                            </select>
+                            @error('pendidikan_terakhir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div x-data="{
+                            penghasilan: '{{ old('jumlah_penghasilan') }}',
+                            formatRupiah(value) {
+                                let number_string = value.replace(/[^,\d]/g, '').toString(),
+                                    split = number_string.split(','),
+                                    sisa = split[0].length % 3,
+                                    rupiah = split[0].substr(0, sisa),
+                                    ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+                                
+                                if(ribuan){
+                                    separator = sisa ? '.' : '';
+                                    rupiah += separator + ribuan.join('.');
+                                }
+                                return rupiah;
+                            }
+                        }">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah Penghasilan per Bulan <span class="text-red-500">*</span></label>
+                            <div class="relative rounded-lg shadow-sm flex">
+                                <span class="inline-flex items-center px-4 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-500 sm:text-sm font-medium">
+                                    Rp.
+                                </span>
+                                <input type="text" x-model="penghasilan" @input="penghasilan = formatRupiah($event.target.value)" name="jumlah_penghasilan" placeholder="3.000.000" class="flex-1 w-full rounded-none rounded-r-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Angka saja, cont: 3000000</p>
+                            @error('jumlah_penghasilan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Sesuai KTP <span class="text-red-500">*</span></label>
                         <textarea x-model="alamat" name="alamat_lengkap" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('alamat_lengkap') }}</textarea>
@@ -122,7 +153,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Keperluan <span class="text-red-500">*</span></label>
-                        <input type="text" name="keperluan" value="{{ old('keperluan') }}" placeholder="Contoh: Melamar pekerjaan / Keperluan administrasi" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <input type="text" name="keperluan" value="{{ old('keperluan') }}" placeholder="Contoh: Pengajuan beasiswa / Administrasi perbankan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('keperluan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
@@ -166,83 +197,70 @@
                 </div>
             </div>
 
-            <!-- Bagian 3: Surat Pernyataan -->
+            <!-- Bagian 3: Dokumen Lampiran -->
             <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
                 <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
                     <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">3</span>
-                    Blangko Surat Pernyataan
+                    Dokumen Lampiran
                 </h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Surat Pernyataan <span class="text-red-500">*</span></label>
-                        <input type="date" name="tanggal_surat_pernyataan" value="{{ old('tanggal_surat_pernyataan') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('tanggal_surat_pernyataan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-6">
+                    <div class="flex">
+                        <svg class="h-5 w-5 text-blue-400 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                        </svg>
+                        <div class="ml-3 text-sm text-blue-800">
+                            <p class="font-medium mb-1">Ketentuan Berkas:</p>
+                            <ul class="list-disc list-inside space-y-1 text-blue-700 text-xs">
+                                <li>Pastikan foto/scan terlihat jelas dan tidak terpotong.</li>
+                                <li>Setiap file berukuran maksimal <span class="font-bold">5MB</span>.</li>
+                                <li>Format file yang diizinkan: <span class="font-bold">JPG, PNG, PDF</span>.</li>
+                            </ul>
+                        </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Bagian 4: Upload Berkas Pendukung -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">4</span>
-                    Upload Berkas Pendukung
-                </h2>
-
-                <div class="bg-amber-50 border border-amber-100 rounded-lg p-4 mb-6">
-                    <p class="text-sm text-amber-700">
-                        <strong>Catatan:</strong> Upload dokumen dalam format JPG, PNG, atau PDF. Maksimal 5MB per file. File yang digabung harap dijadikan 1 file PDF.
-                    </p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Pengantar RT/RW -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Surat Pengantar RT/RW Setempat <span class="text-red-500">*</span>
-                        </label>
-                        <input type="file" name="skbm_surat_pengantar" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
-                        @error('skbm_surat_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Surat Pengantar RT/RW Setempat <span class="text-red-500">*</span></label>
+                        <input type="file" name="skp_surat_pengantar" accept=".jpg,.jpeg,.png,.pdf" class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 border border-gray-300 rounded-lg bg-gray-50" required>
+                        @error('skp_surat_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
+                    <!-- Blangko Pernyataan -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Blangko Pernyataan Bermeterai 10.000 <span class="text-red-500">*</span>
-                        </label>
-                        <input type="file" name="skbm_blangko_pernyataan" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
-                        @error('skbm_blangko_pernyataan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Blangko Pernyataan Bermeterai 10.000 <span class="text-red-500">*</span></label>
+                        <input type="file" name="skp_blangko_pernyataan" accept=".jpg,.jpeg,.png,.pdf" class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 border border-gray-300 rounded-lg bg-gray-50" required>
+                        @error('skp_blangko_pernyataan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
+                    <!-- KTP & KK -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            KTP & KK yang Bersangkutan <span class="text-red-500">*</span>
-                            <span class="ml-1 text-xs text-gray-500 font-normal">(Dijadikan 1 File)</span>
-                        </label>
-                        <input type="file" name="skbm_ktp_kk" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
-                        @error('skbm_ktp_kk') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-1">KTP & KK yang Bersangkutan <span class="text-gray-500 font-normal">(Jadikan 1 File)</span> <span class="text-red-500">*</span></label>
+                        <input type="file" name="skp_ktp_kk" accept=".jpg,.jpeg,.png,.pdf" class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 border border-gray-300 rounded-lg bg-gray-50" required>
+                        @error('skp_ktp_kk') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
+                    <!-- KTP Saksi -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            KTP 2 Orang Saksi (RT yang sama) <span class="text-red-500">*</span>
-                            <span class="ml-1 text-xs text-gray-500 font-normal">(Dijadikan 1 File)</span>
-                        </label>
-                        <input type="file" name="skbm_ktp_saksi" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
-                        @error('skbm_ktp_saksi') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-1">KTP 2 Orang Saksi <span class="text-gray-500 font-normal">(RT sama, 1 File)</span> <span class="text-red-500">*</span></label>
+                        <input type="file" name="skp_ktp_saksi" accept=".jpg,.jpeg,.png,.pdf" class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 border border-gray-300 rounded-lg bg-gray-50" required>
+                        @error('skp_ktp_saksi') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">
-                            Bukti Tanda Lunas PBB-P2 Tahun Berjalan <span class="text-red-500">*</span>
-                        </label>
-                        <input type="file" name="skbm_bukti_pbb" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
-                        @error('skbm_bukti_pbb') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    <!-- Bukti PBB -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Bukti Tanda Lunas PBB-P2 Tahun Berjalan <span class="text-red-500">*</span></label>
+                        <input type="file" name="skp_bukti_pbb" accept=".jpg,.jpeg,.png,.pdf" class="w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100 border border-gray-300 rounded-lg bg-gray-50" required>
+                        @error('skp_bukti_pbb') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
 
+            <!-- AlpineJS Script for OCR (Same as SKTMR) -->
             <script>
-                function ocrSkbmHandler() {
-                    return {
+                document.addEventListener('alpine:init', () => {
+                    Alpine.data('ocrSktmHandler', () => ({
                         nama: '{{ old("nama_lengkap") }}',
                         nik: '{{ old("nik_bersangkutan") }}',
                         tempat_lahir: '{{ old("tempat_lahir") }}',
@@ -256,7 +274,6 @@
                             this.$refs.ocrInput.value = '';
                             this.$refs.ocrInput.click();
                         },
-
                         async handleFileUpload(e) {
                             const file = e.target.files[0];
                             if (!file) return;
@@ -312,6 +329,7 @@
                                         this.$nextTick(() => {
                                             const ts = document.querySelector('.select2-pekerjaan').tomselect;
                                             if (ts) {
+                                                // Convert to Title Case to match job list if possible, or Add New
                                                 let jobTitleCase = d.pekerjaan.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
                                                 if (d.pekerjaan.toUpperCase() === 'PNS') jobTitleCase = 'PNS (Pegawai Negeri Sipil)';
                                                 else if (d.pekerjaan.toUpperCase() === 'TNI') jobTitleCase = 'TNI (Tentara Nasional Indonesia)';
@@ -339,6 +357,6 @@
                                 this.loading = false;
                             }
                         }
-                    }
-                }
+                    }));
+                });
             </script>

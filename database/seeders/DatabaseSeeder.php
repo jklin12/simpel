@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             MasterLocationSeeder::class,
             UserRoleSeeder::class,
             NotificationSeeder::class,
+            SkpSeeder::class,
         ]);
     }
 }

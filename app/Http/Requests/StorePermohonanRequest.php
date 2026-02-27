@@ -16,20 +16,12 @@ class StorePermohonanRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
-     */
-    public function rules(): array
-    {
         $commonRules = [
             'jenis_surat_id' => 'required|exists:jenis_surats,id',
             'kelurahan_id' => 'required|exists:m_kelurahans,id',
 
-            'pemohon_nama' => 'required|string|max:255',
-            'pemohon_nik' => 'required|string|size:16',
-            'pemohon_phone' => 'required|string|max:20',
-            'pemohon_alamat' => 'required|string|max:255',
+            // removed pemohon_nama, pemohon_nik, pemohon_phone, pemohon_alamat
+            // because they will be mapped in the controller dynamically
         ];
 
         // Fetch Type based on ID
@@ -54,13 +46,16 @@ class StorePermohonanRequest extends FormRequest
             case 'SKBM': // Surat Keterangan Belum Menikah
                 $specificRules = $this->getSkbmRules();
                 break;
+            case 'SKP': // Surat Keterangan Penghasilan
+                $specificRules = $this->getSkpRules();
+                break;
             case 'SKU': // Surat Keterangan Usaha (Example)
                 // $specificRules = $this->getSkuRules();
                 break;
             default:
                 if ($jenisSurat->required_fields) {
                     foreach ($jenisSurat->required_fields as $field) {
-                        $specificRules[$field['name']] = match($field['type']) {
+                        $specificRules[$field['name']] = match ($field['type']) {
                             'file'   => ($field['is_required'] ? 'required' : 'nullable') . '|file|mimes:jpg,jpeg,png,pdf|max:5120',
                             'date'   => ($field['is_required'] ? 'required' : 'nullable') . '|date',
                             'number' => ($field['is_required'] ? 'required' : 'nullable') . '|numeric',
@@ -81,8 +76,12 @@ class StorePermohonanRequest extends FormRequest
     {
         return [
             // SKM
-            'ktp_alm',
-            'ktp_ortu',
+            'skm_surat_pengantar',
+            'skm_blangko_pernyataan',
+            'skm_ktp_kk_pemohon',
+            'skm_ktp_kk_meninggal',
+            'skm_ktp_saksi',
+            'skm_bukti_pbb',
             // SKTM
             'surat_pengantar_rtrw',
             'blangko_pernyataan',
@@ -102,6 +101,12 @@ class StorePermohonanRequest extends FormRequest
             'skbm_ktp_kk',
             'skbm_ktp_saksi',
             'skbm_bukti_pbb',
+            // SKP
+            'skp_surat_pengantar',
+            'skp_blangko_pernyataan',
+            'skp_ktp_kk',
+            'skp_ktp_saksi',
+            'skp_bukti_pbb',
             // Legacy / other
             'foto_ktp',
             'foto_kk',
@@ -143,7 +148,21 @@ class StorePermohonanRequest extends FormRequest
             'tempat_meninggal' => 'required|string|max:255',
             'sebab_kematian' => 'required|string|max:255',
             'tempat_pemakaman' => 'required|string|max:255',
+
+            // Pelapor
+            'nama_pelapor' => 'required|string|max:255',
+            'nik_pelapor' => 'required|string|size:16',
+            'alamat_pelapor' => 'nullable|string',
             'hubungan_pelapor' => 'required|string|max:100',
+            'no_wa' => 'required|string|max:20',
+
+            // Dokumen Lampiran
+            'skm_surat_pengantar'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skm_blangko_pernyataan' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skm_ktp_kk_pemohon'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skm_ktp_kk_meninggal'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skm_ktp_saksi'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skm_bukti_pbb'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
@@ -160,7 +179,9 @@ class StorePermohonanRequest extends FormRequest
             'status_perkawinan'     => 'required|string',
             'pekerjaan'             => 'required|string|max:100',
             'alamat_lengkap'        => 'required|string',
+            'no_wa'                 => 'required|string|max:20',
             'keperluan_sktm'        => 'required|string',
+            'keterangan_sktm'       => 'required|string',
 
             // Surat Pengantar RT/RW
             'rt'                    => 'required|string|max:10',
@@ -169,7 +190,7 @@ class StorePermohonanRequest extends FormRequest
             'tanggal_surat_pengantar' => 'required|date',
 
             // Surat Pernyataan
-            'no_surat_pernyataan'      => 'required|string|max:100',
+            //'no_surat_pernyataan'      => 'required|string|max:100',
             'tanggal_surat_pernyataan' => 'required|date',
 
             // Dokumen Lampiran
@@ -196,6 +217,7 @@ class StorePermohonanRequest extends FormRequest
             'pekerjaan'             => 'required|string|max:100',
             'pendidikan_terakhir'   => 'required|string',
             'alamat_lengkap'        => 'required|string',
+            'no_wa'                 => 'required|string|max:20',
             'keperluan'             => 'required|string|max:255',
 
             // Surat Pengantar RT/RW
@@ -205,7 +227,7 @@ class StorePermohonanRequest extends FormRequest
             'tanggal_surat_pengantar' => 'required|date',
 
             // Surat Pernyataan
-            'no_surat_pernyataan'      => 'required|string|max:100',
+            //'no_surat_pernyataan'      => 'required|string|max:100',
             'tanggal_surat_pernyataan' => 'required|date',
 
             // Dokumen Lampiran
@@ -214,6 +236,39 @@ class StorePermohonanRequest extends FormRequest
             'sktmr_ktp_kk'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sktmr_ktp_saksi'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sktmr_bukti_pbb'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getSkpRules()
+    {
+        return [
+            // Data Diri
+            'nama_lengkap' => 'required|string|max:255',
+            'nik_bersangkutan' => 'required|string|size:16',
+            'jenis_kelamin' => 'required|string|in:Laki-laki,Perempuan',
+            'agama' => 'required|string',
+            'tempat_lahir' => 'required|string',
+            'tanggal_lahir' => 'required|date',
+            'status_perkawinan' => 'required|string|in:Belum Kawin,Kawin,Cerai Hidup,Cerai Mati',
+            'pekerjaan' => 'required|string',
+            'pendidikan_terakhir' => 'required|string',
+            'alamat_lengkap' => 'required|string',
+            'no_wa' => 'required|string|max:20',
+            'jumlah_penghasilan' => 'required|string', // atau numeric, tapi formnya mungkin bisa text / format ribuan
+            'keperluan' => 'required|string',
+
+            // Surat Pengantar
+            'rt' => 'required|string',
+            'rw' => 'required|string',
+            'no_surat_pengantar' => 'required|string',
+            'tanggal_surat_pengantar' => 'required|date',
+
+            // Lampiran
+            'skp_surat_pengantar' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'skp_blangko_pernyataan' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'skp_ktp_kk' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'skp_ktp_saksi' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
+            'skp_bukti_pbb' => 'required|file|mimes:pdf,jpg,jpeg,png|max:5120',
         ];
     }
 
@@ -239,7 +294,7 @@ class StorePermohonanRequest extends FormRequest
             'tanggal_surat_pengantar' => 'required|date',
 
             // Surat Pernyataan
-            'no_surat_pernyataan'      => 'required|string|max:100',
+            //'no_surat_pernyataan'      => 'required|string|max:100',
             'tanggal_surat_pernyataan' => 'required|date',
 
             // Dokumen Lampiran

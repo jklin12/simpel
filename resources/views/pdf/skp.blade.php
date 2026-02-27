@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Surat Keterangan Belum Menikah</title>
+    <title>Surat Keterangan Belum Memiliki Rumah</title>
     <style>
         * {
             margin: 0;
@@ -100,6 +100,12 @@
             width: 55%;
         }
 
+        table.data-table td.col-value-bold {
+            width: 55%;
+            font-weight: bold;
+            color: #000;
+        }
+
         /* NARASI */
         .narasi {
             font-size: 11pt;
@@ -108,7 +114,6 @@
             line-height: 1.7;
         }
 
-        /* PENUTUP */
         .penutup {
             font-size: 11pt;
             text-align: justify;
@@ -134,6 +139,10 @@
         }
 
         .ttd-nama {
+            font-size: 11pt;
+        }
+
+        .ttd-jabatan {
             font-size: 11pt;
         }
 
@@ -185,7 +194,7 @@
         @if($kelurahan->kop_surat_path && file_exists(storage_path('app/public/' . $kelurahan->kop_surat_path)))
         <div style="border-bottom: 4px solid #000; padding-bottom: 6px; margin-bottom: 6px; text-align: center;">
             <img src="{{ storage_path('app/public/' . $kelurahan->kop_surat_path) }}"
-                style="width: 100%; max-height: 100px; object-fit: contain;" alt="Kop Surat">
+                style="width: 100%; max-height: 110px; object-fit: contain;" alt="Kop Surat">
         </div>
         @else
         <table class="header-table">
@@ -200,16 +209,20 @@
                     <div class="header-text-line4">
                         Alamat : {{ $kelurahan->alamat ?? 'Kota Banjarbaru' }}
                         &nbsp; Telp. {{ $kelurahan->telp ?? '-' }}
+                        @if($kelurahan->website ?? null)
+                        &nbsp; Website : {{ $kelurahan->website }}
+                        @endif
                     </div>
                 </td>
             </tr>
         </table>
         @endif
 
+
         {{-- ===== JUDUL ===== --}}
-        <div class="surat-title">Surat Keterangan Belum Menikah</div>
+        <div class="surat-title">Surat Keterangan Penghasilan</div>
         <div class="surat-nomor">
-            Nomor : <strong>{{ $permohonan->nomor_surat ?? '......../..........' }}</strong>
+            Nomor : {{ $permohonan->nomor_surat ?? '600.2/....../...../.........../......' }}
         </div>
 
         {{-- ===== PEMBUKA ===== --}}
@@ -237,6 +250,7 @@
         {{-- MENERANGKAN --}}
         <p class="section-margin" style="font-size:11pt;">Menerangkan bahwa &nbsp;:</p>
 
+
         {{-- DATA PEMOHON --}}
         @php
         $data = $permohonan->data_permohonan ?? [];
@@ -249,13 +263,15 @@
         $tglSurat = $permohonan->tanggal_surat
         ? \Carbon\Carbon::parse($permohonan->tanggal_surat)->translatedFormat('d F Y')
         : \Carbon\Carbon::now()->translatedFormat('d F Y');
+        $rtPad = str_pad($data['rt'] ?? '...', 3, '0', STR_PAD_LEFT);
+        $rwPad = str_pad($data['rw'] ?? '...', 3, '0', STR_PAD_LEFT);
         @endphp
 
         <table class="data-table">
             <tr>
                 <td class="col-label">Nama</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['nama_lengkap'] ?? $permohonan->nama_pemohon }}</td>
+                <td class="col-value">{{ strtoupper($data['nama_lengkap'] ?? $permohonan->nama_pemohon) }}</td>
             </tr>
             <tr>
                 <td class="col-label">NIK</td>
@@ -272,9 +288,9 @@
                 <td class="col-sep">:</td>
                 <td class="col-value">
                     {{ $data['alamat_lengkap'] ?? $permohonan->alamat_pemohon }}
-                    RT. {{ $data['rt'] ?? '-' }} RW. {{ $data['rw'] ?? '-' }}
-                    Kel. {{ $kelurahan->nama }}
-                    Kec. {{ $kelurahan->kecamatan->nama ?? '-' }}
+                    RT. {{ $rtPad }} RW. {{ $rwPad }}
+                    Kel. {{ ucfirst($kelurahan->nama) }}
+                    Kec. {{ ucfirst($kelurahan->kecamatan->nama ?? '-') }}
                     Kota Banjarbaru
                 </td>
             </tr>
@@ -289,36 +305,33 @@
                 <td class="col-value">{{ $data['agama'] ?? '-' }}</td>
             </tr>
             <tr>
-                <td class="col-label">Status Perkawinan</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['status_perkawinan'] ?? '-' }}</td>
-            </tr>
-            <tr>
                 <td class="col-label">Pekerjaan</td>
                 <td class="col-sep">:</td>
                 <td class="col-value">{{ $data['pekerjaan'] ?? '-' }}</td>
             </tr>
+            <tr>
+                <td class="col-label">Pendidikan Terakhir</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['pendidikan_terakhir'] ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Keperluan Untuk</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['keperluan'] ?? '-' }}</td>
+            </tr>
         </table>
+
 
         {{-- ===== NARASI ===== --}}
         <p class="narasi" style="margin-top:10px;">
-            Berdasarkan surat pernyataan pemohon tanggal <span>{{ $tglSurat }}</span>
-            dan surat pengantar Ketua RT. <span>{{ str_pad($data['rt'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
-            RW. <span>{{ str_pad($data['rw'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
-            Nomor: <span>{{ $data['no_surat_pengantar'] ?? '....' }}</span>
-            tanggal <span>{{ $tglPengantar }}</span>,
-            Kelurahan <span>{{ ucfirst($kelurahan->nama) }}</span>
-            Kecamatan <span>{{ ucfirst($kelurahan->kecamatan->nama) }}</span>
-            Pemerintah Kota Banjarbaru dengan ini menerangkan bahwa nama tersebut diatas, <span>belum pernah kawin</span>.
-        </p>
-
-        <p class="narasi">
-            Adapun surat keterangan belum menikah ini dibuat untuk keperluan
-            <span>{{ $data['keperluan'] ?? '-' }}</span>.
+            Berdasarkan surat pengantar Ketua RT. {{ $rtPad }}
+            RW. {{ $rwPad }}
+            Nomor: {{ $data['no_surat_pengantar'] ?? '....' }}
+            tanggal {{ $tglPengantar }}, dan surat pernyataan pemohon bahwa yang namanya tersebut diatas, memiliki penghasilan rata-rata Rp. {{ number_format($data['jumlah_penghasilan'] ?? 0, 0, ',', '.') }}/Bulan.
         </p>
 
         <p class="penutup">
-            Demikian surat keterangan belum menikah ini diberikan untuk dapat dipergunakan
+            Demikian surat keterangan belum memiliki rumah ini diberikan untuk dapat dpergunakan
             sebagaimana mestinya.
         </p>
 

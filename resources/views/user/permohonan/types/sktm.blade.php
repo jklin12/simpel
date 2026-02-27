@@ -32,6 +32,8 @@
                     :class="statusOk ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'"
                     class="mb-4 text-sm border rounded-lg px-4 py-2" style="display:none"></div>
 
+
+
                 <div class="grid grid-cols-1 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
@@ -57,7 +59,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Agama <span class="text-red-500">*</span></label>
-                            <select name="agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select x-ref="agamaSelect" name="agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="">Pilih Agama</option>
                                 <option value="Islam" {{ old('agama') == 'Islam' ? 'selected' : '' }}>Islam</option>
                                 <option value="Kristen" {{ old('agama') == 'Kristen' ? 'selected' : '' }}>Kristen</option>
@@ -86,7 +88,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Status Perkawinan <span class="text-red-500">*</span></label>
-                            <select name="status_perkawinan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select x-ref="statusPerkawinanSelect" name="status_perkawinan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="">Pilih Status Perkawinan</option>
                                 <option value="Belum Kawin" {{ old('status_perkawinan') == 'Belum Kawin' ? 'selected' : '' }}>Belum Kawin</option>
                                 <option value="Kawin" {{ old('status_perkawinan') == 'Kawin' ? 'selected' : '' }}>Kawin</option>
@@ -97,7 +99,12 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan <span class="text-red-500">*</span></label>
-                            <input type="text" name="pekerjaan" value="{{ old('pekerjaan') }}" placeholder="Contoh: Petani / Buruh / Tidak Bekerja" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select name="pekerjaan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4 select2-pekerjaan" required>
+                                <option value="">Pilih Pekerjaan</option>
+                                @foreach($pekerjaanList ?? [] as $pekerjaan)
+                                <option value="{{ $pekerjaan }}" {{ old('pekerjaan') == $pekerjaan ? 'selected' : '' }}>{{ $pekerjaan }}</option>
+                                @endforeach
+                            </select>
                             @error('pekerjaan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
@@ -112,14 +119,35 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Keperluan SKTM <span class="text-red-500">*</span></label>
                         <select name="keperluan_sktm" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                             <option value="">Pilih Keperluan</option>
-                            <option value="Beasiswa Pendidikan" {{ old('keperluan_sktm') == 'Beasiswa Pendidikan' ? 'selected' : '' }}>Beasiswa Pendidikan</option>
-                            <option value="Keringanan Biaya Pendidikan" {{ old('keperluan_sktm') == 'Keringanan Biaya Pendidikan' ? 'selected' : '' }}>Keringanan Biaya Pendidikan</option>
-                            <option value="Bantuan Biaya Kesehatan" {{ old('keperluan_sktm') == 'Bantuan Biaya Kesehatan' ? 'selected' : '' }}>Bantuan Biaya Kesehatan</option>
-                            <option value="Bantuan Sosial" {{ old('keperluan_sktm') == 'Bantuan Sosial' ? 'selected' : '' }}>Bantuan Sosial</option>
-                            <option value="Keringanan Biaya Pengobatan" {{ old('keperluan_sktm') == 'Keringanan Biaya Pengobatan' ? 'selected' : '' }}>Keringanan Biaya Pengobatan</option>
+                            <option value="Pengajuan Beasiswa Pendidikan" {{ old('keperluan_sktm') == 'Pengajuan Beasiswa Pendidikan' ? 'selected' : '' }}>Pengajuan Beasiswa Pendidikan</option>
+                            <option value="Persyaratan pendaftaran Sekolah" {{ old('keperluan_sktm') == 'Persyaratan pendaftaran Sekolah' ? 'selected' : '' }}>Persyaratan pendaftaran Sekolah</option>
+                            <option value="Persyaratan pendaftaran Kuliah" {{ old('keperluan_sktm') == 'Persyaratan pendaftaran Kuliah' ? 'selected' : '' }}>Persyaratan pendaftaran Kuliah</option>
+                            <option value="Keringanan atau pembebasan biaya pendidikan" {{ old('keperluan_sktm') == 'Keringanan atau pembebasan biaya pendidikan' ? 'selected' : '' }}>Keringanan atau pembebasan biaya pendidikan</option>
+                            <option value="Bantuan keringanan SPP" {{ old('keperluan_sktm') == 'Bantuan keringanan SPP' ? 'selected' : '' }}>Bantuan keringanan SPP</option>
+                            <option value="Bantuan biaya kesehatan" {{ old('keperluan_sktm') == 'Bantuan biaya kesehatan' ? 'selected' : '' }}>Bantuan biaya kesehatan</option>
+                            <option value="Mendapatkan layanan pengobatan gratis" {{ old('keperluan_sktm') == 'Mendapatkan layanan pengobatan gratis' ? 'selected' : '' }}>Mendapatkan layanan pengobatan gratis</option>
+                            <option value="Pengurusan BPJS Kesehatan" {{ old('keperluan_sktm') == 'Pengurusan BPJS Kesehatan' ? 'selected' : '' }}>Pengurusan BPJS Kesehatan</option>
+                            <option value="Keringanan biaya operasi atau perawatan khusus" {{ old('keperluan_sktm') == 'Keringanan biaya operasi atau perawatan khusus' ? 'selected' : '' }}>Keringanan biaya operasi atau perawatan khusus</option>
+                            <option value="Persyaratan bantuan sosial" {{ old('keperluan_sktm') == 'Persyaratan bantuan sosial' ? 'selected' : '' }}>Persyaratan bantuan sosial</option>
+                            <option value="Pengajuan bantuan modal usaha" {{ old('keperluan_sktm') == 'Pengajuan bantuan modal usaha' ? 'selected' : '' }}>Pengajuan bantuan modal usaha</option>
+                            <option value="Pengajuan bantuan perbaikan rumah" {{ old('keperluan_sktm') == 'Pengajuan bantuan perbaikan rumah' ? 'selected' : '' }}>Pengajuan bantuan perbaikan rumah</option>
+                            <option value="Persyaratan mendapatkan layanan hukum" {{ old('keperluan_sktm') == 'Persyaratan mendapatkan layanan hukum' ? 'selected' : '' }}>Persyaratan mendapatkan layanan hukum</option>
                             <option value="Lainnya" {{ old('keperluan_sktm') == 'Lainnya' ? 'selected' : '' }}>Lainnya</option>
                         </select>
                         @error('keperluan_sktm') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan Tambahan <span class="text-red-500">*</span></label>
+                        <textarea x-model="keterangan_sktm" name="keterangan_sktm" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('keterangan_sktm') }}</textarea>
+                        @error('keterangan_sktm') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">No. WhatsApp / HP <span class="text-red-500">*</span></label>
+                        <input type="text" name="no_wa" value="{{ old('no_wa') }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <p class="mt-1 text-xs text-blue-600">*Nomor ini akan digunakan sebagai nomor kontak pemohon.</p>
+                        @error('no_wa') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -162,12 +190,7 @@
                     Blangko Surat Pernyataan
                 </h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">No. Surat Pernyataan <span class="text-red-500">*</span></label>
-                        <input type="text" name="no_surat_pernyataan" value="{{ old('no_surat_pernyataan') }}" placeholder="Contoh: 001/SP/I/2026" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('no_surat_pernyataan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Surat Pernyataan <span class="text-red-500">*</span></label>
                         <input type="date" name="tanggal_surat_pernyataan" value="{{ old('tanggal_surat_pernyataan') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
@@ -251,6 +274,7 @@
                         tempat_lahir: '{{ old("tempat_lahir") }}',
                         tanggal_lahir: '{{ old("tanggal_lahir") }}',
                         alamat: '{{ old("alamat_lengkap") }}',
+                        keterangan_sktm: '{{ old("keterangan_sktm") }}',
                         loading: false,
                         statusMsg: '',
                         statusOk: true,
@@ -289,6 +313,44 @@
                                     if (d.jenis_kelamin) {
                                         this.$nextTick(() => {
                                             this.$refs.jenisKelaminSelect.value = d.jenis_kelamin;
+                                        });
+                                    }
+                                    if (d.agama) {
+                                        this.$nextTick(() => {
+                                            let agamaTitleCase = d.agama.charAt(0).toUpperCase() + d.agama.slice(1).toLowerCase();
+                                            this.$refs.agamaSelect.value = agamaTitleCase;
+                                        });
+                                    }
+                                    if (d.status_perkawinan) {
+                                        this.$nextTick(() => {
+                                            const normalizedStatus = d.status_perkawinan.toLowerCase();
+                                            let selectedStatus = '';
+                                            if (normalizedStatus.includes('belum kawin')) selectedStatus = 'Belum Kawin';
+                                            else if (normalizedStatus.includes('cerai mati')) selectedStatus = 'Cerai Mati';
+                                            else if (normalizedStatus.includes('cerai hidup')) selectedStatus = 'Cerai Hidup';
+                                            else if (normalizedStatus.includes('kawin')) selectedStatus = 'Kawin';
+
+                                            if (selectedStatus) {
+                                                this.$refs.statusPerkawinanSelect.value = selectedStatus;
+                                            }
+                                        });
+                                    }
+                                    if (d.pekerjaan) {
+                                        this.$nextTick(() => {
+                                            const ts = document.querySelector('.select2-pekerjaan').tomselect;
+                                            if (ts) {
+                                                // Convert to Title Case to match job list if possible, or Add New
+                                                let jobTitleCase = d.pekerjaan.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                                                if (d.pekerjaan.toUpperCase() === 'PNS') jobTitleCase = 'PNS (Pegawai Negeri Sipil)';
+                                                else if (d.pekerjaan.toUpperCase() === 'TNI') jobTitleCase = 'TNI (Tentara Nasional Indonesia)';
+                                                else if (d.pekerjaan.toUpperCase() === 'POLRI') jobTitleCase = 'POLRI';
+
+                                                ts.addOption({
+                                                    value: jobTitleCase,
+                                                    text: jobTitleCase
+                                                });
+                                                ts.setValue(jobTitleCase);
+                                            }
                                         });
                                     }
                                     this.statusOk = true;

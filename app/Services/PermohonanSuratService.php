@@ -41,6 +41,42 @@ class PermohonanSuratService
     }
 
     /**
+     * Update data_permohonan secara langsung.
+     */
+    public function updateDataPermohonan($id, array $data)
+    {
+        DB::beginTransaction();
+        try {
+            $permohonan = $this->repository->find($id);
+
+            // Allow update as long as it's not completed or rejected yet
+            if (in_array($permohonan->status, ['completed', 'rejected'])) {
+                throw new \Exception('Surat sudah selesai atau ditolak, tidak bisa diubah.');
+            }
+
+            // Update allowed fields
+            $permohonan->update([
+                'nama_pemohon'   => $data['nama_pemohon'] ?? $permohonan->nama_pemohon,
+                'nik_pemohon'    => $data['nik_pemohon'] ?? $permohonan->nik_pemohon,
+                'alamat_pemohon' => $data['alamat_pemohon'] ?? $permohonan->alamat_pemohon,
+                'phone_pemohon'  => $data['phone_pemohon'] ?? $permohonan->phone_pemohon,
+                'keperluan'      => $data['keperluan'] ?? $permohonan->keperluan,
+                'data_permohonan' => array_merge(
+                    is_array($permohonan->data_permohonan) ? $permohonan->data_permohonan : [],
+                    $data['data_permohonan'] ?? []
+                )
+            ]);
+
+            DB::commit();
+            return $permohonan->fresh();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to update data_permohonan: ' . $e->getMessage());
+            throw new \Exception('Gagal mengubah data permohonan: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Approve permohonan at current step
      */
     public function approvePermohonan($id, $userId, $catatan = null)
@@ -206,10 +242,28 @@ class PermohonanSuratService
         $kodeJenis    = strtoupper($jenisSurat->kode ?? '');
         $kodeKelurahan = strtoupper($kelurahan->akronim ?? $kelurahan->kode ?? $kelurahan->nama);
 
-        if ($kodeJenis === 'SKTMR') {
+        if ($kodeJenis === 'SKM') {
+            // Format: 400.12.3.1/002/I/KEL.SN/2026
+            $nomorSurat = sprintf(
+                '400.12.3.1/%03d/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
+        } elseif ($kodeJenis === 'SKTMR') {
             // Format: 600.2/002/I/LU/2026
             $nomorSurat = sprintf(
                 '600.2/%03d/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
+        } elseif ($kodeJenis === 'SKP') {
+            // Format: 500/002/I/LU/2026
+            $nomorSurat = sprintf(
+                '500/%03d/%s/%s/%s',
                 $counter->counter,
                 $this->toRoman($now->month),
                 $kodeKelurahan,
@@ -225,9 +279,9 @@ class PermohonanSuratService
                 $now->format('Y')
             );
         } else {
-            // 400.2/002/I/KEL.SN/2026
+            // 002/I/KEL.SN/2026
             $nomorSurat = sprintf(
-                '400.2/%03d/%s/%s/%s',
+                '%03d/%s/%s/%s',
                 $counter->counter,
                 $this->toRoman($now->month),
                 $kodeKelurahan,

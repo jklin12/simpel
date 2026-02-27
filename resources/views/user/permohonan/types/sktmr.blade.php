@@ -32,6 +32,13 @@
                     :class="statusOk ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'"
                     class="mb-4 text-sm border rounded-lg px-4 py-2" style="display:none"></div>
 
+                <div class="mb-6 flex items-center gap-2 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <input type="checkbox" id="sama_dengan_pemohon" x-model="samaDenganPemohon" @change="syncPemohon()" class="w-5 h-5 text-primary-600 bg-white border-gray-300 rounded focus:ring-primary-500">
+                    <label for="sama_dengan_pemohon" class="text-sm font-medium text-blue-900 cursor-pointer">
+                        Gunakan data yang sama dengan Data Pemohon
+                    </label>
+                </div>
+
                 <div class="grid grid-cols-1 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
@@ -57,7 +64,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Agama <span class="text-red-500">*</span></label>
-                            <select name="agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select x-ref="agamaSelect" name="agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="">Pilih Agama</option>
                                 <option value="Islam" {{ old('agama') == 'Islam' ? 'selected' : '' }}>Islam</option>
                                 <option value="Kristen" {{ old('agama') == 'Kristen' ? 'selected' : '' }}>Kristen</option>
@@ -86,7 +93,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Status Perkawinan <span class="text-red-500">*</span></label>
-                            <select name="status_perkawinan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select x-ref="statusPerkawinanSelect" name="status_perkawinan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="">Pilih Status Perkawinan</option>
                                 <option value="Belum Kawin" {{ old('status_perkawinan') == 'Belum Kawin' ? 'selected' : '' }}>Belum Kawin</option>
                                 <option value="Kawin" {{ old('status_perkawinan') == 'Kawin' ? 'selected' : '' }}>Kawin</option>
@@ -97,7 +104,12 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan <span class="text-red-500">*</span></label>
-                            <input type="text" name="pekerjaan" value="{{ old('pekerjaan') }}" placeholder="Contoh: Petani / Buruh / Tidak Bekerja" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <select name="pekerjaan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4 select2-pekerjaan" required>
+                                <option value="">Pilih Pekerjaan</option>
+                                @foreach($pekerjaanList ?? [] as $pekerjaan)
+                                <option value="{{ $pekerjaan }}" {{ old('pekerjaan') == $pekerjaan ? 'selected' : '' }}>{{ $pekerjaan }}</option>
+                                @endforeach
+                            </select>
                             @error('pekerjaan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
@@ -123,6 +135,13 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Keperluan <span class="text-red-500">*</span></label>
                         <input type="text" name="keperluan" value="{{ old('keperluan') }}" placeholder="Contoh: Mengurus rumah dinas / Pengajuan bantuan perumahan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('keperluan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">No. WhatsApp / HP <span class="text-red-500">*</span></label>
+                        <input type="text" name="no_wa" value="{{ old('no_wa') }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <p class="mt-1 text-xs text-blue-600">*Nomor ini akan digunakan sebagai nomor kontak pemohon.</p>
+                        @error('no_wa') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
@@ -165,12 +184,7 @@
                     Blangko Surat Pernyataan
                 </h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">No. Surat Pernyataan <span class="text-red-500">*</span></label>
-                        <input type="text" name="no_surat_pernyataan" value="{{ old('no_surat_pernyataan') }}" placeholder="Contoh: 001/SP/I/2026" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('no_surat_pernyataan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
-                    </div>
+                <div class="grid grid-cols-1 md:grid-cols-1 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Surat Pernyataan <span class="text-red-500">*</span></label>
                         <input type="date" name="tanggal_surat_pernyataan" value="{{ old('tanggal_surat_pernyataan') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
@@ -283,6 +297,43 @@
                                     if (d.jenis_kelamin) {
                                         this.$nextTick(() => {
                                             this.$refs.jenisKelaminSelect.value = d.jenis_kelamin;
+                                        });
+                                    }
+                                    if (d.agama) {
+                                        this.$nextTick(() => {
+                                            let agamaTitleCase = d.agama.charAt(0).toUpperCase() + d.agama.slice(1).toLowerCase();
+                                            this.$refs.agamaSelect.value = agamaTitleCase;
+                                        });
+                                    }
+                                    if (d.status_perkawinan) {
+                                        this.$nextTick(() => {
+                                            const normalizedStatus = d.status_perkawinan.toLowerCase();
+                                            let selectedStatus = '';
+                                            if (normalizedStatus.includes('belum kawin')) selectedStatus = 'Belum Kawin';
+                                            else if (normalizedStatus.includes('cerai mati')) selectedStatus = 'Cerai Mati';
+                                            else if (normalizedStatus.includes('cerai hidup')) selectedStatus = 'Cerai Hidup';
+                                            else if (normalizedStatus.includes('kawin')) selectedStatus = 'Kawin';
+
+                                            if (selectedStatus) {
+                                                this.$refs.statusPerkawinanSelect.value = selectedStatus;
+                                            }
+                                        });
+                                    }
+                                    if (d.pekerjaan) {
+                                        this.$nextTick(() => {
+                                            const ts = document.querySelector('.select2-pekerjaan').tomselect;
+                                            if (ts) {
+                                                let jobTitleCase = d.pekerjaan.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                                                if (d.pekerjaan.toUpperCase() === 'PNS') jobTitleCase = 'PNS (Pegawai Negeri Sipil)';
+                                                else if (d.pekerjaan.toUpperCase() === 'TNI') jobTitleCase = 'TNI (Tentara Nasional Indonesia)';
+                                                else if (d.pekerjaan.toUpperCase() === 'POLRI') jobTitleCase = 'POLRI';
+
+                                                ts.addOption({
+                                                    value: jobTitleCase,
+                                                    text: jobTitleCase
+                                                });
+                                                ts.setValue(jobTitleCase);
+                                            }
                                         });
                                     }
                                     this.statusOk = true;

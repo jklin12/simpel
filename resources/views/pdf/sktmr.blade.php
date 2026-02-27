@@ -58,7 +58,7 @@
             text-align: center;
             margin: 14px 0 0 0;
             font-size: 14pt;
-            font-weight: bold; 
+            font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -153,6 +153,37 @@
         .section-margin {
             margin: 8px 0 4px 0;
         }
+
+        /* FOOTER */
+        .footer {
+            position: fixed;
+            bottom: 1cm;
+            left: 2cm;
+            right: 2cm;
+            font-size: 7pt;
+            color: #333;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            font-family: Arial, sans-serif;
+        }
+
+        .footer-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-list li {
+            margin-bottom: 2px;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .footer-list li:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
     </style>
 </head>
 
@@ -191,7 +222,7 @@
         {{-- ===== JUDUL ===== --}}
         <div class="surat-title">Surat Keterangan Belum Memiliki Rumah</div>
         <div class="surat-nomor">
-            Nomor :  {{ $permohonan->nomor_surat ?? '600.2/....../...../.........../......' }} 
+            Nomor : {{ $permohonan->nomor_surat ?? '600.2/....../...../.........../......' }}
         </div>
 
         {{-- ===== PEMBUKA ===== --}}
@@ -203,7 +234,7 @@
                 <td class="col-label">Nama</td>
                 <td class="col-sep">:</td>
                 <td class="col-value">{{ $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : ($lurah['nama'] ?? 'KEPALA KELURAHAN') }}</td>
-            </tr> 
+            </tr>
             <tr>
                 <td class="col-label">NIP</td>
                 <td class="col-sep">:</td>
@@ -249,7 +280,7 @@
             <tr>
                 <td class="col-label">Tempat/Tanggal Lahir</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . $tglLahir }}</td>
+                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . strtoupper($tglLahir) }}</td>
             </tr>
             <tr>
                 <td class="col-label">Alamat</td>
@@ -291,9 +322,9 @@
 
         {{-- ===== NARASI ===== --}}
         <p class="narasi" style="margin-top:10px;">
-            Berdasarkan surat pengantar Ketua RT.  {{ $rtPad }} 
-            RW. {{ $rwPad }} 
-            Nomor: {{ $data['no_surat_pengantar'] ?? '....' }} 
+            Berdasarkan surat pengantar Ketua RT. {{ $rtPad }}
+            RW. {{ $rwPad }}
+            Nomor: {{ $data['no_surat_pengantar'] ?? '....' }}
             tanggal {{ $tglPengantar }},
             dan surat pernyataan pemohon bahwa yang namanya tersebut diatas belum memiliki rumah/tempat tinggal sendiri.
         </p>
@@ -310,10 +341,10 @@
                 <td class="ttd-right-cell">
                     <p>Banjarbaru, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
                     <p>a.n Camat Landasan Ulin</p>
-                    <p>Lurah  {{ ucwords(strtolower($kelurahan->nama)) }}</p>
+                    <p>Lurah {{ ucwords(strtolower($kelurahan->nama)) }}</p>
                     <div class="ttd-spacer"></div>
                     @if(isset($qrBase64))
-                    <img src="data:image/png;base64,{{ $qrBase64 }}" style="width:60px;height:60px;" alt="QR Status"> 
+                    <img src="data:image/png;base64,{{ $qrBase64 }}" style="width:60px;height:60px;" alt="QR Status">
                     @endif
                     <div class="ttd-spacer"></div>
                     <div class="ttd-nama">{{ $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : ($lurah['nama'] ?? '____________________') }}</div>
@@ -325,6 +356,13 @@
             </tr>
         </table>
 
+    </div>
+    <div class="footer">
+        <ul class="footer-list">
+            <li>UU ITE No 11 Tahun 2008 Pasal 5 Ayat 1 "Informasi Elektronik dan/atau Dokumen Elektronik dan/atau hasil cetaknya merupakan alat bukti hukum yang sah"</li>
+            <li>Dokumen ini telah ditandatangani secara elektronik menggunakan sertifikat elektronik yang diterbitkan BSRe</li>
+            <li>Dicetak dengan SiMPEL</li>
+        </ul>
     </div>
 </body>
 

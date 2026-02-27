@@ -94,6 +94,8 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('permohonan-surat', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'index'])->name('permohonan-surat.index');
         Route::get('permohonan-surat/{permohonanSurat}', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'show'])->name('permohonan-surat.show');
+        Route::get('permohonan-surat/{permohonanSurat}/edit', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'edit'])->name('permohonan-surat.edit');
+        Route::put('permohonan-surat/{permohonanSurat}', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'update'])->name('permohonan-surat.update');
         Route::post('permohonan-surat/{permohonanSurat}/approve', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'approve'])->name('permohonan-surat.approve');
         Route::post('permohonan-surat/{permohonanSurat}/reject', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'reject'])->name('permohonan-surat.reject');
         Route::get('permohonan-surat/{permohonanSurat}/download', [App\Http\Controllers\Admin\PermohonanSuratController::class, 'downloadLetter'])->name('permohonan-surat.download');

@@ -54,6 +54,60 @@ class PermohonanSuratController extends Controller
     }
 
     /**
+     * Show the form for editing the specified permohonan.
+     */
+    public function edit($id)
+    {
+        try {
+            $permohonanSurat = $this->service->getPermohonanById($id);
+
+            // Check if still editable
+            if (in_array($permohonanSurat->status, ['completed', 'rejected'])) {
+                return redirect()->route('admin.permohonan-surat.show', $id)
+                    ->with('error', 'Permohonan sudah diproses dan tidak bisa diubah.');
+            }
+
+            return view('admin.permohonan-surat.edit', compact('permohonanSurat'));
+        } catch (\Exception $e) {
+            return redirect()->route('admin.permohonan-surat.index')
+                ->with('error', 'Permohonan tidak ditemukan');
+        }
+    }
+
+    /**
+     * Update the specified permohonan in storage.
+     */
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nama_pemohon'   => 'required|string|max:255',
+            'nik_pemohon'    => 'required|string|size:16',
+            'phone_pemohon'  => 'required|string|max:20',
+            'alamat_pemohon' => 'required|string',
+            'keperluan'      => 'required|string',
+            'data_permohonan' => 'nullable|array',
+        ]);
+
+        try {
+            $this->service->updateDataPermohonan($id, $request->only([
+                'nama_pemohon',
+                'nik_pemohon',
+                'phone_pemohon',
+                'alamat_pemohon',
+                'keperluan',
+                'data_permohonan'
+            ]));
+
+            return redirect()->route('admin.permohonan-surat.show', $id)
+                ->with('success', 'Data pemohon berhasil diubah.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $e->getMessage());
+        }
+    }
+
+    /**
      * Approve the permohonan at current step.
      */
     public function approve(ApprovePermohonanRequest $request, $id)
