@@ -2,31 +2,21 @@
 
 @section('title', 'Struktur Organisasi')
 
-@push('head')
-<style>
-    /* 
-  Custom CSS untuk Bagan Organisasi tipe Asimetris (Kecamatan Landasan Ulin)
-*/
-    .org-line {
-        background-color: #0d9488;
-        /* Tailwind teal-600 */
-    }
-</style>
-@endpush
 
 @section('content')
-
-<div class="bg-gradient-to-r from-teal-700 to-teal-900 text-white pt-[110px] pb-8">
+<div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white pt-[110px] pb-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <nav class="flex items-center gap-2 text-teal-200 text-sm mb-3">
-            <a href="{{ route('portal.home') }}" class="hover:text-white transition">Portal</a>
+        <nav class="flex items-center gap-2 text-primary-200 text-sm mb-3">
+            <a href="{{ route('portal.home') }}" class="hover:text-white">Portal</a>
             <span>/</span>
             <span class="text-white font-medium">Struktur Organisasi</span>
+
         </nav>
         <h1 class="text-3xl font-extrabold">Struktur Organisasi</h1>
         <p class="text-teal-100 mt-2 text-lg">Bagan kepengurusan pemerintahan di Kecamatan Landasan Ulin.</p>
     </div>
 </div>
+
 
 <div class="max-w-7xl mx-auto px-4 py-16 w-full overflow-x-auto min-h-[700px] bg-slate-50/50">
 
