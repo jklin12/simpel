@@ -34,6 +34,9 @@ class RepositoryServiceProvider extends ServiceProvider
 
         \App\Repositories\Contracts\PortalStrukturOrganisasiRepositoryInterface::class =>
         \App\Repositories\PortalStrukturOrganisasiRepository::class,
+
+        \App\Repositories\Contracts\PortalSliderRepositoryInterface::class =>
+        \App\Repositories\PortalSliderRepository::class,
     ];
 
     /**

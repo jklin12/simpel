@@ -66,10 +66,10 @@
 
     <!-- Topbar -->
     <header
-        class="fixed top-0 w-full z-50 transition-all duration-300 transform"
+        class="fixed top-0 w-full z-50 transition-all duration-300 transform glass-nav"
         x-data="{ mobileMenuOpen: false, scrolled: false }"
         @scroll.window="scrolled = (window.pageYOffset > 20)"
-        :class="scrolled ? 'glass-nav shadow-sm py-2' : 'transparent-nav py-4'">
+        :class="scrolled ? 'shadow-sm py-2' : 'py-4'">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->

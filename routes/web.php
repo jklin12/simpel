@@ -118,7 +118,14 @@ Route::prefix('portal')->name('portal.')->group(function () {
     Route::get('/peta', [App\Http\Controllers\Web\PortalPublikController::class, 'peta'])->name('peta');
     Route::get('/api/peta-data', [App\Http\Controllers\Web\PortalPublikController::class, 'petaData'])->name('peta.data');
     Route::get('/struktur-organisasi', [App\Http\Controllers\Web\PortalPublikController::class, 'strukturOrganisasi'])->name('struktur-organisasi');
+
+    // === PREVIEW ROUTES (hapus setelah memilih desain) ===
+    Route::get('/preview-1', [App\Http\Controllers\Web\PortalPublikController::class, 'previewDesain1'])->name('preview1');
+    Route::get('/preview-2', [App\Http\Controllers\Web\PortalPublikController::class, 'previewDesain2'])->name('preview2');
+    Route::get('/preview-3', [App\Http\Controllers\Web\PortalPublikController::class, 'previewDesain3'])->name('preview3');
+    Route::get('/preview-r', [App\Http\Controllers\Web\PortalPublikController::class, 'previewDesainR'])->name('previewR');
 });
+
 
 // =============================================================================
 // Portal Kecamatan — Admin (harus login + role kecamatan atau super_admin)
@@ -130,4 +137,5 @@ Route::middleware(['auth', 'role:kecamatan|super_admin'])
         Route::resource('berita', App\Http\Controllers\Admin\Portal\BeritaController::class);
         Route::resource('data-kelurahan', App\Http\Controllers\Admin\Portal\DataKelurahanController::class);
         Route::resource('struktur-organisasi', App\Http\Controllers\Admin\Portal\StrukturOrganisasiController::class);
+        Route::resource('slider', App\Http\Controllers\Admin\Portal\SliderController::class);
     });

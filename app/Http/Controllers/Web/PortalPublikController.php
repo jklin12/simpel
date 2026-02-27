@@ -5,21 +5,25 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Services\PortalBeritaService;
 use App\Services\PortalDataKelurahanService;
+use App\Services\PortalSliderService;
 
 class PortalPublikController extends Controller
 {
     protected $beritaService;
     protected $dataService;
     protected $strukturService;
+    protected $sliderService;
 
     public function __construct(
         PortalBeritaService $beritaService,
         PortalDataKelurahanService $dataService,
-        \App\Services\PortalStrukturOrganisasiService $strukturService
+        \App\Services\PortalStrukturOrganisasiService $strukturService,
+        PortalSliderService $sliderService
     ) {
         $this->beritaService   = $beritaService;
         $this->dataService     = $dataService;
         $this->strukturService = $strukturService;
+        $this->sliderService   = $sliderService;
     }
 
     /**
@@ -28,8 +32,34 @@ class PortalPublikController extends Controller
     public function index()
     {
         $beritaTerbaru = $this->beritaService->getLatestPublished(3);
+        $sliders       = $this->sliderService->getAktifSliders();
+        return view('portal.index', compact('beritaTerbaru', 'sliders'));
+    }
 
-        return view('portal.index', compact('beritaTerbaru'));
+    /** PREVIEW SEMENTARA - hapus setelah pilih desain **/
+    public function previewDesain1()
+    {
+        $beritaTerbaru = $this->beritaService->getLatestPublished(3);
+        $sliders       = $this->sliderService->getAktifSliders();
+        return view('portal.index-1', compact('beritaTerbaru', 'sliders'));
+    }
+
+    public function previewDesain2()
+    {
+        $beritaTerbaru = $this->beritaService->getLatestPublished(3);
+        return view('portal.index-2', compact('beritaTerbaru'));
+    }
+
+    public function previewDesain3()
+    {
+        $beritaTerbaru = $this->beritaService->getLatestPublished(3);
+        return view('portal.index-3', compact('beritaTerbaru'));
+    }
+
+    public function previewDesainR()
+    {
+        $beritaTerbaru = $this->beritaService->getLatestPublished(3);
+        return view('portal.index-r', compact('beritaTerbaru'));
     }
 
     /**
