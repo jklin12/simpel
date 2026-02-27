@@ -101,7 +101,7 @@
             </div>
         </div>
         </div> --}}
-        <a href="#faq" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">FAQ</a>
+        <a href="{{ route('portal.faq') }}" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">FAQ</a>
         <a href="#contact" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Contact Us</a>
         </nav>
 

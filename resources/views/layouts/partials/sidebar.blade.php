@@ -71,6 +71,10 @@
                             <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.portal.slider*') ? 'bg-blue-600' : 'bg-gray-400' }}"></span>
                             Banner Slider
                         </a>
+                        <a href="{{ route('admin.portal.faq.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 {{ request()->routeIs('admin.portal.faq*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.portal.faq*') ? 'bg-blue-600' : 'bg-gray-400' }}"></span>
+                            FAQ
+                        </a>
                     </div>
                 </div>
             </div>

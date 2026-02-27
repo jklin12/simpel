@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Services\PortalBeritaService;
 use App\Services\PortalDataKelurahanService;
+use App\Services\PortalFaqService;
 use App\Services\PortalSliderService;
 
 class PortalPublikController extends Controller
@@ -13,17 +14,20 @@ class PortalPublikController extends Controller
     protected $dataService;
     protected $strukturService;
     protected $sliderService;
+    protected $faqService;
 
     public function __construct(
         PortalBeritaService $beritaService,
         PortalDataKelurahanService $dataService,
         \App\Services\PortalStrukturOrganisasiService $strukturService,
-        PortalSliderService $sliderService
+        PortalSliderService $sliderService,
+        PortalFaqService $faqService
     ) {
         $this->beritaService   = $beritaService;
         $this->dataService     = $dataService;
         $this->strukturService = $strukturService;
         $this->sliderService   = $sliderService;
+        $this->faqService      = $faqService;
     }
 
     /**
@@ -115,5 +119,15 @@ class PortalPublikController extends Controller
     {
         $strukturTree = $this->strukturService->getTreeData();
         return view('portal.struktur-organisasi', compact('strukturTree'));
+    }
+
+    /**
+     * Halaman FAQ Portal
+     */
+    public function faq()
+    {
+        $faqGrouped    = $this->faqService->getGroupedAktif();
+        $kategoriLabels = \App\Models\PortalFaq::kategoriOptions();
+        return view('portal.faq', compact('faqGrouped', 'kategoriLabels'));
     }
 }

@@ -37,6 +37,9 @@ class RepositoryServiceProvider extends ServiceProvider
 
         \App\Repositories\Contracts\PortalSliderRepositoryInterface::class =>
         \App\Repositories\PortalSliderRepository::class,
+
+        \App\Repositories\Contracts\PortalFaqRepositoryInterface::class =>
+        \App\Repositories\PortalFaqRepository::class,
     ];
 
     /**
