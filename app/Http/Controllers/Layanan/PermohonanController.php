@@ -11,6 +11,7 @@ use App\Models\PermohonanSurat;
 use App\Models\PermohonanApproval;
 use App\Models\PermohonanDokumen;
 use App\Models\ApprovalFlow;
+use App\Services\PermohonanSuratService;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -142,7 +143,7 @@ class PermohonanController extends Controller
             }
             DB::commit();
 
-            return redirect()->route('home')->with('success_application', [
+            return redirect()->route('layanan.index')->with('success_application', [
                 'token' => $trackToken,
                 'message' => 'Permohonan berhasil diajukan! Simpan kode ini untuk cek status.'
             ]);
@@ -185,6 +186,146 @@ class PermohonanController extends Controller
                     'original_name' => $file->getClientOriginalName(),
                     'mime_type' => $file->getMimeType(),
                     'file_size' => $file->getSize(),
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Show the revision form for a rejected permohonan.
+     * Accessible publicly via track_token.
+     */
+    public function edit(string $trackToken)
+    {
+        $permohonan = PermohonanSurat::with(['jenisSurat', 'kelurahan', 'dokumens'])
+            ->where('track_token', $trackToken)
+            ->firstOrFail();
+
+        if ($permohonan->status !== 'rejected') {
+            return redirect()
+                ->route('layanan.surat.tracking.search', ['track_token' => $trackToken])
+                ->with('error', 'Hanya permohonan yang ditolak yang dapat direvisi.');
+        }
+
+        $pekerjaanList = \App\Models\Pekerjaan::orderBy('nama')->pluck('nama')->toArray();
+
+        return view('user.permohonan.revisi', compact('permohonan', 'pekerjaanList'));
+    }
+
+    /**
+     * Process the revision of a rejected permohonan.
+     * Re-uses the same StorePermohonanRequest validation but files are optional on revision.
+     */
+    public function update(Request $request, string $trackToken)
+    {
+        $permohonan = PermohonanSurat::with(['jenisSurat', 'kelurahan'])
+            ->where('track_token', $trackToken)
+            ->firstOrFail();
+
+        if ($permohonan->status !== 'rejected') {
+            return redirect()
+                ->route('layanan.surat.tracking.search', ['track_token' => $trackToken])
+                ->with('error', 'Permohonan ini tidak bisa direvisi.');
+        }
+
+        try {
+            $service = app(PermohonanSuratService::class);
+            $jenisSurat = $permohonan->jenisSurat;
+
+            // Build data_permohonan from request (same logic as store, excluding file/system fields)
+            $dynamicFileNames = collect($jenisSurat->required_fields ?? [])
+                ->filter(fn($f) => ($f['type'] ?? '') === 'file')
+                ->pluck('name')
+                ->toArray();
+            $excludeFields = array_unique(array_merge(
+                ['_token', '_method', 'jenis_surat_id', 'kelurahan_id'],
+                StorePermohonanRequest::fileFields(),
+                $dynamicFileNames
+            ));
+            $rawData = $request->except($excludeFields);
+            $dataPermohonan = array_map(fn($v) => is_string($v) ? strtoupper($v) : $v, $rawData);
+
+            // Resolve pemohon fields based on jenis surat kode
+            $namaPemohon = $alamatPemohon = $nikPemohon = $phonePemohon = '';
+            switch (strtoupper($jenisSurat->kode)) {
+                case 'SKM':
+                    $namaPemohon  = $request->nama_pelapor ?? $permohonan->nama_pemohon;
+                    $nikPemohon   = $request->nik_pelapor  ?? $permohonan->nik_pemohon;
+                    $phonePemohon = $request->no_wa         ?? $permohonan->phone_pemohon;
+                    $alamatPemohon = $request->alamat_pelapor ?? $permohonan->alamat_pemohon;
+                    break;
+                default:
+                    $namaPemohon  = $request->nama_lengkap     ?? $permohonan->nama_pemohon;
+                    $nikPemohon   = $request->nik_bersangkutan ?? $permohonan->nik_pemohon;
+                    $phonePemohon = $request->no_wa             ?? $permohonan->phone_pemohon;
+                    $alamatPemohon = $request->alamat_lengkap  ?? $permohonan->alamat_pemohon;
+                    break;
+            }
+
+            $service->revisiPermohonan(
+                $permohonan,
+                [
+                    'nama_pemohon'    => strtoupper($namaPemohon),
+                    'nik_pemohon'     => $nikPemohon,
+                    'phone_pemohon'   => $phonePemohon,
+                    'alamat_pemohon'  => strtoupper($alamatPemohon),
+                    'data_permohonan' => $dataPermohonan,
+                ],
+                function ($permohonan) use ($request) {
+                    // Re-use existing handleFileUploads logic but with plain Request
+                    $this->handleRevisiFileUploads($request, $permohonan);
+                }
+            );
+
+            return redirect()
+                ->route('home')
+                ->with('success_application', [
+                    'token'   => $trackToken,
+                    'message' => 'Revisi permohonan berhasil diajukan ulang! Gunakan kode ini untuk memantau status.',
+                ]);
+        } catch (\Exception $e) {
+            Log::error('Revisi permohonan gagal: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+        }
+    }
+
+    /**
+     * Handle file uploads for revision (files are optional — only replace if new file uploaded).
+     * If no new file uploaded, existing dokumen records are preserved.
+     */
+    private function handleRevisiFileUploads(Request $request, PermohonanSurat $permohonan): void
+    {
+        $jenisSurat = $permohonan->jenisSurat;
+        $fileFields = StorePermohonanRequest::fileFields();
+        $dynamicFileFields = collect($jenisSurat->required_fields ?? [])
+            ->filter(fn($f) => ($f['type'] ?? '') === 'file')
+            ->pluck('name')
+            ->toArray();
+        $fileFields = array_unique(array_merge($fileFields, $dynamicFileFields));
+
+        $labels = PermohonanDokumen::JENIS_DOKUMEN;
+
+        foreach ($fileFields as $field) {
+            if ($request->hasFile($field)) {
+                $file = $request->file($field);
+
+                // Delete existing dokumen record for this field type (and its file) if any
+                $existing = $permohonan->dokumens()->where('jenis_dokumen', $field)->first();
+                if ($existing) {
+                    Storage::disk('public')->delete($existing->file_path);
+                    $existing->delete();
+                }
+
+                $path = $file->store('permohonan/' . $permohonan->id . '/dokumen', 'public');
+
+                PermohonanDokumen::create([
+                    'permohonan_surat_id' => $permohonan->id,
+                    'nama_dokumen'  => $labels[$field] ?? ucwords(str_replace('_', ' ', $field)),
+                    'jenis_dokumen' => $field,
+                    'file_path'     => $path,
+                    'original_name' => $file->getClientOriginalName(),
+                    'mime_type'     => $file->getMimeType(),
+                    'file_size'     => $file->getSize(),
                 ]);
             }
         }

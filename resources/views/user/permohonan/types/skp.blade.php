@@ -286,7 +286,7 @@
                             formData.append('_token', '{{ csrf_token() }}');
 
                             try {
-                                const response = await fetch('{{ route("permohonan.ocr") }}', {
+                                const response = await fetch('{{ route("layanan.surat.ocr") }}', {
                                     method: 'POST',
                                     body: formData
                                 });

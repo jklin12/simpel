@@ -32,13 +32,6 @@
                     :class="statusOk ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'"
                     class="mb-4 text-sm border rounded-lg px-4 py-2" style="display:none"></div>
 
-                <div class="mb-6 flex items-center gap-2 bg-blue-50 p-4 rounded-lg border border-blue-100">
-                    <input type="checkbox" id="sama_dengan_pemohon" x-model="samaDenganPemohon" @change="syncPemohon()" class="w-5 h-5 text-primary-600 bg-white border-gray-300 rounded focus:ring-primary-500">
-                    <label for="sama_dengan_pemohon" class="text-sm font-medium text-blue-900 cursor-pointer">
-                        Gunakan data yang sama dengan Data Pemohon
-                    </label>
-                </div>
-
                 <div class="grid grid-cols-1 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
@@ -269,7 +262,7 @@
                             formData.append('_token', '{{ csrf_token() }}');
 
                             try {
-                                const response = await fetch('{{ route("permohonan.ocr") }}', {
+                                const response = await fetch('{{ route("layanan.surat.ocr") }}', {
                                     method: 'POST',
                                     body: formData
                                 });

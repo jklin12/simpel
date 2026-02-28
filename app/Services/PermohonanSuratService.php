@@ -3,9 +3,14 @@
 namespace App\Services;
 
 use App\Repositories\Contracts\PermohonanSuratRepositoryInterface;
+use App\Models\PermohonanApproval;
 use App\Models\SuratCounter;
+use App\Models\User;
 use App\Notifications\PermohonanApprovedWhatsapp;
+use App\Notifications\PermohonanBaruNotification;
 use App\Notifications\PermohonanRejectedWhatsapp;
+use App\Notifications\PermohonanRevisiNotification;
+use App\Notifications\PermohonanRevisiWhatsapp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -210,6 +215,90 @@ class PermohonanSuratService
                 'error' => $e->getMessage()
             ]);
             throw new \Exception('Gagal reject permohonan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Revisi permohonan yang sudah ditolak.
+     * Approval lama TIDAK dihapus — tetap sebagai riwayat di timeline.
+     * Approval baru dibuat dengan catatan "Revisi #N" agar admin tahu ini revisi.
+     *
+     * @param  \App\Models\PermohonanSurat  $permohonan
+     * @param  array  $data  Data baru dari form revisi
+     * @param  callable  $fileCallback  fn($permohonan) untuk handle upload file baru
+     */
+    public function revisiPermohonan($permohonan, array $data, callable $fileCallback)
+    {
+        if ($permohonan->status !== 'rejected') {
+            throw new \Exception('Permohonan ini tidak dalam status ditolak.');
+        }
+
+        DB::beginTransaction();
+        try {
+            // Increment revision count
+            $newRevisionCount = $permohonan->revision_count + 1;
+
+            // Update data permohonan
+            $permohonan->update([
+                'nama_pemohon'    => $data['nama_pemohon']    ?? $permohonan->nama_pemohon,
+                'nik_pemohon'     => $data['nik_pemohon']     ?? $permohonan->nik_pemohon,
+                'phone_pemohon'   => $data['phone_pemohon']   ?? $permohonan->phone_pemohon,
+                'alamat_pemohon'  => $data['alamat_pemohon']  ?? $permohonan->alamat_pemohon,
+                'data_permohonan' => array_merge(
+                    is_array($permohonan->data_permohonan) ? $permohonan->data_permohonan : [],
+                    $data['data_permohonan'] ?? []
+                ),
+                'status'          => 'pending',
+                'current_step'    => 1,
+                'revision_count'  => $newRevisionCount,
+                'rejected_reason' => null,
+            ]);
+
+            // Buat approval baru step 1 dengan catatan revisi
+            // Approval lama (rejected) dibiarkan sebagai riwayat
+            PermohonanApproval::create([
+                'permohonan_surat_id' => $permohonan->id,
+                'target_role'         => 'admin_kelurahan',
+                'step_name'           => 'Verifikasi Berkas',
+                'step_order'          => 1,
+                'status'              => 'pending',
+                'catatan'             => "Revisi #{$newRevisionCount} — diajukan ulang setelah penolakan",
+            ]);
+
+            // Handle upload file baru (jika ada)
+            $fileCallback($permohonan);
+
+            DB::commit();
+
+            // 1. Notifikasi push (database) ke semua admin_kelurahan — dibedakan sebagai REVISI
+            try {
+                $approvers = User::role('admin_kelurahan')
+                    ->where('kelurahan_id', $permohonan->kelurahan_id)
+                    ->get();
+                foreach ($approvers as $approver) {
+                    $approver->notify(new PermohonanRevisiNotification($permohonan->fresh()));
+                }
+            } catch (\Exception $e) {
+                Log::error('Notifikasi revisi admin gagal: ' . $e->getMessage());
+            }
+
+            // 2. Notifikasi WhatsApp ke pemohon — konfirmasi revisi berhasil diajukan
+            try {
+                $permohonan->fresh()->notify(new PermohonanRevisiWhatsapp($permohonan->fresh()));
+            } catch (\Exception $e) {
+                Log::error('Notifikasi WA revisi pemohon gagal: ' . $e->getMessage());
+            }
+
+            Log::info('Permohonan direvisi', [
+                'permohonan_id'  => $permohonan->id,
+                'revision_count' => $newRevisionCount,
+            ]);
+
+            return $permohonan->fresh();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Gagal merevisi permohonan: ' . $e->getMessage());
+            throw new \Exception('Gagal merevisi permohonan: ' . $e->getMessage());
         }
     }
 

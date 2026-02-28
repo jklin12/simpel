@@ -41,6 +41,10 @@ Route::name('')->group(function () {
             Route::get('/cek-status', [TrackingController::class, 'index'])->name('tracking');
             Route::get('/cek-status/search', [TrackingController::class, 'search'])->name('tracking.search');
             Route::get('/cek-status/download/{track_token}', [TrackingController::class, 'downloadSignedLetter'])->name('tracking.download');
+
+            // Revisi permohonan yang ditolak (publik via track_token)
+            Route::get('/revisi/{track_token}', [PermohonanController::class, 'edit'])->name('revisi');
+            Route::post('/revisi/{track_token}', [PermohonanController::class, 'update'])->name('revisi.update');
         });
 
         // Contoh modul berikutnya:

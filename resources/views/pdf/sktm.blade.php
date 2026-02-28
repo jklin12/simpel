@@ -286,9 +286,9 @@
                 <td class="col-value">
                     {{ $data['alamat_lengkap'] ?? $permohonan->alamat_pemohon }}
                     RT. {{ $data['rt'] ?? '-' }} RW. {{ $data['rw'] ?? '-' }}
-                    Kel. {{ $kelurahan->nama }}
-                    Kec. {{ $kelurahan->kecamatan->nama ?? '-' }}
-                    Kota Banjarbaru
+                    KEL. {{ strtoupper($kelurahan->nama) }}
+                    KEC. {{ strtoupper($kelurahan->kecamatan->nama) }}
+                    KOTA BANJARBARU
                 </td>
             </tr>
             <tr>
@@ -327,7 +327,7 @@
 
         <p class="narasi">
             Adapun surat keterangan tidak mampu ini dibuat untuk keperluan
-            <span>{{ $data['keperluan_sktm'] ?? '-' }}</span>@if(!empty($data['keterangan_sktm'])), {{ ucfirst(strtolower($data['keterangan_sktm'])) }}@endif.
+            <span>{{ strtolower($data['keperluan_sktm']) ?? '-' }}</span>
         </p>
 
         <p class="penutup">

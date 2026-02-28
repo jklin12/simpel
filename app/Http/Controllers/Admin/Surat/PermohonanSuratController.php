@@ -178,7 +178,7 @@ class PermohonanSuratController extends Controller
             }
 
             // Generate QR code sebagai base64 PNG untuk embed di PDF
-            $trackUrl = route('tracking.search', ['track_token' => $permohonan->track_token]);
+            $trackUrl = route('layanan.surat.tracking.search', ['track_token' => $permohonan->track_token]);
             $qrBase64 = base64_encode(
                 \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')
                     ->size(120)
