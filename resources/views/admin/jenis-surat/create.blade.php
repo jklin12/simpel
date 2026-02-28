@@ -81,7 +81,9 @@
                         <p class="text-xs text-gray-500 mt-0.5">Definisikan field yang akan muncul di form pengajuan publik.</p>
                     </div>
                     <button type="button" id="add-field-btn" class="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 font-medium transition shadow-sm flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
                         Tambah Field
                     </button>
                 </div>
@@ -104,6 +106,36 @@
                     </table>
                 </div>
                 <p class="text-xs text-gray-400 mt-2">Nama field: huruf kecil dan underscore saja, contoh: <code>nama_lengkap</code></p>
+            </div>
+
+            {{-- Attachment Guides Builder --}}
+            <div class="pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-800">Petunjuk Lampiran</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Petunjuk per file attachment yang akan ditampilkan kepada user di bawah setiap input file.</p>
+                    </div>
+                    <button type="button" id="add-guide-btn" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-medium transition shadow-sm flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Tambah Petunjuk
+                    </button>
+                </div>
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="w-full text-sm" id="guides-table">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase w-48">Nama Field</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Keterangan</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">Contoh</th>
+                                <th class="px-3 py-2 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="guides-body"></tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">Nama field harus sesuai field attachment, contoh: <code>surat_pengantar_rtrw</code></p>
             </div>
 
             <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
@@ -145,69 +177,130 @@
         </td>
         <td class="px-3 py-2 text-center">
             <button type="button" class="remove-field-btn text-red-500 hover:text-red-700">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
             </button>
         </td>
     </tr>
 </template>
 
+<template id="guide-row-template">
+    <tr class="border-t border-gray-100 guide-row">
+        <td class="px-3 py-2"><input type="text" class="guide-field-input w-full rounded border-gray-300 text-sm shadow-sm" placeholder="surat_pengantar_rtrw"></td>
+        <td class="px-3 py-2"><input type="text" class="guide-keterangan-input w-full rounded border-gray-300 text-sm shadow-sm" placeholder="Keterangan singkat"></td>
+        <td class="px-3 py-2"><input type="text" class="guide-contoh-input w-full rounded border-gray-300 text-sm shadow-sm" placeholder="Format, ukuran, dsb."></td>
+        <td class="px-3 py-2 text-center"><button type="button" class="remove-guide-btn text-red-500 hover:text-red-700"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg></button></td>
+    </tr>
+</template>
+
 <script>
-(function () {
-    let fieldIndex = 0;
+    (function() {
+        let fieldIndex = 0;
 
-    function addFieldRow(data) {
-        const template = document.getElementById('field-row-template').innerHTML;
-        const html = template.replace(/__INDEX__/g, fieldIndex++);
-        const tbody = document.getElementById('fields-body');
-        const tr = document.createElement('tbody');
-        tr.innerHTML = html;
-        const row = tr.firstElementChild;
+        function addFieldRow(data) {
+            const template = document.getElementById('field-row-template').innerHTML;
+            const html = template.replace(/__INDEX__/g, fieldIndex++);
+            const tbody = document.getElementById('fields-body');
+            const tr = document.createElement('tbody');
+            tr.innerHTML = html;
+            const row = tr.firstElementChild;
 
-        if (data) {
-            row.querySelector('[name$="[name]"]').value = data.name || '';
-            row.querySelector('[name$="[label]"]').value = data.label || '';
-            row.querySelector('[name$="[type]"]').value = data.type || 'text';
-            row.querySelector('[name$="[is_required]"]').checked = !!data.is_required;
-            const optionsVal = Array.isArray(data.options) ? data.options.join(',') : (data.options || '');
-            row.querySelector('[name$="[options]"]').value = optionsVal;
-        }
+            if (data) {
+                row.querySelector('[name$="[name]"]').value = data.name || '';
+                row.querySelector('[name$="[label]"]').value = data.label || '';
+                row.querySelector('[name$="[type]"]').value = data.type || 'text';
+                row.querySelector('[name$="[is_required]"]').checked = !!data.is_required;
+                const optionsVal = Array.isArray(data.options) ? data.options.join(',') : (data.options || '');
+                row.querySelector('[name$="[options]"]').value = optionsVal;
+            }
 
-        bindRowEvents(row);
-        tbody.appendChild(row);
-        updateOptionsVisibility(row);
-    }
-
-    function updateOptionsVisibility(row) {
-        const typeSelect = row.querySelector('.field-type-select');
-        const optionsInput = row.querySelector('.options-input');
-        if (typeSelect.value === 'select') {
-            optionsInput.disabled = false;
-            optionsInput.style.opacity = '1';
-        } else {
-            optionsInput.disabled = true;
-            optionsInput.style.opacity = '0.4';
-            optionsInput.value = '';
-        }
-    }
-
-    function bindRowEvents(row) {
-        row.querySelector('.remove-field-btn').addEventListener('click', function () {
-            row.remove();
-        });
-        row.querySelector('.field-type-select').addEventListener('change', function () {
+            bindRowEvents(row);
+            tbody.appendChild(row);
             updateOptionsVisibility(row);
+        }
+
+        function updateOptionsVisibility(row) {
+            const typeSelect = row.querySelector('.field-type-select');
+            const optionsInput = row.querySelector('.options-input');
+            if (typeSelect.value === 'select') {
+                optionsInput.disabled = false;
+                optionsInput.style.opacity = '1';
+            } else {
+                optionsInput.disabled = true;
+                optionsInput.style.opacity = '0.4';
+                optionsInput.value = '';
+            }
+        }
+
+        function bindRowEvents(row) {
+            row.querySelector('.remove-field-btn').addEventListener('click', function() {
+                row.remove();
+            });
+            row.querySelector('.field-type-select').addEventListener('change', function() {
+                updateOptionsVisibility(row);
+            });
+        }
+
+        document.getElementById('add-field-btn').addEventListener('click', function() {
+            addFieldRow(null);
         });
-    }
 
-    document.getElementById('add-field-btn').addEventListener('click', function () {
-        addFieldRow(null);
-    });
+        @if(old('required_fields'))
+        const oldFields = @json(old('required_fields'));
+        oldFields.forEach(function(f) {
+            addFieldRow(f);
+        });
+        @endif
 
-    // Pre-populate from old() on validation failure
-    @if(old('required_fields'))
-    const oldFields = @json(old('required_fields'));
-    oldFields.forEach(function(f) { addFieldRow(f); });
-    @endif
-})();
+        // ── Attachment Guides ──────────────────────────────────────────
+        const guidesTbody = document.getElementById('guides-body');
+
+        function addGuideRow(fieldName, keterangan, contoh) {
+            const html = `<tr class="border-t border-gray-100 guide-row">
+                <td class="px-3 py-2"><input type="text" class="guide-field-input w-full rounded border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="surat_pengantar_rtrw"></td>
+                <td class="px-3 py-2"><input type="text" class="guide-keterangan-input w-full rounded border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: Surat pengantar asli dari RT/RW"></td>
+                <td class="px-3 py-2"><input type="text" class="guide-contoh-input w-full rounded border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: Foto berwarna, format PDF max 5MB"></td>
+                <td class="px-3 py-2 text-center"><button type="button" class="remove-guide-btn text-red-500 hover:text-red-700"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></td>
+            </tr>`;
+            const wrapper = document.createElement('tbody');
+            wrapper.innerHTML = html;
+            const row = wrapper.firstElementChild;
+            row.querySelector('.guide-field-input').value = fieldName || '';
+            row.querySelector('.guide-keterangan-input').value = keterangan || '';
+            row.querySelector('.guide-contoh-input').value = contoh || '';
+            row.querySelector('.remove-guide-btn').addEventListener('click', () => row.remove());
+            guidesTbody.appendChild(row);
+        }
+
+        document.querySelector('form').addEventListener('submit', function() {
+            document.querySelectorAll('input[name^="attachment_guides["]').forEach(el => el.remove());
+            guidesTbody.querySelectorAll('.guide-row').forEach(function(row) {
+                const fieldName = row.querySelector('.guide-field-input').value.trim();
+                if (!fieldName) return;
+                const keterangan = row.querySelector('.guide-keterangan-input').value.trim();
+                const contoh = row.querySelector('.guide-contoh-input').value.trim();
+
+                function appendHidden(name, value) {
+                    const inp = document.createElement('input');
+                    inp.type = 'hidden';
+                    inp.name = name;
+                    inp.value = value;
+                    document.querySelector('form').appendChild(inp);
+                }
+                appendHidden(`attachment_guides[${fieldName}][keterangan]`, keterangan);
+                appendHidden(`attachment_guides[${fieldName}][contoh]`, contoh);
+            });
+        });
+
+        document.getElementById('add-guide-btn').addEventListener('click', () => addGuideRow('', '', ''));
+
+        @if(old('attachment_guides'))
+        const existingGuides = @json(old('attachment_guides'));
+        Object.entries(existingGuides).forEach(([fn, g]) => addGuideRow(fn, g.keterangan || '', g.contoh || ''));
+        @endif
+    })();
 </script>
 @endsection

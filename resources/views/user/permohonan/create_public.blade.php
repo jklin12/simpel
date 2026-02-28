@@ -90,6 +90,35 @@
                 placeholder: "Pilih atau Ketik Pekerjaan Baru"
             });
         }
+
+        // Inject attachment guides dari database ke bawah setiap file input
+        const storageBase = '<?= Storage::url("") ?>';
+        const attachmentGuides = <?= json_encode($service->attachment_guides ?? []) ?>;
+        document.querySelectorAll('input[type="file"]:not([x-ref])').forEach(function(input) {
+            const fieldName = input.getAttribute('name');
+            if (!fieldName || !attachmentGuides[fieldName]) return;
+            const guide = attachmentGuides[fieldName];
+            const wrapper = document.createElement('div');
+            wrapper.className = 'mt-2 rounded-lg bg-amber-50 border border-amber-100 px-3 py-2 text-xs text-amber-800 space-y-1';
+            if (guide.keterangan) {
+                const p1 = document.createElement('p');
+                p1.innerHTML = '<span class="font-semibold">&#x1F4CB; Keterangan:</span> ' + guide.keterangan;
+                wrapper.appendChild(p1);
+            }
+            if (guide.contoh_file) {
+                const fileUrl = storageBase + guide.contoh_file;
+                const ext = guide.contoh_file.split('.').pop().toLowerCase();
+                const isImg = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
+                const p2 = document.createElement('div');
+                p2.className = 'flex items-start gap-2 mt-1';
+                p2.innerHTML = '<span class="font-semibold whitespace-nowrap">&#x1F4CE; Contoh:</span> ' +
+                    (isImg ?
+                        `<a href="${fileUrl}" target="_blank"><img src="${fileUrl}" class="h-16 rounded border border-amber-200 object-contain cursor-pointer hover:opacity-80" alt="Contoh dokumen"></a>` :
+                        `<a href="${fileUrl}" target="_blank" class="underline text-amber-700 hover:text-amber-900">Lihat contoh dokumen &#x2197;</a>`);
+                wrapper.appendChild(p2);
+            }
+            input.parentNode.insertBefore(wrapper, input.nextSibling);
+        });
     });
 </script>
 @if(session('error'))

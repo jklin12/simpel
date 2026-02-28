@@ -38,7 +38,7 @@
 
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-4xl">
-    <form action="{{ route('admin.jenis-surat.update', $jenisSurat->id) }}" method="POST">
+    <form action="{{ route('admin.jenis-surat.update', $jenisSurat->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="space-y-6">
@@ -82,7 +82,9 @@
                         <p class="text-xs text-gray-500 mt-0.5">Definisikan field yang akan muncul di form pengajuan publik.</p>
                     </div>
                     <button type="button" id="add-field-btn" class="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700 font-medium transition shadow-sm flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
                         Tambah Field
                     </button>
                 </div>
@@ -105,6 +107,38 @@
                     </table>
                 </div>
                 <p class="text-xs text-gray-400 mt-2">Nama field: huruf kecil dan underscore saja, contoh: <code>nama_lengkap</code></p>
+            </div>
+
+            {{-- Attachment Guides Builder --}}
+            <div class="pt-4 border-t border-gray-100">
+                <div class="flex items-center justify-between mb-3">
+                    <div>
+                        <h3 class="text-sm font-semibold text-gray-800">Petunjuk Lampiran</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Petunjuk per file attachment yang akan ditampilkan kepada user di bawah setiap input file.</p>
+                    </div>
+                    <button type="button" id="add-guide-btn" class="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 font-medium transition shadow-sm flex items-center gap-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        Tambah Petunjuk
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto rounded-lg border border-gray-200">
+                    <table class="w-full text-sm" id="guides-table">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase w-44">Nama Field</th>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase w-48">File Contoh <span class="text-gray-400 font-normal">(gambar/PDF)</span></th>
+                                <th class="px-3 py-2 w-10"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="guides-body">
+                            {{-- Rows populated by JS --}}
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">Nama field harus sesuai dengan field attachment yang sudah didefinisikan, contoh: <code>surat_pengantar_rtrw</code></p>
             </div>
 
             <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
@@ -146,71 +180,205 @@
         </td>
         <td class="px-3 py-2 text-center">
             <button type="button" class="remove-field-btn text-red-500 hover:text-red-700">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </td>
+    </tr>
+</template>
+
+<template id="guide-row-template">
+    <tr class="border-t border-gray-100 guide-row">
+        <td class="px-3 py-2">
+            <input type="text" class="guide-field-input w-full rounded border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="surat_pengantar_rtrw">
+        </td>
+        <td class="px-3 py-2">
+            <input type="text" class="guide-contoh-input w-full rounded border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: Foto berwarna, tidak buram, format PDF">
+        </td>
+        <td class="px-3 py-2 text-center">
+            <button type="button" class="remove-guide-btn text-red-500 hover:text-red-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
             </button>
         </td>
     </tr>
 </template>
 
 <script>
-(function () {
-    let fieldIndex = 0;
+    (function() {
+        let fieldIndex = 0;
 
-    function addFieldRow(data) {
-        const template = document.getElementById('field-row-template').innerHTML;
-        const html = template.replace(/__INDEX__/g, fieldIndex++);
-        const tbody = document.getElementById('fields-body');
-        const tr = document.createElement('tbody');
-        tr.innerHTML = html;
-        const row = tr.firstElementChild;
+        function addFieldRow(data) {
+            const template = document.getElementById('field-row-template').innerHTML;
+            const html = template.replace(/__INDEX__/g, fieldIndex++);
+            const tbody = document.getElementById('fields-body');
+            const tr = document.createElement('tbody');
+            tr.innerHTML = html;
+            const row = tr.firstElementChild;
 
-        if (data) {
-            row.querySelector('[name$="[name]"]').value = data.name || '';
-            row.querySelector('[name$="[label]"]').value = data.label || '';
-            row.querySelector('[name$="[type]"]').value = data.type || 'text';
-            row.querySelector('[name$="[is_required]"]').checked = !!data.is_required;
-            const optionsVal = Array.isArray(data.options) ? data.options.join(',') : (data.options || '');
-            row.querySelector('[name$="[options]"]').value = optionsVal;
-        }
+            if (data) {
+                // Handle both: old string format ("field_name") and new object format ({name,label,type,...})
+                const fieldData = (typeof data === 'string') ?
+                    {
+                        name: data,
+                        label: data.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+                        type: 'text',
+                        is_required: true,
+                        options: null
+                    } :
+                    data;
+                row.querySelector('[name$="[name]"]').value = fieldData.name || '';
+                row.querySelector('[name$="[label]"]').value = fieldData.label || '';
+                row.querySelector('[name$="[type]"]').value = fieldData.type || 'text';
+                row.querySelector('[name$="[is_required]"]').checked = !!fieldData.is_required;
+                const optionsVal = Array.isArray(fieldData.options) ? fieldData.options.join(',') : (fieldData.options || '');
+                row.querySelector('[name$="[options]"]').value = optionsVal;
+            }
 
-        bindRowEvents(row);
-        tbody.appendChild(row);
-        updateOptionsVisibility(row);
-    }
-
-    function updateOptionsVisibility(row) {
-        const typeSelect = row.querySelector('.field-type-select');
-        const optionsInput = row.querySelector('.options-input');
-        if (typeSelect.value === 'select') {
-            optionsInput.disabled = false;
-            optionsInput.style.opacity = '1';
-        } else {
-            optionsInput.disabled = true;
-            optionsInput.style.opacity = '0.4';
-            optionsInput.value = '';
-        }
-    }
-
-    function bindRowEvents(row) {
-        row.querySelector('.remove-field-btn').addEventListener('click', function () {
-            row.remove();
-        });
-        row.querySelector('.field-type-select').addEventListener('change', function () {
+            bindRowEvents(row);
+            tbody.appendChild(row);
             updateOptionsVisibility(row);
+        }
+
+        function updateOptionsVisibility(row) {
+            const typeSelect = row.querySelector('.field-type-select');
+            const optionsInput = row.querySelector('.options-input');
+            if (typeSelect.value === 'select') {
+                optionsInput.disabled = false;
+                optionsInput.style.opacity = '1';
+            } else {
+                optionsInput.disabled = true;
+                optionsInput.style.opacity = '0.4';
+                optionsInput.value = '';
+            }
+        }
+
+        function bindRowEvents(row) {
+            row.querySelector('.remove-field-btn').addEventListener('click', function() {
+                row.remove();
+            });
+            row.querySelector('.field-type-select').addEventListener('change', function() {
+                updateOptionsVisibility(row);
+            });
+        }
+
+        document.getElementById('add-field-btn').addEventListener('click', function() {
+            addFieldRow(null);
         });
-    }
 
-    document.getElementById('add-field-btn').addEventListener('click', function () {
-        addFieldRow(null);
-    });
 
-    // Pre-populate: use old() on validation failure, otherwise use existing required_fields
-    @if(old('required_fields'))
-    const initialFields = @json(old('required_fields'));
-    @else
-    const initialFields = @json($jenisSurat->required_fields ?? []);
-    @endif
-    initialFields.forEach(function(f) { addFieldRow(f); });
-})();
+
+        // ── Attachment Guides ──────────────────────────────────────────────
+        const guidesTbody = document.getElementById('guides-body');
+
+        function addGuideRow(fieldName, keterangan, existingFileUrl, existingFileName) {
+            const fileInputId = 'guide_file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            const safeFieldName = fieldName ? fieldName.replace(/[^a-z0-9_]/gi, '') : '';
+            let previewHtml = '';
+            if (existingFileUrl) {
+                const ext = existingFileName ? existingFileName.split('.').pop().toLowerCase() : '';
+                const isImg = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(ext);
+                previewHtml = `<div class="guide-file-preview mt-1">${
+                    isImg
+                        ? `<img src="${existingFileUrl}" class="h-10 rounded border" alt="preview">`
+                        : `<a href="${existingFileUrl}" target="_blank" class="text-xs text-blue-600 underline">${existingFileName || 'Lihat file'}</a>`
+                }</div>`;
+            }
+            const html = `<tr class="border-t border-gray-100 guide-row">
+                <td class="px-3 py-2"><input type="text" class="guide-field-input w-full rounded border-gray-300 text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="surat_pengantar_rtrw"></td> 
+                <td class="px-3 py-2">
+                    <input type="file" id="${fileInputId}" class="guide-contoh-file w-full text-xs border border-gray-300 rounded p-1 cursor-pointer" accept="image/*,.pdf">
+                    ${previewHtml}
+                </td>
+                <td class="px-3 py-2 text-center"><button type="button" class="remove-guide-btn text-red-500 hover:text-red-700"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></button></td>
+            </tr>`;
+            const wrapper = document.createElement('tbody');
+            wrapper.innerHTML = html;
+            const row = wrapper.firstElementChild;
+            const fieldInput = row.querySelector('.guide-field-input');
+            const fileInput = row.querySelector('.guide-contoh-file');
+
+            fieldInput.value = fieldName || '';
+            // Sync file input name with field name
+            const syncFileName = () => {
+                const fn = fieldInput.value.trim().replace(/[^a-z0-9_]/gi, '_').toLowerCase();
+                fileInput.name = fn ? `attachment_guide_files[${fn}]` : '';
+            };
+            syncFileName();
+            fieldInput.addEventListener('input', syncFileName);
+
+            // Live preview when new file selected
+            fileInput.addEventListener('change', function() {
+                const existing = row.querySelector('.guide-file-preview');
+                if (existing) existing.remove();
+                if (this.files[0]) {
+                    const reader = new FileReader();
+                    const f = this.files[0];
+                    reader.onload = e => {
+                        const prev = document.createElement('div');
+                        prev.className = 'guide-file-preview mt-1';
+                        if (f.type.startsWith('image/')) {
+                            prev.innerHTML = `<img src="${e.target.result}" class="h-10 rounded border" alt="preview">`;
+                        } else {
+                            prev.innerHTML = `<span class="text-xs text-gray-600">${f.name}</span>`;
+                        }
+                        this.parentNode.appendChild(prev);
+                    };
+                    reader.readAsDataURL(f);
+                }
+            });
+
+            row.querySelector('.remove-guide-btn').addEventListener('click', () => row.remove());
+            guidesTbody.appendChild(row);
+        }
+
+        document.getElementById('add-guide-btn').addEventListener('click', () => addGuideRow('', '', null, null));
+
+        // Serialize TEXT guides (keterangan) to hidden inputs before submit
+        // Note: file inputs already carry their own name, no need to inject for them
+        document.querySelector('form').addEventListener('submit', function() {
+            // Remove any previously-added hidden inputs
+            document.querySelectorAll('input[name^="attachment_guides["]').forEach(el => el.remove());
+
+            guidesTbody.querySelectorAll('.guide-row').forEach(function(row) {
+                const fieldName = row.querySelector('.guide-field-input').value.trim();
+                if (!fieldName) return;
+
+                function appendHidden(name, value) {
+                    const inp = document.createElement('input');
+                    inp.type = 'hidden';
+                    inp.name = name;
+                    inp.value = value;
+                    document.querySelector('form').appendChild(inp);
+                }
+
+                appendHidden(`attachment_guides[${fieldName}][keterangan]`, '');
+            });
+        });
+
+        // Pre-populate guides from existing data
+        @if(old('attachment_guides'))
+        const existingGuides = @json(old('attachment_guides'));
+        @else
+        const existingGuides = <?= json_encode($jenisSurat->attachment_guides ?? []) ?>;
+        @endif
+        Object.entries(existingGuides).forEach(([fieldName, guide]) => {
+            const fileUrl = guide.contoh_file ? '<?= Storage::url("") ?>' + guide.contoh_file : null;
+            const fileName = guide.contoh_file ? guide.contoh_file.split('/').pop() : null;
+            addGuideRow(fieldName, guide.keterangan || '', fileUrl, fileName);
+        });
+
+        // Pre-populate required_fields (ensure array, not object)
+        const initialFields = <?php
+                                $rf = $jenisSurat->required_fields;
+                                $rfArr = is_array($rf) ? $rf : (is_string($rf) ? (json_decode($rf, true) ?? []) : []);
+                                echo json_encode(array_values($rfArr));
+                                ?>;
+        initialFields.forEach(function(f) {
+            addFieldRow(f);
+        });
+    })();
 </script>
 @endsection

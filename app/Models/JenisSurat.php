@@ -13,8 +13,9 @@ class JenisSurat extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'required_fields' => 'array',
-        'is_active' => 'boolean',
+        'required_fields'    => 'array',
+        'attachment_guides'  => 'array',
+        'is_active'          => 'boolean',
     ];
 
     public function approvalFlows(): HasMany

@@ -48,6 +48,9 @@ class StoreJenisSuratRequest extends FormRequest
             'required_fields.*.is_required' => 'nullable|boolean',
             'required_fields.*.options' => 'nullable|array',
             'required_fields.*.options.*' => 'string',
+            'attachment_guides'                     => 'nullable|array',
+            'attachment_guides.*.keterangan'        => 'nullable|string|max:500',
+            'attachment_guides.*.contoh'            => 'nullable|string|max:500',
             'template_path' => 'nullable|string|max:255',
             'is_active' => 'boolean',
         ];

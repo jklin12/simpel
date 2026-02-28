@@ -80,6 +80,19 @@ class JenisSuratService
                     ->toArray();
             }
 
+            // Handle attachment_guides: merge keterangan from request + contoh_file uploads
+            $guides = $data['attachment_guides'] ?? [];
+            if (!empty($data['_attachment_guide_files'])) {
+                foreach ($data['_attachment_guide_files'] as $fieldName => $file) {
+                    if ($file && $file->isValid()) {
+                        $path = $file->store('attachment-guides', 'public');
+                        $guides[$fieldName]['contoh_file'] = $path;
+                    }
+                }
+            }
+            $data['attachment_guides'] = !empty($guides) ? $guides : null;
+            unset($data['_attachment_guide_files']);
+
             // Create jenis surat
             $jenisSurat = $this->repository->create($data);
 
@@ -136,6 +149,30 @@ class JenisSuratService
             } elseif (array_key_exists('required_fields', $data)) {
                 $data['required_fields'] = [];
             }
+
+            // Handle attachment_guides: merge keterangan from request + contoh_file uploads
+            $existingJenisSurat = $this->repository->find($id);
+            $guides = $data['attachment_guides'] ?? [];
+            // Preserve existing contoh_file paths that are not being replaced
+            foreach ($existingJenisSurat->attachment_guides ?? [] as $fieldName => $existingGuide) {
+                if (!empty($existingGuide['contoh_file']) && !isset($guides[$fieldName]['contoh_file'])) {
+                    $guides[$fieldName]['contoh_file'] = $existingGuide['contoh_file'];
+                }
+            }
+            if (!empty($data['_attachment_guide_files'])) {
+                foreach ($data['_attachment_guide_files'] as $fieldName => $file) {
+                    if ($file && $file->isValid()) {
+                        // Delete old file if exists
+                        if (!empty($guides[$fieldName]['contoh_file'])) {
+                            \Illuminate\Support\Facades\Storage::disk('public')->delete($guides[$fieldName]['contoh_file']);
+                        }
+                        $path = $file->store('attachment-guides', 'public');
+                        $guides[$fieldName]['contoh_file'] = $path;
+                    }
+                }
+            }
+            $data['attachment_guides'] = !empty($guides) ? $guides : null;
+            unset($data['_attachment_guide_files']);
 
             // Update jenis surat
             $jenisSurat = $this->repository->update($id, $data);

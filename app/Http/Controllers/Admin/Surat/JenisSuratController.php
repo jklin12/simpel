@@ -42,7 +42,10 @@ class JenisSuratController extends Controller
     public function store(StoreJenisSuratRequest $request)
     {
         try {
-            $this->service->createJenisSurat($request->validated());
+            $data = $request->validated();
+            // Pass uploaded contoh files (keyed by field name) to service
+            $data['_attachment_guide_files'] = $request->file('attachment_guide_files', []);
+            $this->service->createJenisSurat($data);
 
             return redirect()
                 ->route('admin.jenis-surat.index')
@@ -77,7 +80,10 @@ class JenisSuratController extends Controller
     public function update(UpdateJenisSuratRequest $request, $id)
     {
         try {
-            $this->service->updateJenisSurat($id, $request->validated());
+            $data = $request->validated();
+            // Pass uploaded contoh files (keyed by field name) to service
+            $data['_attachment_guide_files'] = $request->file('attachment_guide_files', []);
+            $this->service->updateJenisSurat($id, $data);
 
             return redirect()
                 ->route('admin.jenis-surat.index')
