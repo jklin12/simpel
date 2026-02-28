@@ -57,7 +57,7 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
-    'admin_domain' => env('APP_ADMIN_DOMAIN', 'admin.simpel.id'),
+    'admin_domain' => env('APP_ADMIN_DOMAIN', 'panel.simpel-bjb.id'),
 
     'asset_url' => env('ASSET_URL'),
 

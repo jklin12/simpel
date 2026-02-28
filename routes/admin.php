@@ -10,7 +10,7 @@ use App\Http\Controllers\Auth\LoginController;
 // Admin Subdomain Routes
 // =============================================================================
 
-Route::domain(config('app.admin_domain', 'admin.simpel.id'))->group(function () {
+Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function () {
 
     // Authentication Routes
     Route::middleware('guest')->group(function () {
