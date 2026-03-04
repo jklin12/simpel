@@ -9,7 +9,7 @@
     current: 0,
     total: {{ $sliders->count() > 0 ? $sliders->count() : 3 }},
     auto: null,
-    start() { if (this.total > 1) { this.auto = setInterval(() => this.next(), 5500); } },
+    start() { if (this.total > 1) { this.auto = setInterval(() => this.next(), 10000); } },
     stop() { clearInterval(this.auto); },
     prev() { this.current = (this.current - 1 + this.total) % this.total; },
     next() { this.current = (this.current + 1) % this.total; },
@@ -89,12 +89,12 @@
 
     {{-- Nav arrows (only if more than 1 slide) --}}
     @if($sliders->count() > 1)
-    <button @click="prev(); stop(); start()" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all border border-white/30" aria-label="Sebelumnya">
+    <button @click="prev(); stop(); start()" class="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full items-center justify-center text-white transition-all border border-white/30" aria-label="Sebelumnya">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
     </button>
-    <button @click="next(); stop(); start()" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white transition-all border border-white/30" aria-label="Berikutnya">
+    <button @click="next(); stop(); start()" class="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/20 hover:bg-white/40 backdrop-blur-sm rounded-full items-center justify-center text-white transition-all border border-white/30" aria-label="Berikutnya">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
         </svg>
