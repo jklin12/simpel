@@ -99,6 +99,9 @@
                             <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                                 <a href="{{ route('layanan.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600" role="menuitem">Buat Surat</a>
                                 <a href="{{ route('layanan.surat.tracking') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600" role="menuitem">Cek Status</a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <a href="{{ route('layanan.surat.template.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600" role="menuitem">Download Template</a>
+                                <div class="border-t border-gray-100 my-1"></div>
                             </div>
                         </div>
                     </div>
@@ -139,6 +142,7 @@
                 <a href="{{ route('peta.index') }}" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg">Peta Wilayah</a>
                 <a href="{{ route('struktur-organisasi') }}" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg">Struktur Organisasi</a>
                 <a href="{{route('layanan.index')}}" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg">Layanan Surat</a>
+                <a href="{{ route('layanan.surat.template.index') }}" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg">Download Template</a>
 
                 <div class="border-t border-gray-100 my-2 pt-2">
                     @auth

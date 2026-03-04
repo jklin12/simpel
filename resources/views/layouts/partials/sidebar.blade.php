@@ -35,8 +35,24 @@
                 </a>
             </div>
 
-            {{-- Portal Kecamatan Group (kecamatan & super_admin) --}}
-            @hasanyrole('kecamatan|super_admin')
+            {{-- Data Kelurahan (hanya untuk admin_kelurahan) --}}
+            @role('admin_kelurahan')
+            @unless(auth()->user()->hasAnyRole(['admin_kecamatan', 'admin_kabupaten', 'super_admin']))
+            <div class="pt-4">
+                <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Data Wilayah</p>
+                <a href="{{ route('admin.portal.data-kelurahan.index') }}" class="flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group {{ request()->routeIs('admin.portal.data-kelurahan*') ? 'bg-blue-50 text-blue-600 shadow-sm' : '' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 transition-colors group-hover:text-blue-600 {{ request()->routeIs('admin.portal.data-kelurahan*') ? 'text-blue-600' : '' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span class="font-medium">Data Kelurahan</span>
+                </a>
+            </div>
+            @endunless
+            @endrole
+
+            {{-- Portal Kecamatan Group (admin_kecamatan, admin_kabupaten, super_admin) --}}
+            @hasanyrole('admin_kecamatan|admin_kabupaten|super_admin')
             <div class="pt-4">
                 <p class="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Portal Kecamatan</p>
 
@@ -116,8 +132,8 @@
                 </div>
 
                 <!-- Manajemen Surat Group -->
-                <div x-data="{ open: {{ request()->routeIs('admin.jenis-surat*', 'admin.approval-flow*', 'admin.surat-counter*') ? 'true' : 'false' }} }">
-                    <button @click="open = !open" type="button" class="w-full flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group justify-between {{ request()->routeIs('admin.jenis-surat*', 'admin.approval-flow*', 'admin.surat-counter*') ? 'bg-blue-50 text-blue-600' : '' }}">
+                <div x-data="{ open: {{ request()->routeIs('admin.jenis-surat*', 'admin.approval-flow*', 'admin.surat-counter*', 'admin.template-surat*') ? 'true' : 'false' }} }">
+                    <button @click="open = !open" type="button" class="w-full flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group justify-between {{ request()->routeIs('admin.jenis-surat*', 'admin.approval-flow*', 'admin.surat-counter*', 'admin.template-surat*') ? 'bg-blue-50 text-blue-600' : '' }}">
                         <div class="flex items-center gap-3">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 transition-colors group-hover:text-blue-600 {{ request()->routeIs('admin.jenis-surat*', 'admin.approval-flow*', 'admin.surat-counter*') ? 'text-blue-600' : '' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -137,6 +153,10 @@
                         <a href="{{ route('admin.approval-flow.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 {{ request()->routeIs('admin.approval-flow*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
                             <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.approval-flow*') ? 'bg-blue-600' : 'bg-gray-400' }}"></span>
                             Approval Flow
+                        </a>
+                        <a href="{{ route('admin.template-surat.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 {{ request()->routeIs('admin.template-surat*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
+                            <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.template-surat*') ? 'bg-blue-600' : 'bg-gray-400' }}"></span>
+                            Template Surat
                         </a>
                         <a href="{{ route('admin.surat-counter.index') }}" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-500 rounded-lg hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 {{ request()->routeIs('admin.surat-counter*') ? 'text-blue-600 bg-blue-50 font-medium' : '' }}">
                             <span class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.surat-counter*') ? 'bg-blue-600' : 'bg-gray-400' }}"></span>

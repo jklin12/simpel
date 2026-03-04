@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\PortalPublikController;
 use App\Http\Controllers\Layanan\ServiceController;
 use App\Http\Controllers\Layanan\PermohonanController;
 use App\Http\Controllers\Layanan\TrackingController;
+use App\Http\Controllers\Layanan\TemplateSuratPublikController;
 
 // =============================================================================
 // Portal Utama & Modul Layanan Publik (tanpa prefix)
@@ -45,6 +46,10 @@ Route::name('')->group(function () {
             // Revisi permohonan yang ditolak (publik via track_token)
             Route::get('/revisi/{track_token}', [PermohonanController::class, 'edit'])->name('revisi');
             Route::post('/revisi/{track_token}', [PermohonanController::class, 'update'])->name('revisi.update');
+
+            // Download Template Surat
+            Route::get('/download-template', [TemplateSuratPublikController::class, 'index'])->name('template.index');
+            Route::get('/download-template/{template}/download', [TemplateSuratPublikController::class, 'download'])->name('template.download');
         });
 
         // Contoh modul berikutnya:

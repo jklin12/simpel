@@ -69,6 +69,7 @@
             <div class="absolute left-1/2 -ml-[1.5px] top-0 bottom-[-50px] w-[3px] org-line"></div>
 
             <!-- Fungsional Branch (Left) -->
+            @if($fungsional )
             <div class="w-1/2 flex justify-end pr-[40px] relative z-10 pt-[20px]">
                 <!-- Horizontal Connector -->
                 <div class="absolute right-0 top-[60px] w-[40px] h-[3px] org-line"></div>
@@ -89,6 +90,8 @@
                     </div>
                 </div>
             </div>
+            @endif
+
 
             <!-- Sekretariat Branch (Right) -->
             <div class="w-1/2 flex justify-start pl-[40px] relative z-10">

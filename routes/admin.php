@@ -56,6 +56,7 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
             // Letter Management
             Route::resource('jenis-surat', App\Http\Controllers\Admin\Surat\JenisSuratController::class);
             Route::resource('approval-flow', App\Http\Controllers\Admin\Surat\ApprovalFlowController::class);
+            Route::resource('template-surat', App\Http\Controllers\Admin\Surat\TemplateSuratController::class);
             Route::get('surat-counter', [App\Http\Controllers\Admin\Surat\SuratCounterController::class, 'index'])->name('surat-counter.index');
             Route::patch('surat-counter/{suratCounter}/reset', [App\Http\Controllers\Admin\Surat\SuratCounterController::class, 'reset'])->name('surat-counter.reset');
         });
@@ -73,16 +74,23 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
             Route::post('permohonan-surat/{permohonanSurat}/upload-signed', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'uploadSignedLetter'])->name('permohonan-surat.upload-signed');
         });
 
-        // Portal Kecamatan — Admin (harus login + role kecamatan atau super_admin)
-        Route::middleware(['role:kecamatan|super_admin'])
+        // Portal Kecamatan — Admin (harus login + role admin_kecamatan atau super_admin)
+        Route::middleware(['role:admin_kecamatan|admin_kabupaten|super_admin'])
             ->prefix('admin/portal')
             ->name('admin.portal.')
             ->group(function () {
                 Route::resource('berita', App\Http\Controllers\Admin\Portal\BeritaController::class);
-                Route::resource('data-kelurahan', App\Http\Controllers\Admin\Portal\DataKelurahanController::class);
                 Route::resource('struktur-organisasi', App\Http\Controllers\Admin\Portal\StrukturOrganisasiController::class);
                 Route::resource('slider', App\Http\Controllers\Admin\Portal\SliderController::class);
                 Route::resource('faq', App\Http\Controllers\Admin\Portal\FaqController::class);
+            });
+
+        // Data Kelurahan — Admin Kelurahan juga bisa manage data milik kelurahan sendiri
+        Route::middleware(['role:admin_kecamatan|admin_kabupaten|super_admin|admin_kelurahan'])
+            ->prefix('admin/portal')
+            ->name('admin.portal.')
+            ->group(function () {
+                Route::resource('data-kelurahan', App\Http\Controllers\Admin\Portal\DataKelurahanController::class);
             });
     });
 });

@@ -6,7 +6,14 @@
 <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
     <div>
         <h1 class="text-2xl font-bold text-gray-800">Data Kelurahan</h1>
+        @hasanyrole('admin_kecamatan|admin_kabupaten|super_admin')
         <p class="text-gray-500">Kelola data RW, RT, fasilitas, dan lokasi di wilayah kecamatan.</p>
+        @else
+        <p class="text-gray-500">
+            Data untuk kelurahan:
+            <span class="font-semibold text-blue-600">{{ Auth::user()->kelurahan?->nama ?? '-' }}</span>
+        </p>
+        @endhasanyrole
     </div>
     <div class="flex flex-col sm:flex-row gap-3">
         <form action="{{ route('admin.portal.data-kelurahan.index') }}" method="GET" class="flex flex-wrap gap-2">
@@ -24,12 +31,15 @@
                 <option value="{{ $key }}" @selected(($filters['kategori'] ?? '' )===$key)>{{ $label }}</option>
                 @endforeach
             </select>
+            @hasanyrole('admin_kecamatan|admin_kabupaten|super_admin')
+            {{-- Filter kelurahan hanya untuk kecamatan/super_admin --}}
             <select name="kelurahan_id" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500">
                 <option value="">Semua Kelurahan</option>
                 @foreach($kelurahans as $kel)
                 <option value="{{ $kel->id }}" @selected(($filters['kelurahan_id'] ?? '' )==$kel->id)>{{ $kel->nama }}</option>
                 @endforeach
             </select>
+            @endhasanyrole
             <button type="submit" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">Filter</button>
         </form>
         <a href="{{ route('admin.portal.data-kelurahan.create') }}" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition shadow-sm flex items-center gap-2 text-sm whitespace-nowrap">

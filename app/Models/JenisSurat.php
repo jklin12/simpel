@@ -32,4 +32,9 @@ class JenisSurat extends Model
     {
         return $this->hasMany(PermohonanSurat::class);
     }
+
+    public function templateSurats(): HasMany
+    {
+        return $this->hasMany(TemplateSurat::class);
+    }
 }
