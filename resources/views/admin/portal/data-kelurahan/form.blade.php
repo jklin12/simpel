@@ -23,7 +23,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {{-- Form Fields --}}
         <div class="space-y-5">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4" x-data="{ kategori: '{{ old('kategori', $item->kategori ?? '') }}' }">
                 <h3 class="font-semibold text-gray-800">Informasi Dasar</h3>
 
                 {{-- Kelurahan --}}
@@ -39,6 +39,7 @@
                     </select>
                     @else
                     {{-- Admin Kelurahan: kelurahan sudah dikunci ke kelurahan mereka --}}
+                    <input type="hidden" name="kelurahan_id" value="{{ Auth::user()->kelurahan_id }}">
                     <div class="flex items-center gap-2 px-3 py-2.5 bg-blue-50 border border-blue-200 rounded-lg">
                         <svg class="w-4 h-4 text-blue-500 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -54,13 +55,91 @@
                 {{-- Kategori --}}
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1.5">Kategori <span class="text-red-500">*</span></label>
-                    <select name="kategori" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-primary-500 focus:border-primary-500 @error('kategori') border-red-400 @enderror">
+                    <select name="kategori" x-model="kategori" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-primary-500 focus:border-primary-500 @error('kategori') border-red-400 @enderror">
                         <option value="">— Pilih Kategori —</option>
                         @foreach($kategoriList as $key => $label)
                         <option value="{{ $key }}" @selected(old('kategori', $item->kategori ?? '') === $key)>{{ $label }}</option>
                         @endforeach
                     </select>
                     @error('kategori') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
+                {{-- Dependent: Jenis Fasilitas (Ibadah, Pemakaman, Pendidikan, Kesehatan, Keamanan) --}}
+                <div x-show="['tempat_ibadah', 'pemakaman', 'sarana_pendidikan', 'fasilitas_kesehatan', 'fasilitas_keamanan'].includes(kategori)" x-cloak>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Jenis Fasilitas</label>
+                    <select name="jenis_fasilitas" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-primary-500 focus:border-primary-500 @error('jenis_fasilitas') border-red-400 @enderror">
+                        <option value="">— Pilih Jenis (Opsional) —</option>
+
+                        <template x-if="kategori === 'tempat_ibadah'">
+                            <optgroup label="Tipe Tempat Ibadah">
+                                @foreach($options['ibadah'] as $opt)
+                                <option value="{{ $opt }}" @selected(old('jenis_fasilitas', $item->jenis_fasilitas ?? '') == $opt)>{{ $opt }}</option>
+                                @endforeach
+                            </optgroup>
+                        </template>
+
+                        <template x-if="kategori === 'pemakaman'">
+                            <optgroup label="Tipe Tempat Pemakaman">
+                                @foreach($options['pemakaman'] as $opt)
+                                <option value="{{ $opt }}" @selected(old('jenis_fasilitas', $item->jenis_fasilitas ?? '') == $opt)>{{ $opt }}</option>
+                                @endforeach
+                            </optgroup>
+                        </template>
+
+                        <template x-if="kategori === 'sarana_pendidikan'">
+                            <optgroup label="Tipe Sarana Pendidikan">
+                                @foreach($options['pendidikan'] as $opt)
+                                <option value="{{ $opt }}" @selected(old('jenis_fasilitas', $item->jenis_fasilitas ?? '') == $opt)>{{ $opt }}</option>
+                                @endforeach
+                            </optgroup>
+                        </template>
+
+                        <template x-if="kategori === 'fasilitas_kesehatan'">
+                            <optgroup label="Tipe Fasilitas Kesehatan">
+                                @foreach($options['kesehatan'] as $opt)
+                                <option value="{{ $opt }}" @selected(old('jenis_fasilitas', $item->jenis_fasilitas ?? '') == $opt)>{{ $opt }}</option>
+                                @endforeach
+                            </optgroup>
+                        </template>
+
+                        <template x-if="kategori === 'fasilitas_keamanan'">
+                            <optgroup label="Tipe Fasilitas Keamanan">
+                                @foreach($options['keamanan'] as $opt)
+                                <option value="{{ $opt }}" @selected(old('jenis_fasilitas', $item->jenis_fasilitas ?? '') == $opt)>{{ $opt }}</option>
+                                @endforeach
+                            </optgroup>
+                        </template>
+                    </select>
+                    <p class="text-xs text-gray-400 mt-1">Kosongkan jika jenis tidak ada di pilihan.</p>
+                </div>
+
+                {{-- Dependent: Status Fasilitas (Hanya Pendidikan & Kesehatan) --}}
+                <div x-show="['sarana_pendidikan', 'fasilitas_kesehatan'].includes(kategori)" x-cloak>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1.5">Status Instansi</label>
+                    <select name="status_fasilitas" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:ring-primary-500 focus:border-primary-500 @error('status_fasilitas') border-red-400 @enderror">
+                        <option value="">— Pilih Status (Opsional) —</option>
+                        @foreach($options['status'] as $opt)
+                        <option value="{{ $opt }}" @selected(old('status_fasilitas', $item->status_fasilitas ?? '') == $opt)>{{ $opt }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- RT dan RW --}}
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">RT</label>
+                        <input type="text" name="rt" value="{{ old('rt', $item->rt ?? '') }}"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Contoh: 001">
+                        @error('rt') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1.5">RW</label>
+                        <input type="text" name="rw" value="{{ old('rw', $item->rw ?? '') }}"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500"
+                            placeholder="Contoh: 015">
+                        @error('rw') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
                 </div>
 
                 {{-- Nama --}}

@@ -14,14 +14,18 @@ class StorePortalDataKelurahanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kelurahan_id' => 'required|exists:m_kelurahans,id',
-            'kategori'     => 'required|in:rw,rt,lpm,tempat_ibadah,pemakaman,sarana_pendidikan,fasilitas_kesehatan,fasilitas_keamanan,pos_kamling',
-            'nama'         => 'required|string|max:255',
-            'keterangan'   => 'nullable|string',
-            'alamat'       => 'nullable|string|max:500',
-            'latitude'     => 'nullable|numeric|between:-90,90',
-            'longitude'    => 'nullable|numeric|between:-180,180',
-            'foto'         => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'kelurahan_id'     => 'required|exists:m_kelurahans,id',
+            'kategori'         => 'required|in:rw,rt,lpm,tempat_ibadah,pemakaman,sarana_pendidikan,fasilitas_kesehatan,fasilitas_keamanan,pos_kamling,fasilitas_umum',
+            'jenis_fasilitas'  => 'nullable|string|max:255',
+            'status_fasilitas' => 'nullable|string|max:255',
+            'rt'               => 'nullable|string|max:10',
+            'rw'               => 'nullable|string|max:10',
+            'nama'             => 'required|string|max:255',
+            'keterangan'       => 'nullable|string',
+            'alamat'           => 'nullable|string|max:500',
+            'latitude'         => 'nullable|numeric|between:-90,90',
+            'longitude'        => 'nullable|numeric|between:-180,180',
+            'foto'             => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ];
     }
 

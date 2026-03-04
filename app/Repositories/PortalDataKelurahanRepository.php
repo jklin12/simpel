@@ -58,6 +58,14 @@ class PortalDataKelurahanRepository implements PortalDataKelurahanRepositoryInte
             $query->where('kelurahan_id', $filters['kelurahan_id']);
         }
 
+        if (!empty($filters['rt'])) {
+            $query->where('rt', 'like', '%' . $filters['rt'] . '%');
+        }
+
+        if (!empty($filters['rw'])) {
+            $query->where('rw', 'like', '%' . $filters['rw'] . '%');
+        }
+
         $sortBy    = $filters['sort_by'] ?? 'kategori';
         $sortOrder = $filters['sort_order'] ?? 'asc';
         $query->orderBy($sortBy, $sortOrder);

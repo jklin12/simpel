@@ -25,34 +25,47 @@
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" x-data="petaApp">
 
-    {{-- Filter Kategori --}}
-    <div class="flex flex-wrap gap-2 mb-6 min-h-[40px]">
-        <template x-if="loading">
-            <div class="flex gap-2">
-                <template x-for="i in [1,2,3,4,5]">
-                    <div class="h-9 w-28 bg-gray-200 animate-pulse rounded-full"></div>
-                </template>
-            </div>
-        </template>
+    {{-- Filter Kategori dan Pencarian --}}
+    <div class="flex flex-col md:flex-row gap-4 mb-6 items-start md:items-center justify-between min-h-[40px]">
+        <div class="w-full md:w-auto flex-1">
+            <template x-if="loading">
+                <div class="flex gap-2">
+                    <template x-for="i in [1,2,3,4,5]">
+                        <div class="h-9 w-28 bg-gray-200 animate-pulse rounded-full"></div>
+                    </template>
+                </div>
+            </template>
 
-        <template x-if="!loading">
-            <div class="flex flex-wrap gap-2 w-full">
-                <button @click="toggleKategori('all')"
-                    :class="activeKategori === 'all' ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-gray-600 hover:bg-gray-50'"
-                    class="px-4 py-2 rounded-full text-sm font-medium border border-gray-200 transition-colors">
-                    📍 Semua Lokasi
-                    <span class="ml-1 opacity-70" x-text="'(' + totalMarkers + ')'"></span>
-                </button>
-                <template x-for="(info, key) in kategoriList" :key="key">
-                    <button @click="toggleKategori(key)"
-                        :class="activeKategori === key ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-gray-600 hover:bg-gray-50'"
+            <template x-if="!loading">
+                <div class="flex flex-wrap gap-2 w-full">
+                    <button @click="toggleKategori('all')"
+                        :class="activeKategori === 'all' ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-gray-600 hover:bg-gray-50'"
                         class="px-4 py-2 rounded-full text-sm font-medium border border-gray-200 transition-colors">
-                        <span x-text="info.ikon + ' ' + info.label"></span>
-                        <span class="ml-1 opacity-70" x-text="'(' + info.data.length + ')'"></span>
+                        📍 Semua
+                        <span class="ml-1 opacity-70" x-text="'(' + totalMarkers + ')'"></span>
                     </button>
-                </template>
+                    <template x-for="(info, key) in kategoriList" :key="key">
+                        <button @click="toggleKategori(key)"
+                            :class="activeKategori === key ? 'bg-primary-600 text-white border-primary-600' : 'bg-white text-gray-600 hover:bg-gray-50'"
+                            class="px-4 py-2 rounded-full text-sm font-medium border border-gray-200 transition-colors">
+                            <span x-text="info.ikon + ' ' + (info.label.length > 15 ? info.label.substring(0,15)+'...' : info.label)"></span>
+                            <span class="ml-1 opacity-70" x-text="'(' + info.data.length + ')'"></span>
+                        </button>
+                    </template>
+                </div>
+            </template>
+        </div>
+
+        <div class="w-full md:w-72 shrink-0">
+            <div class="relative">
+                <input type="text" x-model.debounce.300ms="searchQuery" @input="filterData" placeholder="Cari fasilitas, RT, RW..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full text-sm focus:border-primary-500 focus:ring-primary-500 shadow-sm" :disabled="loading">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
             </div>
-        </template>
+        </div>
     </div>
 
     {{-- Layout Peta + Sidebar --}}
@@ -128,7 +141,16 @@
                 <div class="p-4">
                     <p class="text-xs text-primary-600 font-medium uppercase tracking-wide mb-1" x-text="activeKategoriLabel"></p>
                     <h4 class="font-bold text-gray-900 text-base mb-1" x-text="selected ? selected.nama : ''"></h4>
-                    <p x-show="selected && selected.kelurahan" class="text-xs text-gray-400 mb-2" x-text="selected && selected.kelurahan ? 'Kel. ' + selected.kelurahan : ''"></p>
+
+                    <div x-show="selected && selected.jenis_fasilitas" class="mb-2">
+                        <span class="inline-block px-2 py-0.5 text-[10px] font-medium rounded bg-gray-100 text-gray-600 border border-gray-200" x-text="selected ? (selected.jenis_fasilitas + (selected.status_fasilitas ? ' (' + selected.status_fasilitas + ')' : '')) : ''"></span>
+                    </div>
+
+                    <div class="flex items-center gap-2 mb-2">
+                        <p x-show="selected && selected.kelurahan" class="text-xs text-gray-400" x-text="selected && selected.kelurahan ? 'Kel. ' + selected.kelurahan : ''"></p>
+                        <p x-show="selected && (selected.rt || selected.rw)" class="text-xs font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded" x-text="selected && (selected.rt || selected.rw) ? ('RT ' + (selected.rt || '000') + ' / RW ' + (selected.rw || '000')) : ''"></p>
+                    </div>
+
                     <p x-show="selected && selected.alamat" class="text-sm text-gray-600 mb-1" x-text="selected ? selected.alamat : ''"></p>
                     <p x-show="selected && selected.keterangan" class="text-sm text-gray-500 italic" x-text="selected ? selected.keterangan : ''"></p>
                     <div class="mt-3 pt-3 flex items-center justify-between border-t border-gray-100">
@@ -165,6 +187,7 @@
             activeKategoriLabel: '',
             loading: true,
             totalMarkers: 0,
+            searchQuery: '',
 
             init() {
                 this.$nextTick(() => {
@@ -189,19 +212,55 @@
 
                     if (json.success) {
                         this.allData = json.data;
-                        this.kategoriList = json.data;
-
-                        // Hitung total marker dari semua kategori
-                        this.totalMarkers = Object.values(json.data)
-                            .reduce((sum, info) => sum + (info.data ? info.data.length : 0), 0);
-
-                        this.renderMarkers('all');
+                        this.filterData();
                     }
                 } catch (err) {
                     console.error('Gagal memuat data peta:', err);
                 } finally {
                     this.loading = false;
                 }
+            },
+
+            filterData() {
+                const query = this.searchQuery.toLowerCase().trim();
+
+                if (query === '') {
+                    this.kategoriList = JSON.parse(JSON.stringify(this.allData));
+                } else {
+                    const filtered = {};
+                    for (const key in this.allData) {
+                        const info = this.allData[key];
+                        if (!info || !info.data) continue;
+
+                        const matchedData = info.data.filter(item => {
+                            const str = (
+                                (item.nama || '') + ' ' +
+                                (item.alamat || '') + ' ' +
+                                (item.keterangan || '') + ' ' +
+                                (item.kelurahan || '') + ' ' +
+                                (item.jenis_fasilitas || '') + ' ' +
+                                (item.status_fasilitas || '') + ' ' +
+                                (item.rt ? 'rt ' + item.rt : '') + ' ' +
+                                (item.rt ? 'rt' + item.rt : '') + ' ' +
+                                (item.rw ? 'rw ' + item.rw : '') + ' ' +
+                                (item.rw ? 'rw' + item.rw : '')
+                            ).toLowerCase();
+                            return str.includes(query);
+                        });
+
+                        filtered[key] = {
+                            ...info,
+                            data: matchedData
+                        };
+                    }
+                    this.kategoriList = filtered;
+                }
+
+                // Hitung total marker dari semua kategori yg sudah difilter
+                this.totalMarkers = Object.values(this.kategoriList)
+                    .reduce((sum, info) => sum + (info.data ? info.data.length : 0), 0);
+
+                this.renderMarkers(this.activeKategori);
             },
 
             renderMarkers(kategori) {
@@ -238,17 +297,24 @@
                             popupAnchor: [0, -34],
                         });
 
+                        const popupHTML = `
+                         <div style="font-family:system-ui,sans-serif">
+                            <div style="font-weight:700;font-size:14px;margin-bottom:2px">${item.nama}</div>
+                            <div style="font-size:11px;color:#6366f1;margin-bottom:4px">
+                                ${info.label} ${item.jenis_fasilitas ? '- ' + item.jenis_fasilitas : ''}
+                            </div>
+                            <div style="font-size:12px;color:#4b5563;margin-bottom:6px">
+                                ${item.kelurahan ? '<b>Kel. ' + item.kelurahan + '</b>' : ''} 
+                                ${item.rt || item.rw ? '(RT ' + (item.rt || '000') + '/RW ' + (item.rw || '000') + ')' : ''}
+                            </div>
+                            ${item.alamat ? `<div style="font-size:12px;color:#4b5563;margin-bottom:6px">${item.alamat}</div>` : ''}
+                            <a href="https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}" target="_blank" style="display:inline-block;padding:4px 8px;background:#eef2ff;color:#4f46e5;border-radius:4px;text-decoration:none;font-size:11px;font-weight:600;margin-top:2px;">Google Maps ↗</a>
+                         </div>`;
+
                         const popup = L.popup({
                             closeButton: false,
                             maxWidth: 220
-                        }).setContent(
-                            `<div style="font-family:system-ui,sans-serif">
-                            <div style="font-weight:700;font-size:14px;margin-bottom:2px">${item.nama}</div>
-                            <div style="font-size:11px;color:#6366f1;margin-bottom:4px">${info.label}</div>
-                            ${item.alamat ? `<div style="font-size:12px;color:#4b5563;margin-bottom:6px">${item.alamat}</div>` : ''}
-                            <a href="https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}" target="_blank" style="display:inline-block;padding:4px 8px;background:#eef2ff;color:#4f46e5;border-radius:4px;text-decoration:none;font-size:11px;font-weight:600;margin-top:2px;">Google Maps ↗</a>
-                         </div>`
-                        );
+                        }).setContent(popupHTML);
 
                         const marker = L.marker(latLng, {
                                 icon

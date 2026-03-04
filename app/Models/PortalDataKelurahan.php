@@ -14,6 +14,10 @@ class PortalDataKelurahan extends Model
     protected $fillable = [
         'kelurahan_id',
         'kategori',
+        'jenis_fasilitas',
+        'status_fasilitas',
+        'rt',
+        'rw',
         'nama',
         'keterangan',
         'alamat',
@@ -58,6 +62,7 @@ class PortalDataKelurahan extends Model
             'fasilitas_kesehatan' => 'Fasilitas Kesehatan',
             'fasilitas_keamanan'  => 'Fasilitas Keamanan',
             'pos_kamling'         => 'Pos Kamling',
+            'fasilitas_umum'      => 'Fasilitas Umum',
         ];
     }
 
@@ -76,6 +81,40 @@ class PortalDataKelurahan extends Model
             'fasilitas_kesehatan' => '🏥',
             'fasilitas_keamanan'  => '🚔',
             'pos_kamling'         => '🏚️',
+            'fasilitas_umum'      => '🛝',
         ];
+    }
+
+    /**
+     * Opsi sub-kategori dinamis / statis berdasarkan array.
+     */
+    public static function opsiJenisIbadah(): array
+    {
+        return ['Masjid', 'Langgar/Musholla', 'Gereja', 'Pura', 'Vihara', 'Kelenteng/Lintang', 'Sinagoge'];
+    }
+
+    public static function opsiJenisPemakaman(): array
+    {
+        return ['Tempat Pemakaman Umum (TPU)', 'Tempat Pemakaman Bukan Umum (TPBU)/ Swasta', 'Tempat Pemakaman Khusus (TPK)', 'Makam Keluarga/Pribadi', 'Tempat Kremasi & Abu (Cremation/Urn Garden)'];
+    }
+
+    public static function opsiJenisPendidikan(): array
+    {
+        return ['PAUD', 'TK', 'SD', 'SMP', 'SMA', 'Perguruan Tinggi'];
+    }
+
+    public static function opsiJenisKesehatan(): array
+    {
+        return ['Puskesmas', 'Klinik Pratama', 'Tempat Praktik Mandiri', 'Posyandu', 'Rumah Sakit', 'Klinik Utama (Klinik Spesialis)', 'Apotek', 'Laboratorium Kesehatan', 'Unit Transfusi Darah', 'Optikal', 'Fasilitas Kesehatan Tradisional'];
+    }
+
+    public static function opsiJenisKeamanan(): array
+    {
+        return ['TNI', 'POLRI', 'Swadaya Masyarakat'];
+    }
+
+    public static function opsiStatusFasilitas(): array
+    {
+        return ['Negeri', 'Swasta'];
     }
 }

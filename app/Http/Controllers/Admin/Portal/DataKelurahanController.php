@@ -42,7 +42,7 @@ class DataKelurahanController extends Controller
 
     public function index(Request $request)
     {
-        $filters = $request->only(['search', 'kategori', 'kelurahan_id', 'sort_by', 'sort_order']);
+        $filters = $request->only(['search', 'kategori', 'kelurahan_id', 'sort_by', 'sort_order', 'rt', 'rw']);
 
         // Admin kelurahan: paksa filter ke kelurahan sendiri
         if ($this->isAdminKelurahan()) {
@@ -69,7 +69,17 @@ class DataKelurahanController extends Controller
             ? collect()
             : Kelurahan::where('kecamatan_id', '6372010')->orderBy('nama')->get();
 
-        return view('admin.portal.data-kelurahan.form', compact('kategoriList', 'kelurahans'));
+        // Ambil opsi statis dari Model
+        $options = [
+            'ibadah'     => PortalDataKelurahan::opsiJenisIbadah(),
+            'pemakaman'  => PortalDataKelurahan::opsiJenisPemakaman(),
+            'pendidikan' => PortalDataKelurahan::opsiJenisPendidikan(),
+            'kesehatan'  => PortalDataKelurahan::opsiJenisKesehatan(),
+            'keamanan'   => PortalDataKelurahan::opsiJenisKeamanan(),
+            'status'     => PortalDataKelurahan::opsiStatusFasilitas(),
+        ];
+
+        return view('admin.portal.data-kelurahan.form', compact('kategoriList', 'kelurahans', 'options'));
     }
 
     public function store(StorePortalDataKelurahanRequest $request)
@@ -111,7 +121,17 @@ class DataKelurahanController extends Controller
                 ? collect()
                 : Kelurahan::where('kecamatan_id', '6372010')->orderBy('nama')->get();
 
-            return view('admin.portal.data-kelurahan.form', compact('item', 'kategoriList', 'kelurahans'));
+            // Ambil opsi statis dari Model
+            $options = [
+                'ibadah'     => PortalDataKelurahan::opsiJenisIbadah(),
+                'pemakaman'  => PortalDataKelurahan::opsiJenisPemakaman(),
+                'pendidikan' => PortalDataKelurahan::opsiJenisPendidikan(),
+                'kesehatan'  => PortalDataKelurahan::opsiJenisKesehatan(),
+                'keamanan'   => PortalDataKelurahan::opsiJenisKeamanan(),
+                'status'     => PortalDataKelurahan::opsiStatusFasilitas(),
+            ];
+
+            return view('admin.portal.data-kelurahan.form', compact('item', 'kategoriList', 'kelurahans', 'options'));
         } catch (\Exception $e) {
             return redirect()
                 ->route('admin.portal.data-kelurahan.index')

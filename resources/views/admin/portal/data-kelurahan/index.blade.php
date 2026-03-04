@@ -40,6 +40,8 @@
                 @endforeach
             </select>
             @endhasanyrole
+            <input type="text" name="rt" value="{{ $filters['rt'] ?? '' }}" class="border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-primary-500 focus:border-primary-500 w-16" placeholder="RT">
+            <input type="text" name="rw" value="{{ $filters['rw'] ?? '' }}" class="border border-gray-300 rounded-lg px-2 py-2 text-sm focus:ring-primary-500 focus:border-primary-500 w-16" placeholder="RW">
             <button type="submit" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-sm">Filter</button>
         </form>
         <a href="{{ route('admin.portal.data-kelurahan.create') }}" class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition shadow-sm flex items-center gap-2 text-sm whitespace-nowrap">
@@ -75,9 +77,23 @@
                         </div>
                         @endif
                         <div>
-                            <p class="font-medium text-gray-900 text-sm">{{ $item->nama }}</p>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <p class="font-medium text-gray-900 text-sm">{{ $item->nama }}</p>
+                                @if($item->jenis_fasilitas)
+                                <span class="px-2 py-0.5 text-[10px] font-medium rounded bg-gray-100 text-gray-600 border border-gray-200">
+                                    {{ $item->jenis_fasilitas }} {{ $item->status_fasilitas ? '('.$item->status_fasilitas.')' : '' }}
+                                </span>
+                                @endif
+                            </div>
+
+                            @if($item->rt || $item->rw)
+                            <p class="text-xs text-blue-600 mt-1 font-medium bg-blue-50 inline-block px-1.5 py-0.5 rounded border border-blue-100">
+                                RT {{ $item->rt ? str_pad($item->rt, 3, '0', STR_PAD_LEFT) : '000' }} / RW {{ $item->rw ? str_pad($item->rw, 3, '0', STR_PAD_LEFT) : '000' }}
+                            </p>
+                            @endif
+
                             @if($item->alamat)
-                            <p class="text-xs text-gray-400 mt-0.5">{{ Str::limit($item->alamat, 40) }}</p>
+                            <p class="text-xs text-gray-400 mt-1">{{ Str::limit($item->alamat, 40) }}</p>
                             @endif
                         </div>
                     </div>
