@@ -44,23 +44,46 @@ class PortalDataKelurahanService
 
         $result = [];
         foreach ($grouped as $kategori => $items) {
+            $baseIkon = $ikons[$kategori] ?? '📍';
+
             $result[$kategori] = [
                 'label' => $labels[$kategori] ?? $kategori,
-                'ikon'  => $ikons[$kategori] ?? '📍',
-                'data'  => $items->map(fn($item) => [
-                    'id'               => $item->id,
-                    'nama'             => $item->nama,
-                    'alamat'           => $item->alamat,
-                    'keterangan'       => $item->keterangan,
-                    'kelurahan'        => $item->kelurahan?->nama,
-                    'jenis_fasilitas'  => $item->jenis_fasilitas,
-                    'status_fasilitas' => $item->status_fasilitas,
-                    'rt'               => $item->rt ? str_pad($item->rt, 3, '0', STR_PAD_LEFT) : null,
-                    'rw'               => $item->rw ? str_pad($item->rw, 3, '0', STR_PAD_LEFT) : null,
-                    'lat'              => $item->latitude,
-                    'lng'              => $item->longitude,
-                    'foto'             => $item->foto ? \Illuminate\Support\Facades\Storage::url($item->foto) : null,
-                ])->values(),
+                'ikon'  => $baseIkon,
+                'data'  => $items->map(function ($item) use ($kategori, $baseIkon) {
+                    $itemIkon = $baseIkon;
+                    if ($kategori === 'tempat_ibadah' && !empty($item->jenis_fasilitas)) {
+                        $jns = strtolower($item->jenis_fasilitas);
+                        if (str_contains($jns, 'masjid') || str_contains($jns, 'langgar') || str_contains($jns, 'musholla')) {
+                            $itemIkon = '🕌';
+                        } elseif (str_contains($jns, 'gereja')) {
+                            $itemIkon = '⛪';
+                        } elseif (str_contains($jns, 'pura')) {
+                            $itemIkon = '🛕';
+                        } elseif (str_contains($jns, 'vihara')) {
+                            $itemIkon = '☸️';
+                        } elseif (str_contains($jns, 'kelenteng') || str_contains($jns, 'lintang')) {
+                            $itemIkon = '⛩️';
+                        } elseif (str_contains($jns, 'sinagoge')) {
+                            $itemIkon = '🕍';
+                        }
+                    }
+
+                    return [
+                        'id'               => $item->id,
+                        'nama'             => $item->nama,
+                        'alamat'           => $item->alamat,
+                        'keterangan'       => $item->keterangan,
+                        'kelurahan'        => $item->kelurahan?->nama,
+                        'jenis_fasilitas'  => $item->jenis_fasilitas,
+                        'status_fasilitas' => $item->status_fasilitas,
+                        'rt'               => $item->rt ? str_pad($item->rt, 3, '0', STR_PAD_LEFT) : null,
+                        'rw'               => $item->rw ? str_pad($item->rw, 3, '0', STR_PAD_LEFT) : null,
+                        'lat'              => $item->latitude,
+                        'lng'              => $item->longitude,
+                        'ikon'             => $itemIkon,
+                        'foto'             => $item->foto ? \Illuminate\Support\Facades\Storage::url($item->foto) : null,
+                    ];
+                })->values(),
             ];
         }
 

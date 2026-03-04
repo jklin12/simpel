@@ -289,8 +289,10 @@
                         const latLng = [lat, lng];
                         allLatLngs.push(latLng);
 
+                        const displayIkon = item.ikon || info.ikon;
+
                         const icon = L.divIcon({
-                            html: `<div style="font-size:26px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.35))">${info.ikon}</div>`,
+                            html: `<div style="font-size:26px;line-height:1;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.35))">${displayIkon}</div>`,
                             className: '',
                             iconSize: [32, 32],
                             iconAnchor: [16, 32],
@@ -324,7 +326,7 @@
 
                         marker.on('click', () => {
                             this.selected = item;
-                            this.activeIkon = info.ikon;
+                            this.activeIkon = displayIkon;
                             this.activeKategoriLabel = info.label;
                         });
                     });
