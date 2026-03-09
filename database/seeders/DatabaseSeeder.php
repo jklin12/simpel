@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             UserRoleSeeder::class,
             NotificationSeeder::class,
             SkpSeeder::class,
+            SkmhSeeder::class,
         ]);
     }
 }

@@ -46,6 +46,9 @@ class StorePermohonanRequest extends FormRequest
             case 'SKBM': // Surat Keterangan Belum Menikah
                 $specificRules = $this->getSkbmRules();
                 break;
+            case 'SKMH': // Surat Keterangan Menikah
+                $specificRules = $this->getSkmhRules();
+                break;
             case 'SKP': // Surat Keterangan Penghasilan
                 $specificRules = $this->getSkpRules();
                 break;
@@ -107,6 +110,20 @@ class StorePermohonanRequest extends FormRequest
             'skp_ktp_kk',
             'skp_ktp_saksi',
             'skp_bukti_pbb',
+            // SKMH
+            'skmh_surat_pengantar',
+            'skmh_akta_ijazah_catin',
+            'skmh_ktp_kk_catin',
+            'skmh_ktp_kk_ortu',
+            'skmh_pas_foto',
+            'skmh_ktp_saksi',
+            'skmh_form_n2_n5',
+            'skmh_akta_cerai_kematian',
+            'skmh_dispensasi_pengadilan',
+            'skmh_izin_atasan',
+            'skmh_izin_poligami',
+            'skmh_rekom_dp3a',
+            'skmh_bukti_pbb',
             // Legacy / other
             'foto_ktp',
             'foto_kk',
@@ -303,6 +320,60 @@ class StorePermohonanRequest extends FormRequest
             'skbm_ktp_kk'             => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skbm_ktp_saksi'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skbm_bukti_pbb'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getSkmhRules()
+    {
+        return [
+            // Data Pemohon
+            'nama_lengkap'          => 'required|string|max:255',
+            'nik_bersangkutan'      => 'required|string|size:16',
+            'jenis_kelamin'         => 'required|in:Laki-laki,Perempuan',
+            'agama'                 => 'required|string',
+            'kewarganegaraan'       => 'required|string',
+            'tempat_lahir'          => 'required|string|max:100',
+            'tanggal_lahir'         => 'required|date',
+            'status_perkawinan'     => 'required|string',
+            'pekerjaan'             => 'required|string|max:100',
+            'alamat_lengkap'        => 'required|string',
+
+            // Data Ayah
+            'ayah_nama'             => 'required|string|max:255',
+            'ayah_bin'              => 'required|string|max:255',
+            'ayah_nik'              => 'required|string|size:16',
+            'ayah_agama'            => 'required|string',
+            'ayah_kewarganegaraan'  => 'required|string',
+            'ayah_tempat_lahir'     => 'required|string|max:100',
+            'ayah_tanggal_lahir'    => 'required|date',
+            'ayah_pekerjaan'        => 'required|string',
+            'ayah_alamat'           => 'required|string',
+
+            // Data Ibu
+            'ibu_nama'              => 'required|string|max:255',
+            'ibu_binti'             => 'required|string|max:255',
+            'ibu_nik'               => 'required|string|size:16',
+            'ibu_agama'             => 'required|string',
+            'ibu_kewarganegaraan'   => 'required|string',
+            'ibu_tempat_lahir'      => 'required|string|max:100',
+            'ibu_tanggal_lahir'     => 'required|date',
+            'ibu_pekerjaan'         => 'required|string',
+            'ibu_alamat'            => 'required|string',
+
+            // Dokumen Lampiran
+            'skmh_surat_pengantar'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_akta_ijazah_catin'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_ktp_kk_catin'             => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_ktp_kk_ortu'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_pas_foto'                 => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_ktp_saksi'                => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_form_n2_n5'               => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_akta_cerai_kematian'      => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_dispensasi_pengadilan'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_izin_atasan'              => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_izin_poligami'            => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_rekom_dp3a'               => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_bukti_pbb'                => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
