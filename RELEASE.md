@@ -1,5 +1,24 @@
 # Release Notes
 
+## [v1.0.3] - 2026-03-09
+
+### Added — Template Surat Keterangan Menikah (SKMH)
+
+- **Jenis Surat Baru (SKMH)**: Ditambahkan tipe surat baru **Surat Keterangan Menikah (SKMH)** lengkap dengan seeder (`SkmhSeeder`), alur persetujuan per kelurahan, validasi form, dan template cetak PDF.
+- **Form Pengajuan Custom `types/skmh.blade.php`**: Form pengajuan SKMH terdiri dari 4 bagian:
+  - **Data Diri Pemohon** — dengan fitur *Scan KTP (OCR)* dan dropdown Status Perkawinan khusus nikah (Jejaka / Duda / Beristri ke-X / Perawan / Janda).
+  - **Data Orang Tua — Ayah** — Nama, Bin, NIK, Agama, Kewarganegaraan, TTL, Pekerjaan, Alamat.
+  - **Data Orang Tua — Ibu** — Nama, Binti, NIK, Agama, Kewarganegaraan, TTL, Pekerjaan, Alamat.
+  - **Upload Berkas** — 7 lampiran wajib + 5 lampiran opsional (Akta Cerai, Dispensasi Kawin, Izin TNI/POLRI, Izin Poligami, Rekom DP3A).
+- **Template PDF 2 Halaman `pdf/skmh.blade.php`**:
+  - **Halaman 1 (Cover)**: Surat Keterangan Untuk Nikah dengan nama, BIN/BINTI, alamat pemohon, dekorasi cincin nikah SVG, dan logo SiMPEL.
+  - **Halaman 2 (Formulir Pengantar Nikah — Blanko N1)**: Data pemohon dalam format daftar bernomor (1–9), Status Perkawinan terpisah a/b (Laki-laki / Perempuan), data Ayah ("Adalah benar anak dari perkawinan seorang pria:"), data Ibu ("Dengan seorang wanita:"), tanda tangan Lurah + QR code.
+- **Nomor Surat SKMH**: Format baru `472-SMPL/XXX/RomawiiBulan/KodeKelurahan/Tahun`.
+
+### Changed
+- **Format Nomor Surat semua tipe**: Semua kode surat kini ditambahkan suffix `-SMPL` (contoh: `400.12.3.1-SMPL/...`, `600.2-SMPL/...`, `500-SMPL/...`, `400.12-SMPL/...`) untuk membedakan surat yang diterbitkan melalui sistem SiMPEL.
+- **Validasi Request SKMH**: Menambahkan `getSkmhRules()` pada `StorePermohonanRequest` dengan aturan per-field untuk data pemohon, data orang tua, dan semua lampiran (wajib dan opsional).
+
 ## [v1.0.2] - 2026-03-09
 
 ### Added / Improvements
