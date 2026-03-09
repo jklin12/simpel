@@ -125,13 +125,17 @@ class PermohonanController extends Controller
                 'status' => 'pending',
             ]);
 
-            // Notify Approvers
-            $approvers = \App\Models\User::role($targetRole)
+            // Notify Admin Kelurahan, Admin Kecamatan, and Super Admin
+            $adminKelurahan = \App\Models\User::role($targetRole)
                 ->where('kelurahan_id', $request->kelurahan_id)
                 ->get();
+            $adminKecamatan = \App\Models\User::role('admin_kecamatan')->get();
+            $superAdmins = \App\Models\User::role('super_admin')->get();
 
-            foreach ($approvers as $approver) {
-                $approver->notify(new PermohonanBaruNotification($permohonan));
+            $notifiableAdmins = $adminKelurahan->merge($adminKecamatan)->merge($superAdmins);
+
+            foreach ($notifiableAdmins as $admin) {
+                $admin->notify(new PermohonanBaruNotification($permohonan));
             }
 
             // Notify Applicant (WhatsApp)
@@ -140,6 +144,15 @@ class PermohonanController extends Controller
             } catch (\Exception $e) {
                 // Log error but don't fail the transaction
                 Log::error('WA Notification failed: ' . $e->getMessage());
+            }
+
+            // Notify Admins (WhatsApp)
+            try {
+                foreach ($notifiableAdmins as $admin) {
+                    $admin->notify(new PermohonanCreatedWhatsapp($permohonan));
+                }
+            } catch (\Exception $e) {
+                Log::error('WA Admin Notification failed: ' . $e->getMessage());
             }
             DB::commit();
 

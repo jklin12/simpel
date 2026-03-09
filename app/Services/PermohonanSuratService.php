@@ -146,6 +146,19 @@ class PermohonanSuratService
                 Log::error('WA Approved notification failed: ' . $e->getMessage());
             }
 
+            // Send WhatsApp notification and Draft PDF to Lurah (admin_kelurahan)
+            try {
+                $lurahAdmins = User::role('admin_kelurahan')
+                    ->where('kelurahan_id', $permohonan->kelurahan_id)
+                    ->get();
+
+                foreach ($lurahAdmins as $lurahAdmin) {
+                    $lurahAdmin->notify(new PermohonanApprovedWhatsapp($permohonan->fresh()));
+                }
+            } catch (\Exception $e) {
+                Log::error('WA Lurah notification failed: ' . $e->getMessage());
+            }
+
             return $permohonan->fresh();
         } catch (\Exception $e) {
             DB::rollBack();
@@ -270,13 +283,18 @@ class PermohonanSuratService
 
             DB::commit();
 
-            // 1. Notifikasi push (database) ke semua admin_kelurahan — dibedakan sebagai REVISI
+            // 1. Notifikasi push (database) ke admin kelurahan, kecamatan, dan super admin
             try {
-                $approvers = User::role('admin_kelurahan')
+                $adminKelurahan = User::role('admin_kelurahan')
                     ->where('kelurahan_id', $permohonan->kelurahan_id)
                     ->get();
-                foreach ($approvers as $approver) {
-                    $approver->notify(new PermohonanRevisiNotification($permohonan->fresh()));
+                $adminKecamatan = User::role('admin_kecamatan')->get();
+                $superAdmins = User::role('super_admin')->get();
+
+                $notifiableAdmins = $adminKelurahan->merge($adminKecamatan)->merge($superAdmins);
+
+                foreach ($notifiableAdmins as $admin) {
+                    $admin->notify(new PermohonanRevisiNotification($permohonan->fresh()));
                 }
             } catch (\Exception $e) {
                 Log::error('Notifikasi revisi admin gagal: ' . $e->getMessage());

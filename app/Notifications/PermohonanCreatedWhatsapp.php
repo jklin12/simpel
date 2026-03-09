@@ -37,10 +37,22 @@ class PermohonanCreatedWhatsapp extends Notification
      */
     public function toWhatsApp(object $notifiable)
     {
-        return "Halo {$this->permohonan->nama_pemohon},\n\n" .
-            "Permohonan surat *{$this->permohonan->jenisSurat->nama}* Anda telah kami terima.\n\n" .
-            "Kode Tracking: *{$this->permohonan->track_token}*\n\n" .
-            "Gunakan kode ini untuk mengecek status permohonan Anda di website kami.\n" .
-            "Terima kasih.";
+        $p = $this->permohonan;
+        $isApplicant = $notifiable instanceof \App\Models\PermohonanSurat;
+
+        if ($isApplicant) {
+            return "Halo {$p->nama_pemohon},\n\n" .
+                "Permohonan surat *{$p->jenisSurat->nama}* Anda telah kami terima.\n\n" .
+                "Kode Tracking: *{$p->track_token}*\n\n" .
+                "Gunakan kode ini untuk mengecek status permohonan Anda di website kami.\n" .
+                "Terima kasih.";
+        }
+
+        // Untuk notifikasi ke Admin
+        $adminName = $notifiable->name ?? 'Admin';
+        return "Halo {$adminName},\n\n" .
+            "Terdapat permohonan surat *baru* untuk layanan *{$p->jenisSurat->nama}* atas nama *{$p->nama_pemohon}*.\n\n" .
+            "Kode Tracking: *{$p->track_token}*\n\n" .
+            "Silakan login ke panel admin untuk memverifikasi permohonan ini.";
     }
 }

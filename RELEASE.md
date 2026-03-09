@@ -1,5 +1,14 @@
 # Release Notes
 
+## [v1.0.2] - 2026-03-09
+
+### Added / Improvements
+- **Notifikasi WhatsApp Multi-Role**: Sistem kini dapat mengirimkan notifikasi permohonan baru (`PermohonanCreatedWhatsapp`) dan revisi (`PermohonanRevisiNotification`) tidak hanya ke pemohon, tetapi juga kepada `admin_kelurahan`, `admin_kecamatan`, dan `super_admin` untuk meningkatkan *awareness*.
+- **Pesan WhatsApp Berbasis Role**: Pesan WhatsApp kini disesuaikan otomatis berdasarkan penerima. Pemohon mendapatkan pesan berisi arahan dan progres, sedangkan admin menerima pesan ajakan untuk memverifikasi atau menandatangani dokumen.
+- **Attachment Draft PDF otomatis via WhatsApp**: Menambahkan fungsionalitas pengiriman dokumen draf persetujuan dalam bentuk PDF yang dilampirkan langsung via WhatsApp ke akun `admin_kelurahan` (Lurah) pada saat persetujuan permohonan, mempermudah dan mempercepat proses penandatanganan surat.
+- **Konfigurasi API WhatsApp Dinamis**: Mengubah *hardcoded url* sehingga konfigurasi Basic Auth (`username`, `password`) dan Base URL penyedia WhatsApp gateway diletakkan tersentralisasi di `config/services.php` dan file `.env`.
+- **Pengalihan WA untuk Environment Local**: Menambahkan fitur _intercept_ pada `WhatsAppChannel` yang akan mengalihkan semua notifikasi WA ke satu nomor testing khusus secara statis ketika environment server adalah `local`.
+
 ## [v1.0.1] - 2026-03-04
 
 ### Added / Added Features
