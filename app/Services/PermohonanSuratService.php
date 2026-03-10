@@ -148,7 +148,7 @@ class PermohonanSuratService
 
             // Send WhatsApp notification and Draft PDF to Lurah (admin_kelurahan)
             try {
-                $lurahAdmins = User::role('admin_kelurahan')
+                $lurahAdmins = User::role('lurah')
                     ->where('kelurahan_id', $permohonan->kelurahan_id)
                     ->get();
 
