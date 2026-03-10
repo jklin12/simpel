@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Kecamatan;
 use App\Models\Kabupaten;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class KecamatanController extends Controller
 {
@@ -48,9 +49,21 @@ class KecamatanController extends Controller
             'kabupaten_id' => 'required|exists:m_kabupatens,id',
             'nama' => 'required|string|max:255',
             'kode' => 'required|string|unique:m_kecamatans,kode|max:20',
+            'camat_nama' => 'nullable|string|max:255',
+            'camat_nip' => 'nullable|string|max:255',
+            'camat_pangkat' => 'nullable|string|max:255',
+            'camat_golongan' => 'nullable|string|max:255',
+            'kop_surat_path' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        Kecamatan::create($request->all());
+        $data = $request->except('kop_surat_path');
+
+        if ($request->hasFile('kop_surat_path')) {
+            $path = $request->file('kop_surat_path')->store('kop_surat_kecamatan', 'public');
+            $data['kop_surat_path'] = $path;
+        }
+
+        Kecamatan::create($data);
 
         return redirect()->route('admin.master.kecamatan.index')->with('success', 'Kecamatan created successfully');
     }
@@ -73,9 +86,25 @@ class KecamatanController extends Controller
             'kabupaten_id' => 'required|exists:m_kabupatens,id',
             'nama' => 'required|string|max:255',
             'kode' => 'required|string|max:20|unique:m_kecamatans,kode,' . $kecamatan->id,
+            'camat_nama' => 'nullable|string|max:255',
+            'camat_nip' => 'nullable|string|max:255',
+            'camat_pangkat' => 'nullable|string|max:255',
+            'camat_golongan' => 'nullable|string|max:255',
+            'kop_surat_path' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        $kecamatan->update($request->all());
+        $data = $request->except('kop_surat_path');
+
+        if ($request->hasFile('kop_surat_path')) {
+            // Delete old file if exists
+            if ($kecamatan->kop_surat_path && Storage::disk('public')->exists($kecamatan->kop_surat_path)) {
+                Storage::disk('public')->delete($kecamatan->kop_surat_path);
+            }
+            $path = $request->file('kop_surat_path')->store('kop_surat_kecamatan', 'public');
+            $data['kop_surat_path'] = $path;
+        }
+
+        $kecamatan->update($data);
 
         return redirect()->route('admin.master.kecamatan.index')->with('success', 'Kecamatan updated successfully');
     }

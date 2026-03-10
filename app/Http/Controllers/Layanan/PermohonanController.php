@@ -115,24 +115,38 @@ class PermohonanController extends Controller
             $this->handleFileUploads($request, $permohonan);
 
             // Trigger Approval Flow
-            $targetRole = 'admin_kelurahan';
+            // HARDCODED BYPASS FOR SDNH: Langsung ke admin_kecamatan
+            if (strtoupper($service->kode) === 'SDNH') {
+                $targetRole = 'admin_kecamatan';
+                $stepName   = 'Verifikasi Tingkat Kecamatan';
+            } else {
+                $targetRole = 'admin_kelurahan';
+                $stepName   = 'Verifikasi Berkas';
+            }
 
             PermohonanApproval::create([
                 'permohonan_surat_id' => $permohonan->id,
-                'target_role' => $targetRole,
-                'step_name' => 'Verifikasi Berkas',
-                'step_order' => 1,
-                'status' => 'pending',
+                'target_role'         => $targetRole,
+                'step_name'           => $stepName,
+                'step_order'          => 1,
+                'status'              => 'pending',
             ]);
 
-            // Notify Admin Kelurahan, Admin Kecamatan, and Super Admin
-            $adminKelurahan = \App\Models\User::role($targetRole)
-                ->where('kelurahan_id', $request->kelurahan_id)
-                ->get();
+            // Notify Admins
             $adminKecamatan = \App\Models\User::role('admin_kecamatan')->get();
-            $superAdmins = \App\Models\User::role('super_admin')->get();
+            $superAdmins    = \App\Models\User::role('super_admin')->get();
 
-            $notifiableAdmins = $adminKelurahan->merge($adminKecamatan)->merge($superAdmins);
+            $notifiableAdmins = collect();
+
+            // Jika BUKAN SDNH, admin kelurahan diikutkan notifikasinya
+            if (strtoupper($service->kode) !== 'SDNH') {
+                $adminKelurahan = \App\Models\User::role(['admin_kelurahan', 'lurah'])
+                    ->where('kelurahan_id', $request->kelurahan_id)
+                    ->get();
+                $notifiableAdmins = $notifiableAdmins->merge($adminKelurahan);
+            }
+
+            $notifiableAdmins = $notifiableAdmins->merge($adminKecamatan)->merge($superAdmins)->unique('id');
 
             foreach ($notifiableAdmins as $admin) {
                 $admin->notify(new PermohonanBaruNotification($permohonan));

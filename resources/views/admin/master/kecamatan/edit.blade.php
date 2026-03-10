@@ -15,7 +15,7 @@
 </div>
 
 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 max-w-2xl">
-    <form action="{{ route('admin.master.kecamatan.update', $kecamatan->id) }}" method="POST">
+    <form action="{{ route('admin.master.kecamatan.update', $kecamatan->id) }}" method="POST" enctype="multipart/form-data">
         @csrf
         @method('PUT')
         <div class="space-y-6">
@@ -47,6 +47,43 @@
                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                 @enderror
                 <p class="mt-1 text-xs text-gray-500">Kode unik untuk identifikasi wilayah (Kemendagri).</p>
+            </div>
+
+            <hr class="border-gray-200 my-4">
+
+            <h3 class="text-lg font-medium text-gray-900">Data Profil Camat & Kop Surat</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="camat_nama" class="block text-sm font-medium text-gray-700 mb-1">Nama Camat</label>
+                    <input type="text" name="camat_nama" id="camat_nama" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: DINNY WAHYUNY, S.STP" value="{{ old('camat_nama', $kecamatan->camat_nama) }}">
+                </div>
+                <div>
+                    <label for="camat_nip" class="block text-sm font-medium text-gray-700 mb-1">NIP Camat</label>
+                    <input type="text" name="camat_nip" id="camat_nip" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: 19800723 199810 2 001" value="{{ old('camat_nip', $kecamatan->camat_nip) }}">
+                </div>
+                <div>
+                    <label for="camat_pangkat" class="block text-sm font-medium text-gray-700 mb-1">Pangkat Camat</label>
+                    <input type="text" name="camat_pangkat" id="camat_pangkat" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: Pembina Tingkat I" value="{{ old('camat_pangkat', $kecamatan->camat_pangkat) }}">
+                </div>
+                <div>
+                    <label for="camat_golongan" class="block text-sm font-medium text-gray-700 mb-1">Golongan Camat</label>
+                    <input type="text" name="camat_golongan" id="camat_golongan" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: IV/b" value="{{ old('camat_golongan', $kecamatan->camat_golongan) }}">
+                </div>
+            </div>
+
+            <div>
+                <label for="kop_surat_path" class="block text-sm font-medium text-gray-700 mb-1">Kop Surat Kecamatan (Gambar)</label>
+                @if($kecamatan->kop_surat_path)
+                <div class="mb-3">
+                    <img src="{{ Storage::url($kecamatan->kop_surat_path) }}" alt="Kop Surat" class="h-20 border rounded-md shadow-sm">
+                </div>
+                @endif
+                <input type="file" name="kop_surat_path" id="kop_surat_path" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                <p class="mt-1 text-xs text-gray-500">Format: JPG/PNG/WEBP, Maks: 2MB. Kosongkan jika tidak ingin mengubah Kop Surat.</p>
+                @error('kop_surat_path')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">

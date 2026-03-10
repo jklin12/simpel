@@ -269,10 +269,18 @@ class PermohonanSuratService
 
             // Buat approval baru step 1 dengan catatan revisi
             // Approval lama (rejected) dibiarkan sebagai riwayat
+            if (strtoupper($permohonan->jenisSurat->kode) === 'SDNH') {
+                $targetRole = 'admin_kecamatan';
+                $stepName   = 'Verifikasi Tingkat Kecamatan';
+            } else {
+                $targetRole = 'admin_kelurahan';
+                $stepName   = 'Verifikasi Berkas';
+            }
+
             PermohonanApproval::create([
                 'permohonan_surat_id' => $permohonan->id,
-                'target_role'         => 'admin_kelurahan',
-                'step_name'           => 'Verifikasi Berkas',
+                'target_role'         => $targetRole,
+                'step_name'           => $stepName,
                 'step_order'          => 1,
                 'status'              => 'pending',
                 'catatan'             => "Revisi #{$newRevisionCount} — diajukan ulang setelah penolakan",
@@ -283,15 +291,22 @@ class PermohonanSuratService
 
             DB::commit();
 
-            // 1. Notifikasi push (database) ke admin kelurahan, kecamatan, dan super admin
+            // 1. Notifikasi push (database)
             try {
-                $adminKelurahan = User::role('admin_kelurahan')
-                    ->where('kelurahan_id', $permohonan->kelurahan_id)
-                    ->get();
                 $adminKecamatan = User::role('admin_kecamatan')->get();
-                $superAdmins = User::role('super_admin')->get();
+                $superAdmins    = User::role('super_admin')->get();
 
-                $notifiableAdmins = $adminKelurahan->merge($adminKecamatan)->merge($superAdmins);
+                $notifiableAdmins = collect();
+
+                // Jika BUKAN SDNH, admin kelurahan ikut di-notify
+                if (strtoupper($permohonan->jenisSurat->kode) !== 'SDNH') {
+                    $adminKelurahan = User::role(['admin_kelurahan', 'lurah'])
+                        ->where('kelurahan_id', $permohonan->kelurahan_id)
+                        ->get();
+                    $notifiableAdmins = $notifiableAdmins->merge($adminKelurahan);
+                }
+
+                $notifiableAdmins = $notifiableAdmins->merge($adminKecamatan)->merge($superAdmins)->unique('id');
 
                 foreach ($notifiableAdmins as $admin) {
                     $admin->notify(new PermohonanRevisiNotification($permohonan->fresh()));
@@ -332,16 +347,34 @@ class PermohonanSuratService
         $kelurahan  = $permohonan->kelurahan;
         $now        = Carbon::now();
 
-        // Get or create counter for this month
-        $counter = SuratCounter::firstOrCreate(
-            [
-                'jenis_surat_id' => $jenisSurat->id,
-                'kelurahan_id'   => $kelurahan->id,
-                'tahun'          => $now->year,
-                'bulan'          => $now->month,
-            ],
-            ['counter' => 0]
-        );
+        // Get or create counter
+        if (strtoupper($jenisSurat->kode) === 'SDNH') {
+            // SDNH menggunakan counter Tahunan untuk skala Kecamatan
+            // Anchor counter diletakkan pada satu kelurahan pertama di kecamatan tsb
+            $kelurahanKecamatan = \App\Models\Kelurahan::where('kecamatan_id', $kelurahan->kecamatan_id)->first();
+            $anchorKelurahanId  = $kelurahanKecamatan ? $kelurahanKecamatan->id : $kelurahan->id;
+
+            $counter = SuratCounter::firstOrCreate(
+                [
+                    'jenis_surat_id' => $jenisSurat->id,
+                    'kelurahan_id'   => $anchorKelurahanId,
+                    'tahun'          => $now->year,
+                    'bulan'          => 1, // Fix bulan 1 agar berlaku setahun penuh
+                ],
+                ['counter' => 0]
+            );
+        } else {
+            // Surat normal menggunakan counter Bulanan per Kelurahan
+            $counter = SuratCounter::firstOrCreate(
+                [
+                    'jenis_surat_id' => $jenisSurat->id,
+                    'kelurahan_id'   => $kelurahan->id,
+                    'tahun'          => $now->year,
+                    'bulan'          => $now->month,
+                ],
+                ['counter' => 0]
+            );
+        }
 
         $counter->increment('counter');
         $counter->refresh();
@@ -392,6 +425,14 @@ class PermohonanSuratService
                 $counter->counter,
                 $this->toRoman($now->month),
                 $kodeKelurahan,
+                $now->format('Y')
+            );
+        } elseif ($kodeJenis === 'SDNH') {
+            // Format requested: 400.12.3.2 / 012 / I / KEC.LU / 2026
+            $nomorSurat = sprintf(
+                '400.12.3.2/%03d/%s/KEC.LU/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
                 $now->format('Y')
             );
         } else {
