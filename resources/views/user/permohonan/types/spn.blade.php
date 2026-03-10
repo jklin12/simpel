@@ -139,15 +139,42 @@
             </div>
 
             <!-- Bagian 2: Data Orang Tua — Ayah -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">2</span>
-                    Data Orang Tua — Ayah
-                </h2>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8" x-data="ocrAyahHandler()">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">2</span>
+                        Data Orang Tua — Ayah
+                    </h2>
+                    <div class="flex flex-col items-end">
+                        <button type="button" @click="triggerOCR" :disabled="loading"
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-60 disabled:cursor-not-allowed">
+                            <template x-if="!loading">
+                                <svg class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </template>
+                            <template x-if="loading">
+                                <svg class="animate-spin h-5 w-5 mr-2 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                </svg>
+                            </template>
+                            <span x-text="loading ? 'Memproses...' : 'Scan KTP Ayah'"></span>
+                        </button>
+                    </div>
+                    <input type="file" x-ref="ocrInput" class="hidden" accept="image/*" @change="handleFileUpload">
+                </div>
+
+                <!-- OCR Status -->
+                <div x-show="statusMsg" x-text="statusMsg"
+                    :class="statusOk ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'"
+                    class="mb-4 text-sm border rounded-lg px-4 py-2" style="display:none"></div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nama Ayah <span class="text-red-500">*</span></label>
-                        <input type="text" name="ayah_nama" value="{{ old('ayah_nama') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <input type="text" x-model="nama" name="ayah_nama" value="{{ old('ayah_nama') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('ayah_nama') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
@@ -157,12 +184,12 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">NIK Ayah <span class="text-red-500">*</span></label>
-                        <input type="text" name="ayah_nik" value="{{ old('ayah_nik') }}" maxlength="16" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <input type="text" x-model="nik" name="ayah_nik" value="{{ old('ayah_nik') }}" maxlength="16" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('ayah_nik') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Agama Ayah <span class="text-red-500">*</span></label>
-                        <select name="ayah_agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <select x-ref="agamaSelect" name="ayah_agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                             <option value="">Pilih Agama</option>
                             @foreach(['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu'] as $ag)
                             <option value="{{ $ag }}" {{ old('ayah_agama') == $ag ? 'selected' : '' }}>{{ $ag }}</option>
@@ -180,37 +207,69 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan Ayah <span class="text-red-500">*</span></label>
-                        <input type="text" name="ayah_pekerjaan" value="{{ old('ayah_pekerjaan') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <select name="ayah_pekerjaan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4 select2-pekerjaan" required>
+                            <option value="">Pilih Pekerjaan</option>
+                            @foreach($pekerjaanList ?? [] as $pekerjaan)
+                            <option value="{{ $pekerjaan }}" {{ old('ayah_pekerjaan') == $pekerjaan ? 'selected' : '' }}>{{ $pekerjaan }}</option>
+                            @endforeach
+                        </select>
                         @error('ayah_pekerjaan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir Ayah <span class="text-red-500">*</span></label>
-                        <input type="text" name="ayah_tempat_lahir" value="{{ old('ayah_tempat_lahir') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <input type="text" x-model="tempat_lahir" name="ayah_tempat_lahir" value="{{ old('ayah_tempat_lahir') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('ayah_tempat_lahir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir Ayah <span class="text-red-500">*</span></label>
-                        <input type="date" name="ayah_tanggal_lahir" value="{{ old('ayah_tanggal_lahir') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <input type="date" x-model="tanggal_lahir" name="ayah_tanggal_lahir" value="{{ old('ayah_tanggal_lahir') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('ayah_tanggal_lahir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Sesuai KTP Ayah <span class="text-red-500">*</span></label>
-                        <textarea name="ayah_alamat" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('ayah_alamat') }}</textarea>
+                        <textarea x-model="alamat" name="ayah_alamat" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('ayah_alamat') }}</textarea>
                         @error('ayah_alamat') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
 
             <!-- Bagian 3: Data Orang Tua — Ibu -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">3</span>
-                    Data Orang Tua — Ibu
-                </h2>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8" x-data="ocrIbuHandler()">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">3</span>
+                        Data Orang Tua — Ibu
+                    </h2>
+                    <div class="flex flex-col items-end">
+                        <button type="button" @click="triggerOCR" :disabled="loading"
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-60 disabled:cursor-not-allowed">
+                            <template x-if="!loading">
+                                <svg class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </template>
+                            <template x-if="loading">
+                                <svg class="animate-spin h-5 w-5 mr-2 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                </svg>
+                            </template>
+                            <span x-text="loading ? 'Memproses...' : 'Scan KTP Ibu'"></span>
+                        </button>
+                    </div>
+                    <input type="file" x-ref="ocrInput" class="hidden" accept="image/*" @change="handleFileUpload">
+                </div>
+
+                <!-- OCR Status -->
+                <div x-show="statusMsg" x-text="statusMsg"
+                    :class="statusOk ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'"
+                    class="mb-4 text-sm border rounded-lg px-4 py-2" style="display:none"></div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nama Ibu <span class="text-red-500">*</span></label>
-                        <input type="text" name="ibu_nama" value="{{ old('ibu_nama') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <input type="text" x-model="nama" name="ibu_nama" value="{{ old('ibu_nama') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('ibu_nama') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
@@ -220,12 +279,12 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">NIK Ibu <span class="text-red-500">*</span></label>
-                        <input type="text" name="ibu_nik" value="{{ old('ibu_nik') }}" maxlength="16" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <input type="text" x-model="nik" name="ibu_nik" value="{{ old('ibu_nik') }}" maxlength="16" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('ibu_nik') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Agama Ibu <span class="text-red-500">*</span></label>
-                        <select name="ibu_agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <select x-ref="agamaSelect" name="ibu_agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                             <option value="">Pilih Agama</option>
                             @foreach(['Islam','Kristen','Katolik','Hindu','Buddha','Konghucu'] as $ag)
                             <option value="{{ $ag }}" {{ old('ibu_agama') == $ag ? 'selected' : '' }}>{{ $ag }}</option>
@@ -243,22 +302,27 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan Ibu <span class="text-red-500">*</span></label>
-                        <input type="text" name="ibu_pekerjaan" value="{{ old('ibu_pekerjaan') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <select name="ibu_pekerjaan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4 select2-pekerjaan" required>
+                            <option value="">Pilih Pekerjaan</option>
+                            @foreach($pekerjaanList ?? [] as $pekerjaan)
+                            <option value="{{ $pekerjaan }}" {{ old('ibu_pekerjaan') == $pekerjaan ? 'selected' : '' }}>{{ $pekerjaan }}</option>
+                            @endforeach
+                        </select>
                         @error('ibu_pekerjaan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir Ibu <span class="text-red-500">*</span></label>
-                        <input type="text" name="ibu_tempat_lahir" value="{{ old('ibu_tempat_lahir') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <input type="text" x-model="tempat_lahir" name="ibu_tempat_lahir" value="{{ old('ibu_tempat_lahir') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('ibu_tempat_lahir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir Ibu <span class="text-red-500">*</span></label>
-                        <input type="date" name="ibu_tanggal_lahir" value="{{ old('ibu_tanggal_lahir') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <input type="date" x-model="tanggal_lahir" name="ibu_tanggal_lahir" value="{{ old('ibu_tanggal_lahir') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('ibu_tanggal_lahir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Sesuai KTP Ibu <span class="text-red-500">*</span></label>
-                        <textarea name="ibu_alamat" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('ibu_alamat') }}</textarea>
+                        <textarea x-model="alamat" name="ibu_alamat" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('ibu_alamat') }}</textarea>
                         @error('ibu_alamat') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
@@ -431,8 +495,178 @@
                                             this.$refs.agamaSelect.value = d.agama.charAt(0).toUpperCase() + d.agama.slice(1).toLowerCase();
                                         });
                                     }
+                                    if (d.pekerjaan) {
+                                        this.$nextTick(() => {
+                                            const tsElement = document.querySelector('select[name="pekerjaan"]');
+                                            if (tsElement && tsElement.tomselect) {
+                                                const ts = tsElement.tomselect;
+                                                let jobTitleCase = d.pekerjaan.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                                                if (d.pekerjaan.toUpperCase() === 'PNS') jobTitleCase = 'PNS (Pegawai Negeri Sipil)';
+                                                else if (d.pekerjaan.toUpperCase() === 'TNI') jobTitleCase = 'TNI (Tentara Nasional Indonesia)';
+                                                else if (d.pekerjaan.toUpperCase() === 'POLRI') jobTitleCase = 'POLRI';
+
+                                                ts.addOption({
+                                                    value: jobTitleCase,
+                                                    text: jobTitleCase
+                                                });
+                                                ts.setValue(jobTitleCase);
+                                            }
+                                        });
+                                    }
                                     this.statusOk = true;
                                     this.statusMsg = '✓ Data KTP berhasil diekstrak!';
+                                } else {
+                                    this.statusOk = false;
+                                    this.statusMsg = '✗ ' + (result.message || 'Gagal memproses KTP.');
+                                }
+                            } catch (err) {
+                                this.statusOk = false;
+                                this.statusMsg = '✗ Gagal menghubungi server OCR.';
+                            } finally {
+                                this.loading = false;
+                            }
+                        }
+                    }
+                }
+
+                function ocrAyahHandler() {
+                    return {
+                        nama: '{{ old("ayah_nama") }}',
+                        nik: '{{ old("ayah_nik") }}',
+                        tempat_lahir: '{{ old("ayah_tempat_lahir") }}',
+                        tanggal_lahir: '{{ old("ayah_tanggal_lahir") }}',
+                        alamat: '{{ old("ayah_alamat") }}',
+                        loading: false,
+                        statusMsg: '',
+                        statusOk: true,
+
+                        triggerOCR: function() {
+                            this.$refs.ocrInput.value = '';
+                            this.$refs.ocrInput.click();
+                        },
+
+                        async handleFileUpload(e) {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            this.loading = true;
+                            this.statusMsg = '';
+                            const formData = new FormData();
+                            formData.append('ktp_image', file);
+                            formData.append('_token', '{{ csrf_token() }}');
+                            try {
+                                const response = await fetch('{{ route("layanan.surat.ocr") }}', {
+                                    method: 'POST',
+                                    body: formData
+                                });
+                                const result = await response.json();
+                                if (result.success) {
+                                    const d = result.data;
+                                    if (d.nama) this.nama = d.nama;
+                                    if (d.nik) this.nik = d.nik;
+                                    if (d.tempat_lahir) this.tempat_lahir = d.tempat_lahir;
+                                    if (d.tanggal_lahir) this.tanggal_lahir = d.tanggal_lahir;
+                                    if (d.alamat) this.alamat = d.alamat;
+                                    if (d.agama && this.$refs.agamaSelect) {
+                                        this.$nextTick(() => {
+                                            this.$refs.agamaSelect.value = d.agama.charAt(0).toUpperCase() + d.agama.slice(1).toLowerCase();
+                                        });
+                                    }
+                                    if (d.pekerjaan) {
+                                        this.$nextTick(() => {
+                                            const tsElement = document.querySelector('select[name="ayah_pekerjaan"]');
+                                            if (tsElement && tsElement.tomselect) {
+                                                const ts = tsElement.tomselect;
+                                                let jobTitleCase = d.pekerjaan.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                                                if (d.pekerjaan.toUpperCase() === 'PNS') jobTitleCase = 'PNS (Pegawai Negeri Sipil)';
+                                                else if (d.pekerjaan.toUpperCase() === 'TNI') jobTitleCase = 'TNI (Tentara Nasional Indonesia)';
+                                                else if (d.pekerjaan.toUpperCase() === 'POLRI') jobTitleCase = 'POLRI';
+
+                                                ts.addOption({
+                                                    value: jobTitleCase,
+                                                    text: jobTitleCase
+                                                });
+                                                ts.setValue(jobTitleCase);
+                                            }
+                                        });
+                                    }
+                                    this.statusOk = true;
+                                    this.statusMsg = '✓ Data KTP Ayah berhasil diekstrak!';
+                                } else {
+                                    this.statusOk = false;
+                                    this.statusMsg = '✗ ' + (result.message || 'Gagal memproses KTP.');
+                                }
+                            } catch (err) {
+                                this.statusOk = false;
+                                this.statusMsg = '✗ Gagal menghubungi server OCR.';
+                            } finally {
+                                this.loading = false;
+                            }
+                        }
+                    }
+                }
+
+                function ocrIbuHandler() {
+                    return {
+                        nama: '{{ old("ibu_nama") }}',
+                        nik: '{{ old("ibu_nik") }}',
+                        tempat_lahir: '{{ old("ibu_tempat_lahir") }}',
+                        tanggal_lahir: '{{ old("ibu_tanggal_lahir") }}',
+                        alamat: '{{ old("ibu_alamat") }}',
+                        loading: false,
+                        statusMsg: '',
+                        statusOk: true,
+
+                        triggerOCR: function() {
+                            this.$refs.ocrInput.value = '';
+                            this.$refs.ocrInput.click();
+                        },
+
+                        async handleFileUpload(e) {
+                            const file = e.target.files[0];
+                            if (!file) return;
+                            this.loading = true;
+                            this.statusMsg = '';
+                            const formData = new FormData();
+                            formData.append('ktp_image', file);
+                            formData.append('_token', '{{ csrf_token() }}');
+                            try {
+                                const response = await fetch('{{ route("layanan.surat.ocr") }}', {
+                                    method: 'POST',
+                                    body: formData
+                                });
+                                const result = await response.json();
+                                if (result.success) {
+                                    const d = result.data;
+                                    if (d.nama) this.nama = d.nama;
+                                    if (d.nik) this.nik = d.nik;
+                                    if (d.tempat_lahir) this.tempat_lahir = d.tempat_lahir;
+                                    if (d.tanggal_lahir) this.tanggal_lahir = d.tanggal_lahir;
+                                    if (d.alamat) this.alamat = d.alamat;
+                                    if (d.agama && this.$refs.agamaSelect) {
+                                        this.$nextTick(() => {
+                                            this.$refs.agamaSelect.value = d.agama.charAt(0).toUpperCase() + d.agama.slice(1).toLowerCase();
+                                        });
+                                    }
+                                    if (d.pekerjaan) {
+                                        this.$nextTick(() => {
+                                            const tsElement = document.querySelector('select[name="ibu_pekerjaan"]');
+                                            if (tsElement && tsElement.tomselect) {
+                                                const ts = tsElement.tomselect;
+                                                let jobTitleCase = d.pekerjaan.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                                                if (d.pekerjaan.toUpperCase() === 'PNS') jobTitleCase = 'PNS (Pegawai Negeri Sipil)';
+                                                else if (d.pekerjaan.toUpperCase() === 'TNI') jobTitleCase = 'TNI (Tentara Nasional Indonesia)';
+                                                else if (d.pekerjaan.toUpperCase() === 'POLRI') jobTitleCase = 'POLRI';
+
+                                                ts.addOption({
+                                                    value: jobTitleCase,
+                                                    text: jobTitleCase
+                                                });
+                                                ts.setValue(jobTitleCase);
+                                            }
+                                        });
+                                    }
+                                    this.statusOk = true;
+                                    this.statusMsg = '✓ Data KTP Ibu berhasil diekstrak!';
                                 } else {
                                     this.statusOk = false;
                                     this.statusMsg = '✗ ' + (result.message || 'Gagal memproses KTP.');

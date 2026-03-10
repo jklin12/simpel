@@ -79,17 +79,19 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const selectPekerjaan = document.querySelector('.select2-pekerjaan');
-        if (selectPekerjaan) {
-            new TomSelect(selectPekerjaan, {
-                create: true,
-                sortField: {
-                    field: "text",
-                    direction: "asc"
-                },
-                placeholder: "Pilih atau Ketik Pekerjaan Baru"
-            });
-        }
+        const selectPekerjaanAll = document.querySelectorAll('.select2-pekerjaan');
+        selectPekerjaanAll.forEach(function(selectPekerjaan) {
+            if (selectPekerjaan && !selectPekerjaan.tomselect) {
+                new TomSelect(selectPekerjaan, {
+                    create: true,
+                    sortField: {
+                        field: "text",
+                        direction: "asc"
+                    },
+                    placeholder: "Pilih atau Ketik Pekerjaan Baru"
+                });
+            }
+        });
 
         // Inject attachment guides dari database ke bawah setiap file input
         const storageBase = '<?= Storage::url("") ?>';
