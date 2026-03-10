@@ -133,7 +133,7 @@
 
             get needsLocation() {
                 // Returns true if role requires any location UI section to be shown
-                return ['admin_kabupaten', 'admin_kecamatan', 'admin_kelurahan'].includes(this.role);
+                return ['admin_kabupaten', 'admin_kecamatan', 'admin_kelurahan', 'lurah'].includes(this.role);
             },
             get showKabupaten() {
                 // Kabupaten logic: The user asked to make it static and hidden, 
@@ -142,10 +142,10 @@
                 return this.needsLocation;
             },
             get showKecamatan() {
-                return ['admin_kecamatan', 'admin_kelurahan'].includes(this.role);
+                return ['admin_kecamatan', 'admin_kelurahan', 'lurah'].includes(this.role);
             },
             get showKelurahan() {
-                return ['admin_kelurahan'].includes(this.role);
+                return ['admin_kelurahan', 'lurah'].includes(this.role);
             },
 
             init() {

@@ -46,7 +46,7 @@ class StorePermohonanRequest extends FormRequest
             case 'SKBM': // Surat Keterangan Belum Menikah
                 $specificRules = $this->getSkbmRules();
                 break;
-            case 'SKMH': // Surat Keterangan Menikah
+            case 'SPN': // Surat Keterangan Menikah
                 $specificRules = $this->getSkmhRules();
                 break;
             case 'SKP': // Surat Keterangan Penghasilan
@@ -110,7 +110,7 @@ class StorePermohonanRequest extends FormRequest
             'skp_ktp_kk',
             'skp_ktp_saksi',
             'skp_bukti_pbb',
-            // SKMH
+            // SPN
             'skmh_surat_pengantar',
             'skmh_akta_ijazah_catin',
             'skmh_ktp_kk_catin',

@@ -10,14 +10,14 @@ use App\Models\Kelurahan;
 class SkmhSeeder extends Seeder
 {
     /**
-     * Seed jenis surat SKMH + approval flow untuk semua kelurahan
+     * Seed jenis surat SPN + approval flow untuk semua kelurahan
      * di kecamatan Landasan Ulin (kecamatan_id 6372010).
      */
     public function run(): void
     {
         // ---- 1. JenisSurat ----
         $skmh = JenisSurat::updateOrCreate(
-            ['kode' => 'SKMH'],
+            ['kode' => 'SPN'],
             [
                 'nama'      => 'Surat Keterangan Menikah',
                 'deskripsi' => 'Surat Pengantar / Keterangan untuk mengurus pernikahan yang diterbitkan oleh Kelurahan.',
@@ -57,7 +57,7 @@ class SkmhSeeder extends Seeder
                     'ibu_pekerjaan',
                     'ibu_alamat',
 
-                    // Lampiran SKMH
+                    // Lampiran SPN
                     'skmh_surat_pengantar',
                     'skmh_akta_ijazah_catin',
                     'skmh_ktp_kk_catin',
@@ -76,7 +76,7 @@ class SkmhSeeder extends Seeder
             ]
         );
 
-        $this->command->info("✓ JenisSurat SKMH (ID: {$skmh->id}) siap.");
+        $this->command->info("✓ JenisSurat SPN (ID: {$skmh->id}) siap.");
 
         // ---- 2. Approval Flow ----
         // Buat flow untuk setiap kelurahan di kecamatan Landasan Ulin
@@ -94,7 +94,7 @@ class SkmhSeeder extends Seeder
                     'kelurahan_id'   => $kelurahan->id,
                 ],
                 [
-                    'nama'                       => 'Flow Kelurahan SKMH',
+                    'nama'                       => 'Flow Kelurahan SPN',
                     'require_kecamatan_approval' => false,
                     'require_kabupaten_approval' => false,
                     'is_active'                  => true,

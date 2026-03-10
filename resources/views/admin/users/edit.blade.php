@@ -132,13 +132,13 @@
             kelurahans: [],
 
             get needsLocation() {
-                return ['admin_kabupaten', 'admin_kecamatan', 'admin_kelurahan'].includes(this.role);
+                return ['admin_kabupaten', 'admin_kecamatan', 'admin_kelurahan', 'lurah'].includes(this.role);
             },
             get showKecamatan() {
-                return ['admin_kecamatan', 'admin_kelurahan'].includes(this.role);
+                return ['admin_kecamatan', 'admin_kelurahan', 'lurah'].includes(this.role);
             },
             get showKelurahan() {
-                return ['admin_kelurahan'].includes(this.role);
+                return ['admin_kelurahan', 'lurah'].includes(this.role);
             },
 
             async init() {

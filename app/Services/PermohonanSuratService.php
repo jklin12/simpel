@@ -385,7 +385,7 @@ class PermohonanSuratService
                 $kodeKelurahan,
                 $now->format('Y')
             );
-        } elseif ($kodeJenis === 'SKMH') {
+        } elseif ($kodeJenis === 'SPN') {
             // Format requested: 472/002/I/KEL.SN/2026
             $nomorSurat = sprintf(
                 '472-SMPL/%03d/%s/%s/%s',
