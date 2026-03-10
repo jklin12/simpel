@@ -162,8 +162,29 @@ class PermohonanController extends Controller
 
             // Notify Admins (WhatsApp)
             try {
+                // Notify actual application admins (excluding Lurah which uses master data)
                 foreach ($notifiableAdmins as $admin) {
-                    $admin->notify(new PermohonanCreatedWhatsapp($permohonan));
+                    if (!$admin->hasRole(['lurah', 'camat'])) {
+                        $admin->notify(new PermohonanCreatedWhatsapp($permohonan));
+                    }
+                }
+
+                // Determine Pejabat Master Data HP
+                $jenisSurat = strtoupper($service->kode ?? '');
+                $permohonanContext = \App\Models\PermohonanSurat::with('kelurahan.kecamatan')->find($permohonan->id);
+
+                if ($jenisSurat === 'SDNH') {
+                    $pejabatHp = $permohonanContext->kelurahan->kecamatan->camat_no_hp ?? null;
+                    $namaPejabat = 'Bapak/Ibu Camat';
+                } else {
+                    $pejabatHp = $permohonanContext->kelurahan->lurah_no_hp ?? null;
+                    $namaPejabat = 'Bapak/Ibu Lurah';
+                }
+
+                if (!empty($pejabatHp)) {
+                    // Send via On-Demand Notification
+                    \Illuminate\Support\Facades\Notification::route('whatsapp', $pejabatHp)
+                        ->notify(new PermohonanCreatedWhatsapp($permohonan, $namaPejabat));
                 }
             } catch (\Exception $e) {
                 Log::error('WA Admin Notification failed: ' . $e->getMessage());

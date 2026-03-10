@@ -12,10 +12,12 @@ class PermohonanApprovedWhatsapp extends Notification
     use Queueable;
 
     public $permohonan;
+    public $namaPejabat;
 
-    public function __construct(PermohonanSurat $permohonan)
+    public function __construct(PermohonanSurat $permohonan, $namaPejabat = null)
     {
         $this->permohonan = $permohonan;
+        $this->namaPejabat = $namaPejabat;
     }
 
     public function via(object $notifiable): array
@@ -51,15 +53,15 @@ class PermohonanApprovedWhatsapp extends Notification
                 "Terima kasih atas kesabarannya.";
         }
 
-        // Untuk notifikasi ke Lurah (status bukan completed)
-        $namaLurah = $notifiable->name ?? 'Bapak/Ibu Lurah';
+        // Untuk notifikasi ke Penandatangan Surat (Lurah / Camat)
+        $namaTujuan = $this->namaPejabat ?? ($notifiable->name ?? 'Bapak/Ibu');
         $filename = ($p->nomor_surat)
             ? str_replace('/', '-', $p->nomor_surat) . '.pdf'
             : $p->nomor_permohonan . '.pdf';
 
         return [
-            'to' => $notifiable->phone,
-            'message' => "Halo {$namaLurah},\n\nAda permohonan surat *{$p->jenisSurat->nama}* atas nama *{$p->nama_pemohon}* yang telah diverifikasi dan siap untuk ditandatangani.\n\nBerikut draft surat terlampir.",
+            'to' => $notifiable->routeNotificationFor('whatsapp') ?? $notifiable->phone,
+            'message' => "Halo {$namaTujuan},\n\nAda permohonan surat *{$p->jenisSurat->nama}* atas nama *{$p->nama_pemohon}* yang telah diverifikasi dan siap untuk ditandatangani.\n\nBerikut draft surat terlampir.",
             'file_content' => $this->generatePdfContent($p),
             'filename' => $filename,
         ];

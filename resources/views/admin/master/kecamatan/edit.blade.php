@@ -63,6 +63,10 @@
                     <input type="text" name="camat_nip" id="camat_nip" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: 19800723 199810 2 001" value="{{ old('camat_nip', $kecamatan->camat_nip) }}">
                 </div>
                 <div>
+                    <label for="camat_no_hp" class="block text-sm font-medium text-gray-700 mb-1">No HP Camat (WhatsApp)</label>
+                    <input type="text" name="camat_no_hp" id="camat_no_hp" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: 081234567890" value="{{ old('camat_no_hp', $kecamatan->camat_no_hp) }}">
+                </div>
+                <div>
                     <label for="camat_pangkat" class="block text-sm font-medium text-gray-700 mb-1">Pangkat Camat</label>
                     <input type="text" name="camat_pangkat" id="camat_pangkat" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: Pembina Tingkat I" value="{{ old('camat_pangkat', $kecamatan->camat_pangkat) }}">
                 </div>

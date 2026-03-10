@@ -87,6 +87,13 @@
                 </div>
 
                 <div>
+                    <label for="lurah_no_hp" class="block text-sm font-medium text-gray-700 mb-1">No HP Lurah (WhatsApp)</label>
+                    <input type="text" name="lurah_no_hp" id="lurah_no_hp" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" value="{{ old('lurah_no_hp', $kelurahan->lurah_no_hp) }}" placeholder="Contoh: 081234567890">
+                    @error('lurah_no_hp')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    <p class="mt-1 text-xs text-gray-500">Menerima notifikasi bot WA untuk persetujuan surat masuk.</p>
+                </div>
+
+                <div>
                     <label for="lurah_pangkat" class="block text-sm font-medium text-gray-700 mb-1">Pangkat</label>
                     <input type="text" name="lurah_pangkat" id="lurah_pangkat" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" value="{{ old('lurah_pangkat', $kelurahan->lurah_pangkat) }}" placeholder="Contoh: Penata Tk. I">
                     @error('lurah_pangkat')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror

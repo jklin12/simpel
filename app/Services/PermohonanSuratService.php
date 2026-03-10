@@ -146,17 +146,27 @@ class PermohonanSuratService
                 Log::error('WA Approved notification failed: ' . $e->getMessage());
             }
 
-            // Send WhatsApp notification and Draft PDF to Lurah (admin_kelurahan)
+            // Send WhatsApp notification and Draft PDF to Signer (Lurah / Camat)
             try {
-                $lurahAdmins = User::role('lurah')
-                    ->where('kelurahan_id', $permohonan->kelurahan_id)
-                    ->get();
+                $jenisSurat = strtoupper($permohonan->jenisSurat->kode ?? '');
 
-                foreach ($lurahAdmins as $lurahAdmin) {
-                    $lurahAdmin->notify(new PermohonanApprovedWhatsapp($permohonan->fresh()));
+                if ($jenisSurat === 'SDNH') {
+                    // SDNH is signed by Camat
+                    $noHp = $permohonan->kelurahan->kecamatan->camat_no_hp;
+                    $namaPejabat = 'Bapak/Ibu Camat';
+                } else {
+                    // Others are signed by Lurah
+                    $noHp = $permohonan->kelurahan->lurah_no_hp;
+                    $namaPejabat = 'Bapak/Ibu Lurah';
+                }
+
+                if (!empty($noHp)) {
+                    // Send via On-Demand Notification
+                    \Illuminate\Support\Facades\Notification::route('whatsapp', $noHp)
+                        ->notify(new PermohonanApprovedWhatsapp($permohonan->fresh(), $namaPejabat));
                 }
             } catch (\Exception $e) {
-                Log::error('WA Lurah notification failed: ' . $e->getMessage());
+                Log::error('WA Signer notification failed: ' . $e->getMessage());
             }
 
             return $permohonan->fresh();

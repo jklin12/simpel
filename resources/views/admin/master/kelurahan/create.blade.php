@@ -59,6 +59,15 @@
                 <p class="mt-1 text-xs text-gray-500">Digunakan untuk penomoran surat, contoh: 470/10/LU/2026.</p>
             </div>
 
+            <div>
+                <label for="lurah_no_hp" class="block text-sm font-medium text-gray-700 mb-1">No HP Lurah (WhatsApp)</label>
+                <input type="text" name="lurah_no_hp" id="lurah_no_hp" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: 081234567890" value="{{ old('lurah_no_hp') }}">
+                @error('lurah_no_hp')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+                <p class="mt-1 text-xs text-gray-500">Menerima notifikasi bot WA untuk persetujuan surat masuk.</p>
+            </div>
+
             <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
                 <a href="{{ route('admin.master.kelurahan.index') }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition">Batal</a>
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition shadow-sm">Simpan</button>

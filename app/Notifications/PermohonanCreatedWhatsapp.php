@@ -13,13 +13,15 @@ class PermohonanCreatedWhatsapp extends Notification
     use Queueable;
 
     public $permohonan;
+    public $namaPejabat;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(PermohonanSurat $permohonan)
+    public function __construct(PermohonanSurat $permohonan, $namaPejabat = null)
     {
         $this->permohonan = $permohonan;
+        $this->namaPejabat = $namaPejabat;
     }
 
     /**
@@ -48,8 +50,8 @@ class PermohonanCreatedWhatsapp extends Notification
                 "Terima kasih.";
         }
 
-        // Untuk notifikasi ke Admin
-        $adminName = $notifiable->name ?? 'Admin';
+        // Untuk notifikasi ke Admin / Pejabat
+        $adminName = $this->namaPejabat ?? ($notifiable->name ?? 'Admin');
         return "Halo {$adminName},\n\n" .
             "Terdapat permohonan surat *baru* untuk layanan *{$p->jenisSurat->nama}* atas nama *{$p->nama_pemohon}*.\n\n" .
             "Kode Tracking: *{$p->track_token}*\n\n" .
