@@ -287,7 +287,7 @@
 
     $namaLengkap = strtoupper($data['nama_lengkap'] ?? $permohonan->nama_pemohon);
     $alamatLengkap = strtoupper($data['alamat_lengkap'] ?? $permohonan->alamat_pemohon);
-    $logoPath = public_path('images/logo_simpel.png');
+    $logoPath = public_path('images/cincin.png');
     $logoBase64 = file_exists($logoPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath)) : null;
     @endphp
 
@@ -370,10 +370,7 @@
         {{-- LOGO SIMPEL --}}
         @if($logoBase64)
         <div style="text-align:center; margin-top:10px;">
-            <img src="{{ $logoBase64 }}" style="height:50px; opacity:0.7;" alt="SiMPEL Logo">
-            <div style="font-size:6.5pt; color:#888; margin-top:4px; font-weight:bold; letter-spacing:1px;">
-                SISTEM INFORMASI MANAJEMEN PELAYANAN<br>KECAMATAN LANDASAN ULIN
-            </div>
+            <img src="{{ $logoBase64 }}" style="height:340px; opacity:0.7;" alt="SiMPEL Logo">
         </div>
         @endif
 
@@ -426,11 +423,11 @@
         $statusPerempuan = !$isLakiLaki ? $statusPerkawinan : '';
         // Kewarganegaraan display
         $kwn = $data['kewarganegaraan'] ?? 'WNI';
-        $kwnDisplay = $kwn === 'WNI' ? 'Indonesia' : $kwn;
+        $kwnDisplay = $kwn === 'WNI' ? 'INDONESIA' : $kwn;
         $ayahKwn = $data['ayah_kewarganegaraan'] ?? 'WNI';
-        $ayahKwnDisplay = $ayahKwn === 'WNI' ? 'Indonesia' : $ayahKwn;
+        $ayahKwnDisplay = $ayahKwn === 'WNI' ? 'INDONESIA' : $ayahKwn;
         $ibuKwn = $data['ibu_kewarganegaraan'] ?? 'WNI';
-        $ibuKwnDisplay = $ibuKwn === 'WNI' ? 'Indonesia' : $ibuKwn;
+        $ibuKwnDisplay = $ibuKwn === 'WNI' ? 'INDONESIA' : $ibuKwn;
         @endphp
 
         {{-- Numbered list format --}}
@@ -457,7 +454,7 @@
                 <td style="vertical-align:top; padding:1.5px 0;">4.</td>
                 <td style="vertical-align:top; padding:1.5px 0;">Tempat dan tanggal lahir</td>
                 <td style="vertical-align:top; padding:1.5px 0;">:</td>
-                <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">{{ ($data['tempat_lahir'] ?? '-') . ', ' . $tglLahir }}</td>
+                <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">{{ ($data['tempat_lahir'] ?? '-') . ', ' .strtoupper( $tglLahir) }}</td>
             </tr>
             <tr>
                 <td style="vertical-align:top; padding:1.5px 0;">5.</td>
@@ -483,7 +480,7 @@
                 <td style="vertical-align:top; padding:1.5px 0;">:</td>
                 <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">
                     {{ $alamatLengkap }},<br>
-                    Kel. {{ ucwords(strtolower($kelurahan->nama)) }}, Kec. {{ ucwords(strtolower($kelurahan->kecamatan->nama ?? 'Landasan Ulin')) }}, Kota Banjarbaru
+                    KEL. {{ (strtoupper($kelurahan->nama)) }}, KEC. {{ (strtoupper($kelurahan->kecamatan->nama ?? 'Landasan Ulin')) }}, KOTA BANJARBARU
                 </td>
             </tr>
             <tr>
@@ -494,20 +491,20 @@
             </tr>
             <tr>
                 <td style="vertical-align:top; padding:1px 0;"></td>
-                <td style="vertical-align:top; padding:1px 0; padding-left:12px;">a. Laki-laki</td>
+                <td style="vertical-align:top; padding:1px 0;;">a. Laki-laki</td>
                 <td style="vertical-align:top; padding:1px 0;">:</td>
                 <td style="vertical-align:top; padding:1px 0; font-weight:bold;">{{ $statusLaki }}</td>
             </tr>
             <tr>
                 <td style="vertical-align:top; padding:1px 0;"></td>
-                <td style="vertical-align:top; padding:1px 0; padding-left:12px;">b. Perempuan</td>
+                <td style="vertical-align:top; padding:1px 0;">b. Perempuan</td>
                 <td style="vertical-align:top; padding:1px 0;">:</td>
                 <td style="vertical-align:top; padding:1px 0; font-weight:bold;">{{ $statusPerempuan }}</td>
             </tr>
         </table>
 
         {{-- Data Orang Tua —  Ayah --}}
-        <p style="font-size:10pt; margin: 0 0 0 17px;">
+        <p style="font-size:10pt; margin: 0 0 0 40px;">
             <strong>Adalah benar anak dari perkawinan seorang pria :</strong>
         </p>
         <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-bottom:4px;">
@@ -527,7 +524,7 @@
                 <td style="vertical-align:top; padding:1.5px 0;"></td>
                 <td style="vertical-align:top; padding:1.5px 0;">Tempat dan tanggal lahir</td>
                 <td style="vertical-align:top; padding:1.5px 0;">:</td>
-                <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">{{ ($data['ayah_tempat_lahir'] ?? '-') . ', ' . $tglAyahLahir }}</td>
+                <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">{{ ($data['ayah_tempat_lahir'] ?? '-') . ', ' . strtoupper($tglAyahLahir) }}</td>
             </tr>
             <tr>
                 <td style="vertical-align:top; padding:1.5px 0;"></td>
@@ -556,7 +553,7 @@
         </table>
 
         {{-- Data Orang Tua — Ibu --}}
-        <p style="font-size:10pt; margin: 0 0 0 17px;">
+        <p style="font-size:10pt; margin: 0 0 0 40px;">
             <strong> Dengan seorang wanita :</strong>
         </p>
         <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-bottom:4px;">
@@ -576,7 +573,7 @@
                 <td style="vertical-align:top; padding:1.5px 0;"></td>
                 <td style="vertical-align:top; padding:1.5px 0;">Tempat dan tanggal lahir</td>
                 <td style="vertical-align:top; padding:1.5px 0;">:</td>
-                <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">{{ ($data['ibu_tempat_lahir'] ?? '-') . ', ' . $tglIbuLahir }}</td>
+                <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">{{ ($data['ibu_tempat_lahir'] ?? '-') . ', ' . strtoupper($tglIbuLahir) }}</td>
             </tr>
             <tr>
                 <td style="vertical-align:top; padding:1.5px 0;"></td>
