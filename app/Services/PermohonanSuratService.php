@@ -428,6 +428,15 @@ class PermohonanSuratService
                 $kodeKelurahan,
                 $now->format('Y')
             );
+        } elseif ($kodeJenis === 'SKTM') {
+            // Format: 400.12/002/I/LU/2026
+            $nomorSurat = sprintf(
+                '400.2/%03d-SMPL/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
         } elseif ($kodeJenis === 'SPN') {
             // Format requested: 472/002/I/KEL.SN/2026
             $nomorSurat = sprintf(

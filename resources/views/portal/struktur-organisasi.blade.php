@@ -22,7 +22,7 @@
 
     @php
     $camat = null; $sekcam = null; $fungsional = null;
-    $kasiPem = null; $kasiPMD = null; $kasiTrantib = null; $kasiKesos = null;
+    $kasiPem = null; $kasiTrantib = null; $kasiKesos = null; $kasiEkonomi = null;
     $kasubagUmum = null; $kasubagKeuangan = null;
 
     $allData = \App\Models\PortalStrukturOrganisasi::orderBy('urutan')->get();
@@ -31,10 +31,10 @@
     if(str_contains($jab, 'camat') && !str_contains($jab, 'sekre')) $camat = $item;
     elseif(str_contains($jab, 'sekre') || str_contains($jab, 'sekcam')) $sekcam = $item;
     elseif(str_contains($jab, 'fungsional')) $fungsional = $item;
-    elseif(str_contains($jab, 'pemerintahan')) $kasiPem = $item;
-    elseif(str_contains($jab, 'pemberdayaan') || str_contains($jab, 'pmd')) $kasiPMD = $item;
+    elseif(str_contains($jab, 'pemerintahan')) $kasiPem = $item; 
     elseif(str_contains($jab, 'ketentraman') || str_contains($jab, 'trantib')) $kasiTrantib = $item;
     elseif(str_contains($jab, 'kesejahteraan') || str_contains($jab, 'kesos')) $kasiKesos = $item;
+    elseif(str_contains($jab, 'ekonomi') || str_contains($jab, 'pembangunan')) $kasiEkonomi = $item;
     elseif(str_contains($jab, 'umum') && str_contains($jab, 'kepegawaian')) $kasubagUmum = $item;
     elseif(str_contains($jab, 'keuangan') || str_contains($jab, 'pep')) $kasubagKeuangan = $item;
     }
@@ -69,10 +69,10 @@
             <div class="absolute left-1/2 -ml-[1.5px] top-0 bottom-[-50px] w-[3px] org-line"></div>
 
             <!-- Fungsional Branch (Left) -->
-            @if($fungsional )
             <div class="w-1/2 flex justify-end pr-[40px] relative z-10 pt-[20px]">
                 <!-- Horizontal Connector -->
                 <div class="absolute right-0 top-[60px] w-[40px] h-[3px] org-line"></div>
+
 
                 <div class="w-[280px] bg-white border border-gray-100 border-l-4 border-l-teal-600 rounded-2xl p-4 shadow-lg flex items-center gap-4 transform transition hover:-translate-x-1">
                     <div class="w-14 h-14 shrink-0 rounded-full bg-slate-100 border-2 border-white shadow-sm overflow-hidden">
@@ -89,8 +89,8 @@
                         <p class="text-[13px] font-bold text-slate-800 mt-0.5">{{ $fungsional ? $fungsional->nama : '-' }}</p>
                     </div>
                 </div>
+
             </div>
-            @endif
 
 
             <!-- Sekretariat Branch (Right) -->
@@ -170,9 +170,9 @@
 
             <div class="flex justify-between w-full px-[0%]">
                 @foreach([
-                ['node' => $kasiPem, 'default' => 'SEKSI TATA PEMERINTAHAN'],
-                ['node' => $kasiPMD, 'default' => 'SEKSI PEMBERDAYAAN MASYARAKAT & DESA'],
+                ['node' => $kasiPem, 'default' => 'SEKSI TATA PEMERINTAHAN'], 
                 ['node' => $kasiTrantib, 'default' => 'SEKSI KETENTRAMAN & KETERTIBAN'],
+                ['node' => $kasiEkonomi, 'default' => 'KEPALA SEKSI EKONOMI DAN PEMBANGUNAN'],
                 ['node' => $kasiKesos, 'default' => 'SEKSI KESEJAHTERAAN SOSIAL'],
                 ] as $seksi)
                 <div class="flex flex-col items-center w-[23%]">

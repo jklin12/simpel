@@ -131,19 +131,16 @@
         }
 
         .ttd-nama {
-            font-size: 10pt;
-            color: red;
+            font-size: 10pt; 
             /* As in example image */
         }
 
         .ttd-nip {
-            font-size: 10pt;
-            color: red;
+            font-size: 10pt; 
         }
 
         .ttd-jabatan {
-            font-size: 10pt;
-            color: red;
+            font-size: 10pt; 
         }
 
         /* FOOTER */
@@ -387,7 +384,7 @@
             <tr>
                 <td style="width:50%;"></td>
                 <td class="ttd-right-cell">
-                    <p style="color: black;">Banjarbaru, <span style="color: red;">{{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</span></p>
+                    <p style="color: black;">Banjarbaru, <span style="">{{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</span></p>
                     <p style="color: black;">Camat {{ (strtoupper($kelurahan->kecamatan->nama ?? 'Landasan Ulin')) }}</p>
                     <div class="ttd-spacer"></div>
                     @if(isset($qrBase64))
