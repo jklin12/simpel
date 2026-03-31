@@ -1,6 +1,31 @@
 # Release Notes
 
-## [v1.0.3] - 2026-03-09
+## [v1.0.4] - 2026-03-31
+
+### Added — Integrasi Jenis Surat Baru (SKJD, SKSI, SKG)
+
+- **Surat Keterangan Janda/Duda (SKJD)**:
+  - Form pengajuan dan template cetak PDF untuk pengurusan administrasi terkait status Janda/Duda.
+  - Implementasi nomor surat otomatis format `400.12.3.3/...-SMPL/...`.
+  - Telah dihapusnya field "Data Orang Gaib" pada tahap pengajuan SKJD untuk menyelaraskan dengan persyaratan yang relevan.
+- **Surat Keterangan Suami Istri (SKSI)**:
+  - Form pengajuan terintegrasi sinkron antara Data Diri Bersangkutan dan Data Istri/Pasangan.
+  - Dilengkapi antarmuka pemindaian mutakhir **OCR KTP** otomatis yang juga bisa dioperasikan untuk ekstraksi data Pasangan.
+  - Input "Pekerjaan" pada data pasangan kini menggunakan elemen penelusuran *dropdown* canggih (**TomSelect**) yang responsif.
+  - Implementasi urutan nomor regulasi surat bermatra `400.12.3.4/...-SMPL/...`.
+- **Surat Keterangan Gaib (SKG)**:
+  - Ekstensi form permohonan khusus bagi pelaporan masyarakat atas subjek anggota keluarga yang hilang (gaib).
+  - Mekanisme **OCR KTP** auto-fill dan *dropdown dropdown* canggih terpasang memfasilitasi "Data Orang Gaib", sama interaktifnya dengan antarmuka yang lain.
+  - Menetapkan nomor administrasi berformat `400.12.3.5/...-SMPL/...`.
+
+### Instruksi Deployment (Seeder)
+Agar semua format dokumen, requirement form, dan alur _approval_ dari tiga tipe registrasi *Surat* interaktif ini tereksekusi pada level _database server_, wajib menjalankan perintah seeder *database* secara manual (atau via server deployment logic) sebagai berikut:
+
+```bash
+php artisan db:seed --class=SkjdSeeder
+php artisan db:seed --class=SksiSeeder
+php artisan db:seed --class=SkgSeeder
+```## [v1.0.3] - 2026-03-09
 
 ### Added — Template Surat Keterangan Menikah (SKMH)
 

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Surat Keterangan Tidak Mampu</title>
+    <title>Surat Keterangan Janda/Duda</title>
     <style>
         * {
             margin: 0;
@@ -220,7 +220,7 @@
 
 
         {{-- ===== JUDUL ===== --}}
-        <div class="surat-title">Surat Keterangan Tidak Mampu</div>
+        <div class="surat-title">Surat Keterangan Janda/Duda</div>
         <div class="surat-nomor">
             Nomor : <strong>{{ $permohonan->nomor_surat ?? '......../..........' }}</strong>
         </div>
@@ -248,7 +248,7 @@
         </table>
 
         {{-- MENERANGKAN --}}
-        <p class="section-margin" style="font-size:11pt;">Menerangkan bahwa &nbsp;:</p>
+        <p class="section-margin" style="font-size:11pt;">Menerangkan dengan sebenarnya bahwa &nbsp;:</p>
 
         {{-- DATA PEMOHON --}}
         @php
@@ -256,9 +256,18 @@
         $tglLahir = isset($data['tanggal_lahir'])
         ? \Carbon\Carbon::parse($data['tanggal_lahir'])->translatedFormat('d F Y')
         : '-';
+        
+        $gaibTglLahir = isset($data['gaib_tanggal_lahir'])
+        ? \Carbon\Carbon::parse($data['gaib_tanggal_lahir'])->translatedFormat('d F Y')
+        : '-';
+
         $tglPengantar = isset($data['tanggal_surat_pengantar'])
         ? \Carbon\Carbon::parse($data['tanggal_surat_pengantar'])->translatedFormat('d F Y')
         : '-';
+        $tglSuratPernyataan = isset($data['tanggal_surat_pernyataan'])
+        ? \Carbon\Carbon::parse($data['tanggal_surat_pernyataan'])->translatedFormat('d F Y')
+        : '-';
+        
         $tglSurat = $permohonan->tanggal_surat
         ? \Carbon\Carbon::parse($permohonan->tanggal_surat)->translatedFormat('d F Y')
         : \Carbon\Carbon::now()->translatedFormat('d F Y');
@@ -276,22 +285,6 @@
                 <td class="col-value">{{ $data['nik_bersangkutan'] ?? $permohonan->nik_pemohon }}</td>
             </tr>
             <tr>
-                <td class="col-label">Tempat/Tanggal Lahir</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . strtoupper($tglLahir) }}</td>
-            </tr>
-            <tr>
-                <td class="col-label">Alamat</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">
-                    {{ $data['alamat_lengkap'] ?? $permohonan->alamat_pemohon }}
-                    RT. {{ $data['rt'] ?? '-' }} RW. {{ $data['rw'] ?? '-' }}
-                    KEL. {{ strtoupper($kelurahan->nama) }}
-                    KEC. {{ strtoupper($kelurahan->kecamatan->nama) }}
-                    KOTA BANJARBARU
-                </td>
-            </tr>
-            <tr>
                 <td class="col-label">Jenis Kelamin</td>
                 <td class="col-sep">:</td>
                 <td class="col-value">{{ $data['jenis_kelamin'] ?? '-' }}</td>
@@ -302,42 +295,59 @@
                 <td class="col-value">{{ $data['agama'] ?? '-' }}</td>
             </tr>
             <tr>
-                <td class="col-label">Pekerjaan</td>
+                <td class="col-label">Tempat/Tanggal Lahir</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['pekerjaan'] ?? '-' }}</td>
+                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . strtoupper($tglLahir) }}</td>
             </tr>
             <tr>
                 <td class="col-label">Status Perkawinan</td>
                 <td class="col-sep">:</td>
                 <td class="col-value">{{ $data['status_perkawinan'] ?? '-' }}</td>
             </tr>
+            <tr>
+                <td class="col-label">Pekerjaan</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['pekerjaan'] ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Alamat Sesuai KTP</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">
+                    {{ $data['alamat_lengkap'] ?? $permohonan->alamat_pemohon }}
+                    RT. {{ $data['rt'] ?? '-' }} RW. {{ $data['rw'] ?? '-' }}
+                    KEL. {{ strtoupper($kelurahan->nama) }}
+                    KEC. {{ strtoupper($kelurahan->kecamatan->nama) }}
+                    KOTA BANJARBARU
+                </td>
+            </tr>
         </table>
+
+
 
         {{-- ===== NARASI ===== --}}
         <p class="narasi" style="margin-top:10px;">
-            Berdasarkan surat pernyataan pemohon tanggal <span>{{ $tglSurat }}</span>
+            Berdasarkan surat pernyataan pemohon tanggal <span>{{ $tglSuratPernyataan }}</span>
             dan surat pengantar Ketua RT. <span>{{ str_pad($data['rt'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
             RW. <span>{{ str_pad($data['rw'] ?? '...', 3, '0', STR_PAD_LEFT) }}</span>
             Nomor: <span>{{ $data['no_surat_pengantar'] ?? '....' }}</span>
             tanggal <span>{{ $tglPengantar }}</span>,
             Kelurahan <span>{{ ucfirst(strtolower($kelurahan->nama)) }}</span>
             Kecamatan {{ ucfirst(strtolower($kelurahan->kecamatan->nama)) }}
-            Pemerintah Kota Banjarbaru dengan ini menerangkan bahwa nama tersebut diatas, tergolong tidak mampu.
+            Pemerintah Kota Banjarbaru dengan ini menerangkan bahwa nama tersebut diatas benar berstatus <b>Janda / Duda</b>.
         </p>
 
         <p class="narasi">
-            Adapun surat keterangan tidak mampu ini dibuat untuk keperluan
-            <span>{{ strtolower($data['keperluan_sktm']) ?? '-' }}</span>
-            <span> {{ strtolower($data['keterangan_sktm']) ?? '-' }}</span>
+            Adapun surat keterangan ini dibuat untuk keperluan
+            <span>{{ strtolower($data['keperluan']) ?? '-' }}</span>.
         </p>
 
         <p class="penutup">
-            Demikian surat keterangan tidak mampu ini diberikan untuk dapat dipergunakan
+            Demikian Surat Keterangan Janda/Duda ini diberikan agar dapat dipergunakan
             sebagaimana mestinya.
         </p>
 
         {{-- ===== TANDA TANGAN ===== --}}
-        <table class="ttd-table">
+        <table class="ttd-table" style="margin-top: 10px;">
             <tr>
                 <td style="width:50%;"></td>
                 <td class="ttd-right-cell">

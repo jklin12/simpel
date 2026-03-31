@@ -52,6 +52,15 @@ class StorePermohonanRequest extends FormRequest
             case 'SKP': // Surat Keterangan Penghasilan
                 $specificRules = $this->getSkpRules();
                 break;
+            case 'SKJD': // Surat Keterangan Janda/Duda
+                $specificRules = $this->getSkjdRules();
+                break;
+            case 'SKSI': // Surat Keterangan Suami Istri
+                $specificRules = $this->getSksiRules();
+                break;
+            case 'SKG': // Surat Keterangan Gaib
+                $specificRules = $this->getSkgRules();
+                break;
             case 'SKU': // Surat Keterangan Usaha (Example)
                 // $specificRules = $this->getSkuRules();
                 break;
@@ -124,6 +133,24 @@ class StorePermohonanRequest extends FormRequest
             'skmh_izin_poligami',
             'skmh_rekom_dp3a',
             'skmh_bukti_pbb',
+            // SKJD
+            'skjd_surat_pengantar_rtrw',
+            'skjd_blangko_pernyataan',
+            'skjd_ktp_kk_bersangkutan',
+            'skjd_ktp_saksi',
+            'skjd_bukti_lunas_pbb',
+            // SKSI
+            'sksi_surat_pengantar_rtrw',
+            'sksi_blangko_pernyataan',
+            'sksi_ktp_kk_bersangkutan',
+            'sksi_ktp_saksi',
+            'sksi_bukti_lunas_pbb',
+            // SKG
+            'skg_surat_pengantar_rtrw',
+            'skg_blangko_pernyataan',
+            'skg_ktp_kk_bersangkutan',
+            'skg_ktp_saksi',
+            'skg_bukti_lunas_pbb',
             // Legacy / other
             'foto_ktp',
             'foto_kk',
@@ -136,6 +163,127 @@ class StorePermohonanRequest extends FormRequest
             'surat_rs',
             'akta_pendirian',
             'dokumen_lainnya',
+        ];
+    }
+
+    private function getSkgRules()
+    {
+        return [
+            // Data Diri Pemohon
+            'nama_lengkap'          => 'required|string|max:255',
+            'nik_bersangkutan'      => 'required|string|size:16',
+            'no_wa'                 => 'required|string|max:20',
+            'jenis_kelamin'         => 'required|in:Laki-laki,Perempuan',
+            'agama'                 => 'required|string',
+            'tempat_lahir'          => 'required|string|max:100',
+            'tanggal_lahir'         => 'required|date',
+            'pekerjaan'             => 'required|string|max:100',
+            'alamat_lengkap'        => 'required|string',
+            'keperluan'             => 'required|string|max:255',
+
+            // Data Orang Gaib
+            'gaib_nama'             => 'required|string|max:255',
+            'gaib_nik'              => 'required|string|size:16',
+            'gaib_jenis_kelamin'    => 'required|in:Laki-laki,Perempuan',
+            'gaib_agama'            => 'required|string',
+            'gaib_tempat_lahir'     => 'required|string|max:100',
+            'gaib_tanggal_lahir'    => 'required|date',
+            'gaib_pekerjaan'        => 'required|string|max:100',
+            'gaib_alamat'           => 'required|string',
+
+            // Surat Pengantar RT/RW
+            'rt'                      => 'required|string|max:10',
+            'rw'                      => 'required|string|max:10',
+            'no_surat_pengantar'      => 'required|string|max:100',
+            'tanggal_surat_pengantar' => 'required|date',
+
+            // Surat Pernyataan
+            'tanggal_surat_pernyataan' => 'required|date',
+
+            // Dokumen Lampiran
+            'skg_surat_pengantar_rtrw'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skg_blangko_pernyataan'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skg_ktp_kk_bersangkutan'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skg_ktp_saksi'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skg_bukti_lunas_pbb'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getSksiRules()
+    {
+        return [
+            // Data Diri Pemohon
+            'nama_lengkap'          => 'required|string|max:255',
+            'nik_bersangkutan'      => 'required|string|size:16',
+            'no_wa'                 => 'required|string|max:20',
+            'jenis_kelamin'         => 'required|in:Laki-laki,Perempuan',
+            'agama'                 => 'required|string',
+            'tempat_lahir'          => 'required|string|max:100',
+            'tanggal_lahir'         => 'required|date',
+            'pekerjaan'             => 'required|string|max:100',
+            'alamat_lengkap'        => 'required|string',
+
+            // Data Istri/Suami
+            'istri_nama'             => 'required|string|max:255',
+            'istri_nik'              => 'required|string|size:16',
+            'istri_jenis_kelamin'    => 'required|in:Laki-laki,Perempuan',
+            'istri_agama'            => 'required|string',
+            'istri_tempat_lahir'     => 'required|string|max:100',
+            'istri_tanggal_lahir'    => 'required|date',
+            'istri_pekerjaan'        => 'required|string|max:100',
+            'istri_alamat'           => 'required|string',
+
+            // Surat Pengantar RT/RW
+            'rt'                      => 'required|string|max:10',
+            'rw'                      => 'required|string|max:10',
+            'no_surat_pengantar'      => 'required|string|max:100',
+            'tanggal_surat_pengantar' => 'required|date',
+
+            // Surat Pernyataan
+            'tanggal_surat_pernyataan' => 'required|date',
+
+            // Dokumen Lampiran
+            'sksi_surat_pengantar_rtrw'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sksi_blangko_pernyataan'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sksi_ktp_kk_bersangkutan'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sksi_ktp_saksi'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sksi_bukti_lunas_pbb'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getSkjdRules()
+    {
+        return [
+            // Data Diri
+            'nama_lengkap'          => 'required|string|max:255',
+            'nik_bersangkutan'      => 'required|string|size:16',
+            'no_wa'                 => 'required|string|max:20',
+            'jenis_kelamin'         => 'required|in:Laki-laki,Perempuan',
+            'agama'                 => 'required|string',
+            'tempat_lahir'          => 'required|string|max:100',
+            'tanggal_lahir'         => 'required|date',
+            'status_perkawinan'     => 'required|string',
+            'pekerjaan'             => 'required|string|max:100',
+            'alamat_lengkap'        => 'required|string',
+            'keperluan'             => 'required|string|max:255',
+
+            // Data Orang Gaib dihapus sesuai permintaan
+
+            // Surat Pengantar RT/RW
+            'rt'                      => 'required|string|max:10',
+            'rw'                      => 'required|string|max:10',
+            'no_surat_pengantar'      => 'required|string|max:100',
+            'tanggal_surat_pengantar' => 'required|date',
+
+            // Surat Pernyataan
+            'tanggal_surat_pernyataan' => 'required|date',
+
+            // Dokumen Lampiran
+            'skjd_surat_pengantar_rtrw'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skjd_blangko_pernyataan'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skjd_ktp_kk_bersangkutan'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skjd_ktp_saksi'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skjd_bukti_lunas_pbb'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 

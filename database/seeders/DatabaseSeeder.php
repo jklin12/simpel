@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
             NotificationSeeder::class,
             SkpSeeder::class,
             SkmhSeeder::class,
+            SkjdSeeder::class,
+            SksiSeeder::class,
+            SkgSeeder::class,
         ]);
     }
 }
