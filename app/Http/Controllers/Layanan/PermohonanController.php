@@ -37,6 +37,11 @@ class PermohonanController extends Controller
         $service = JenisSurat::findOrFail($serviceId);
         $kelurahan = Kelurahan::findOrFail($kelurahanId);
 
+        // Piloting restriction
+        if ($kelurahanId != '6372010006') {
+            return redirect()->route('layanan.index')->with('error', 'Layanan saat ini hanya tersedia untuk wilayah piloting (Syamsudin Noor).');
+        }
+
         $pekerjaanList = \App\Models\Pekerjaan::orderBy('nama')->pluck('nama')->toArray();
 
         return view('user.permohonan.create_public', compact('service', 'kelurahan', 'pekerjaanList'));

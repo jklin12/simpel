@@ -20,7 +20,8 @@ class ServiceController extends Controller
         // Fetch all active letter types
         $services = JenisSurat::where('is_active', true)->get();
         // Fetch kelurahans for static Kecamatan (Landasan Ulin - 6372010)
-        $kelurahans = Kelurahan::where('kecamatan_id', '6372010')->get();
+        // Piloting: Only Syamsudin Noor (6372010006)
+        $kelurahans = Kelurahan::where('id', '6372010006')->get();
 
         return view('services.index', compact('services', 'kelurahans'));
     }

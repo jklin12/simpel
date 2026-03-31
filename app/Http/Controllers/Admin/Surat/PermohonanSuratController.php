@@ -158,8 +158,21 @@ class PermohonanSuratController extends Controller
             }
 
             // Load relations
-            $permohonan->load(['jenisSurat', 'kelurahan.kecamatan']);
+            $permohonan->load(['jenisSurat', 'kelurahan.kecamatan', 'dokumens']);
             $kelurahan = $permohonan->kelurahan;
+
+            // Prepare Pas Foto for SPN (Surat Pengantar Nikah)
+            $pasFotoBase64 = null;
+            if (strtolower($permohonan->jenisSurat->kode ?? '') === 'spn') {
+                $pasFoto = $permohonan->dokumens
+                    ->where('jenis_dokumen', 'skmh_pas_foto')
+                    ->whereIn('mime_type', ['image/jpeg', 'image/jpg'])
+                    ->first();
+
+                if ($pasFoto && Storage::disk('public')->exists($pasFoto->file_path)) {
+                    $pasFotoBase64 = base64_encode(Storage::disk('public')->get($pasFoto->file_path));
+                }
+            }
 
             // Data lurah dari kelurahan DB
             $lurah = [
@@ -187,10 +200,11 @@ class PermohonanSuratController extends Controller
             );
 
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView($pdfView, [
-                'permohonan' => $permohonan,
-                'kelurahan'  => $kelurahan,
-                'lurah'      => $lurah,
-                'qrBase64'   => $qrBase64,
+                'permohonan'    => $permohonan,
+                'kelurahan'     => $kelurahan,
+                'lurah'         => $lurah,
+                'qrBase64'      => $qrBase64,
+                'pasFotoBase64' => $pasFotoBase64,
             ]);
 
             $pdf->setPaper('a4', 'portrait');
