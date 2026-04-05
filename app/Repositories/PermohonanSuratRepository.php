@@ -116,4 +116,13 @@ class PermohonanSuratRepository implements PermohonanSuratRepositoryInterface
             ->orderBy('step_order')
             ->first();
     }
+
+    public function delete($id)
+    {
+        $permohonan = $this->model->findOrFail($id);
+        
+        // With SoftDeletes trait on the model, this will perform a soft delete.
+        // We preserve approvals and documents as they are part of the audit trail.
+        return $permohonan->delete();
+    }
 }

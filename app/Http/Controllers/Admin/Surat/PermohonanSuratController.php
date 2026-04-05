@@ -293,4 +293,26 @@ class PermohonanSuratController extends Controller
                 ->with('error', 'Dokumen tidak ditemukan');
         }
     }
+    /**
+     * Delete the specified permohonan.
+     */
+    public function destroy($id)
+    {
+        // Check permission
+        if (!Auth::user()->can('delete_permohonan')) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menghapus data ini.');
+        }
+
+        try {
+            $this->service->deletePermohonan($id);
+
+            return redirect()
+                ->route('admin.permohonan-surat.index')
+                ->with('success', 'Permohonan berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', $e->getMessage());
+        }
+    }
 }

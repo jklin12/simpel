@@ -11,4 +11,5 @@ interface PermohonanSuratRepositoryInterface
     public function updateStatus($id, $status, array $additionalData = []);
     public function getCurrentApproval($permohonanId, $currentStep);
     public function getNextApproval($permohonanId, $currentStepOrder);
+    public function delete($id);
 }

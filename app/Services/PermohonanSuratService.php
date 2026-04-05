@@ -493,6 +493,24 @@ class PermohonanSuratService
     }
 
     /**
+     * Delete permohonan if status is pending.
+     */
+    public function deletePermohonan($id)
+    {
+        $permohonan = $this->repository->find($id);
+        
+        if (!$permohonan) {
+            throw new \Exception('Permohonan tidak ditemukan.');
+        }
+
+        if ($permohonan->status !== 'pending') {
+            throw new \Exception('Hanya permohonan dengan status PENDING yang dapat dihapus.');
+        }
+
+        return $this->repository->delete($id);
+    }
+
+    /**
      * Convert integer month (1-12) to Roman numeral string.
      */
     private function toRoman(int $month): string
