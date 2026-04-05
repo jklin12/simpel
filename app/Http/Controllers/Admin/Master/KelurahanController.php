@@ -120,4 +120,10 @@ class KelurahanController extends Controller
         return redirect()->route('admin.master.kelurahan.index')
             ->with('success', 'Kelurahan berhasil dihapus');
     }
+
+    public function toggleStatus(Kelurahan $kelurahan)
+    {
+        $kelurahan->update(['is_active' => !$kelurahan->is_active]);
+        return back()->with('success', 'Status Kelurahan ' . $kelurahan->nama . ' berhasil diperbarui');
+    }
 }

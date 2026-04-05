@@ -50,11 +50,17 @@
                     <span class="text-xs text-gray-400 block">Orang {{ $kelurahan->kecamatan->kabupaten->nama ?? '-' }}</span>
                 </td>
                 <td class="px-6 py-4 text-center">
-                    @if($kelurahan->is_active)
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
-                    @else
-                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Non-Aktif</span>
-                    @endif
+                    <form action="{{ route('admin.master.kelurahan.toggle-status', $kelurahan->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="transition-transform hover:scale-105 active:scale-95">
+                            @if($kelurahan->is_active)
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">Aktif</span>
+                            @else
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 border border-red-200">Non-Aktif</span>
+                            @endif
+                        </button>
+                    </form>
                 </td>
                 <td class="px-6 py-4 text-sm text-gray-600">
                     <span class="px-2 py-1 text-xs font-semibold rounded-lg bg-blue-50 text-blue-700 border border-blue-100">

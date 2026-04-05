@@ -12,6 +12,9 @@
 - **Efisiensi Data**: Penggunaan baris ganda (Two-line display) untuk menampilkan Nomor Permohonan, Nomor Surat, data Pemohon, dan Waktu pengajuan secara padat informasi.
 * **Status Badges Interaktif**: Lencana status baru dengan indikator visual dinamis (contoh: *pulse* pada status pending) untuk kemudahan pemantauan.
 
+### Added — Master Data Kelurahan
+- **Quick Status Toggle**: Penambahan fitur pembaruan status aktif/non-aktif Kelurahan secara langsung melalui daftar Master Data tanpa harus masuk ke halaman edit.
+
 ### Fixed — Validasi NIK & Duplikasi
 - **Verifikasi Harian**: Implementasi pencegahan pengajuan ganda untuk NIK yang sama pada jenis surat yang sama dalam satu hari kalender guna mengurangi redundansi data.
 - **Perbaikan Rute**: Memperbaiki eror rute `destroy` yang sebelumnya tidak terdaftar.
