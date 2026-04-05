@@ -84,6 +84,19 @@ class PermohonanController extends Controller
                     break;
             }
 
+            // Verification: Same NIK cannot submit the same Jenis Surat within the same day
+            $today = now()->startOfDay();
+            $existing = PermohonanSurat::where('nik_pemohon', $nikPemohon)
+                ->where('jenis_surat_id', $request->jenis_surat_id)
+                ->where('created_at', '>=', $today)
+                ->first();
+
+            if ($existing) {
+                return redirect()->back()
+                    ->with('error', 'NIK ' . $nikPemohon . ' sudah mengajukan permohonan ' . $service->nama . ' hari ini. Silakan coba lagi besok atau gunakan fitur lacak status jika sudah ada token.')
+                    ->withInput();
+            }
+
             // Filter out non-data fields AND file fields for JSON storage
             $dynamicFileNames = collect($service->required_fields ?? [])
                 ->filter(fn($f) => ($f['type'] ?? '') === 'file')
