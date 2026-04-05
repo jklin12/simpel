@@ -609,7 +609,13 @@
         {{-- ===== TANDA TANGAN ===== --}}
         <table class="ttd-table">
             <tr>
-                <td style="width:50%;"></td>
+                <td style="width:50%; vertical-align: bottom; text-align: center; padding-bottom: 20px;">
+                    @if(isset($pasFotoBase64))
+                    <img src="data:image/jpeg;base64,{{ $pasFotoBase64 }}"
+                        style="width: 80px; height: 110px; border: 1px solid #ccc; object-fit: cover;"
+                        alt="Pas Foto">
+                    @endif
+                </td>
                 <td class="ttd-right-cell">
                     <p>Banjarbaru, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
                     <p>a.n Camat Landasan Ulin</p>
