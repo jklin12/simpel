@@ -176,8 +176,9 @@ class PermohonanSuratController extends Controller
 
             // Data lurah dari kelurahan DB
             $lurah = [
-                'nama' => $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : 'KEPALA KELURAHAN',
-                'nip'  => $kelurahan->lurah_nip ?? '-',
+                'nama'  => $kelurahan->lurah_nama ? strtoupper($kelurahan->lurah_nama) : 'KEPALA KELURAHAN',
+                'nip'   => $kelurahan->lurah_nip ?? '-',
+                'title' => $kelurahan->signer_title,
             ];
 
             // Pilih template PDF berdasarkan kode jenis surat

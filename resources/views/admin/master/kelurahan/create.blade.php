@@ -68,6 +68,29 @@
                 <p class="mt-1 text-xs text-gray-500">Menerima notifikasi bot WA untuk persetujuan surat masuk.</p>
             </div>
 
+            <div class="pt-4 border-t border-gray-100">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="status_pejabat" class="block text-sm font-medium text-gray-700 mb-1">Status Jabatan Pejabat <span class="text-red-500">*</span></label>
+                        <select name="status_pejabat" id="status_pejabat" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" required>
+                            <option value="Definitif" {{ old('status_pejabat') == 'Definitif' ? 'selected' : '' }}>Definitif</option>
+                            <option value="Plh" {{ old('status_pejabat') == 'Plh' ? 'selected' : '' }}>PLH</option>
+                            <option value="Plt" {{ old('status_pejabat') == 'Plt' ? 'selected' : '' }}>PLT</option>
+                        </select>
+                        @error('status_pejabat')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                        <p class="mt-1 text-xs text-gray-500">Mempengaruhi penulisan jabatan di PDF (contoh: Plh. Lurah ...)</p>
+                    </div>
+
+                    <div class="flex items-center">
+                        <label class="inline-flex items-center cursor-pointer mt-6">
+                            <input type="checkbox" name="is_active" value="1" class="sr-only peer" {{ old('is_active', '1') ? 'checked' : '' }}>
+                            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <span class="ms-3 text-sm font-medium text-gray-700">Aktif (Tampil di Layanan Publik)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
                 <a href="{{ route('admin.master.kelurahan.index') }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition">Batal</a>
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition shadow-sm">Simpan</button>

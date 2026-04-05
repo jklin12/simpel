@@ -14,6 +14,20 @@ class Kelurahan extends Model
     protected $table = 'm_kelurahans';
     protected $guarded = ['id'];
 
+    public function getSignerTitleAttribute(): string
+    {
+        $baseTitle = 'Lurah ' . ucwords(strtolower($this->nama));
+
+        if ($this->status_pejabat === 'Plh') {
+            return 'Plh. ' . $baseTitle;
+        }
+
+        if ($this->status_pejabat === 'Plt') {
+            return 'Plt. ' . $baseTitle;
+        }
+
+        return $baseTitle;
+    }
     public function kecamatan(): BelongsTo
     {
         return $this->belongsTo(Kecamatan::class);

@@ -49,9 +49,12 @@ class KelurahanController extends Controller
             'alamat'        => 'nullable|string|max:500',
             'telp'          => 'nullable|string|max:20',
             'kop_surat'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'status_pejabat' => 'required|in:Definitif,Plh,Plt',
+            'is_active'     => 'boolean',
         ]);
 
         $data = $request->except(['kop_surat', '_token']);
+        $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('kop_surat')) {
             $data['kop_surat_path'] = $request->file('kop_surat')
@@ -85,9 +88,12 @@ class KelurahanController extends Controller
             'alamat'        => 'nullable|string|max:500',
             'telp'          => 'nullable|string|max:20',
             'kop_surat'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'status_pejabat' => 'required|in:Definitif,Plh,Plt',
+            'is_active'     => 'boolean',
         ]);
 
         $data = $request->except(['kop_surat', '_token', '_method']);
+        $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('kop_surat')) {
             // Hapus kop surat lama

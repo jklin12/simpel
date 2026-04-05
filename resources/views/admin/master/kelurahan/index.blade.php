@@ -35,6 +35,8 @@
                 <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Kode</th>
                 <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama Kelurahan</th>
                 <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Kecamatan</th>
+                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Status</th>
+                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Pejabat</th>
                 <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Aksi</th>
             </tr>
         </thead>
@@ -46,6 +48,18 @@
                 <td class="px-6 py-4 text-sm text-gray-600">
                     {{ $kelurahan->kecamatan->nama }}
                     <span class="text-xs text-gray-400 block">Orang {{ $kelurahan->kecamatan->kabupaten->nama ?? '-' }}</span>
+                </td>
+                <td class="px-6 py-4 text-center">
+                    @if($kelurahan->is_active)
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Aktif</span>
+                    @else
+                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Non-Aktif</span>
+                    @endif
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-600">
+                    <span class="px-2 py-1 text-xs font-semibold rounded-lg bg-blue-50 text-blue-700 border border-blue-100">
+                        {{ $kelurahan->status_pejabat }}
+                    </span>
                 </td>
                 <td class="px-6 py-4 text-right">
                     <div class="flex justify-end gap-2">

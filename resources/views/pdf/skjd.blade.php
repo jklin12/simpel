@@ -353,7 +353,7 @@
                 <td class="ttd-right-cell">
                     <p>Banjarbaru, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
                     <p>a.n Camat Landasan Ulin</p>
-                    <p>Lurah {{ ucwords(strtolower($kelurahan->nama)) }}</p>
+                    <p>{{ $lurah['title'] }}</p>
                     <div class="ttd-spacer"></div>
                     @if(isset($qrBase64))
                     <img src="data:image/png;base64,{{ $qrBase64 }}" style="width:60px;height:60px;" alt="QR Status">
