@@ -97,9 +97,9 @@
             @endphp
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">
-                    {{ $label }}@if($isRequired)<span class="text-red-500 ml-1">*</span>@endif
+                    {{ $label }}<span class="text-red-500 ml-1">*</span>
                 </label>
-                <input type="file" name="{{ $name }}" accept=".jpg,.jpeg,.png,.pdf" {{ $requiredAttr }}
+                <input type="file" name="{{ $name }}" accept=".jpg,.jpeg,.png,.pdf" required
                     class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
                 @error($name) <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>

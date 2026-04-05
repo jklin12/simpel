@@ -64,11 +64,14 @@ class StorePermohonanRequest extends FormRequest
             case 'SKU': // Surat Keterangan Usaha (Example)
                 // $specificRules = $this->getSkuRules();
                 break;
+            case 'SDNH': // Surat Dispensasi Nikah
+                $specificRules = $this->getSdnhRules();
+                break;
             default:
                 if ($jenisSurat->required_fields) {
                     foreach ($jenisSurat->required_fields as $field) {
                         $specificRules[$field['name']] = match ($field['type']) {
-                            'file'   => ($field['is_required'] ? 'required' : 'nullable') . '|file|mimes:jpg,jpeg,png,pdf|max:5120',
+                            'file'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
                             'date'   => ($field['is_required'] ? 'required' : 'nullable') . '|date',
                             'number' => ($field['is_required'] ? 'required' : 'nullable') . '|numeric',
                             default  => ($field['is_required'] ? 'required' : 'nullable') . '|string|max:1000',
@@ -139,6 +142,12 @@ class StorePermohonanRequest extends FormRequest
             'skjd_ktp_kk_bersangkutan',
             'skjd_ktp_saksi',
             'skjd_bukti_lunas_pbb',
+            // SDNH
+            'sdnh_surat_pengantar',
+            'sdnh_ktp_kk',
+            'sdnh_formulir_n',
+            'sdnh_lunas_pbb',
+            'sdnh_akta_cerai_mati',
             // SKSI
             'sksi_surat_pengantar_rtrw',
             'sksi_blangko_pernyataan',
@@ -363,7 +372,7 @@ class StorePermohonanRequest extends FormRequest
             'blangko_pernyataan'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'ktp_kk_bersangkutan'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'ktp_saksi'                 => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'surat_rekomendasi_sekolah' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'surat_rekomendasi_sekolah' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'bukti_lunas_pbb'           => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
@@ -522,6 +531,47 @@ class StorePermohonanRequest extends FormRequest
             'skmh_izin_poligami'            => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skmh_rekom_dp3a'               => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skmh_bukti_pbb'                => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getSdnhRules()
+    {
+        return [
+            // Data Pemohon
+            'nama_lengkap'          => 'required|string|max:255',
+            'nik_bersangkutan'      => 'required|string|size:16',
+            'tempat_lahir'          => 'required|string|max:100',
+            'tanggal_lahir'         => 'required|date',
+            'jenis_kelamin'         => 'required|in:LAKI-LAKI,PEREMPUAN',
+            'agama'                 => 'required|string',
+            'status_perkawinan'     => 'required|string',
+            'pekerjaan'             => 'required|string|max:100',
+            'no_wa'                 => 'required|string|max:20',
+            'alamat_lengkap'        => 'required|string',
+
+            // Data Pasangan
+            'nama_pasangan'             => 'required|string|max:255',
+            'tempat_lahir_pasangan'      => 'required|string|max:100',
+            'tanggal_lahir_pasangan'     => 'required|date',
+            'jenis_kelamin_pasangan'     => 'required|in:LAKI-LAKI,PEREMPUAN',
+            'agama_pasangan'             => 'required|string',
+            'status_perkawinan_pasangan' => 'required|string',
+            'pekerjaan_pasangan'         => 'required|string|max:100',
+            'alamat_pasangan'            => 'required|string',
+
+            // Pelaksanaan
+            'hari_pernikahan'    => 'required|string',
+            'tanggal_pernikahan' => 'required|date',
+            'pukul_pernikahan'   => 'required|string',
+            'alamat_pernikahan'  => 'required|string',
+            'alasan_dispensasi'  => 'required|string',
+
+            // Dokumen Lampiran
+            'sdnh_surat_pengantar' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sdnh_ktp_kk'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sdnh_formulir_n'      => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sdnh_lunas_pbb'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sdnh_akta_cerai_mati' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
