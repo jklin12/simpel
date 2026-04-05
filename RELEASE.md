@@ -1,5 +1,35 @@
 # Release Notes
 
+## [v1.0.5] - 2026-04-06
+
+### Added — Fitur Hapus Permohonan & Soft Delete
+- **Penghapusan Aman**: Admin Kelurahan dan Kecamatan kini dapat menghapus permohonan yang masih berstatus `pending`.
+- **Mekanisme Soft Delete**: Menghapus data permohonan secara logis tanpa menghilangkan record fisik, menjaga integritas audit trail untuk dokumen dan approval terkait.
+- **Izin Keamanan (Permission)**: Penambahan izin `delete_permohonan` yang diberikan otomatis kepada `super_admin`, `admin_kecamatan`, dan `admin_kelurahan`.
+
+### Improved — Modernisasi Dashboard Permohonan
+- **Redesain Antarmuka Indeks**: Transformasi visual daftar permohonan dengan tata letak yang lebih bersih, spasi yang lega, dan kartu-kartu informasi yang responsif.
+- **Efisiensi Data**: Penggunaan baris ganda (Two-line display) untuk menampilkan Nomor Permohonan, Nomor Surat, data Pemohon, dan Waktu pengajuan secara padat informasi.
+* **Status Badges Interaktif**: Lencana status baru dengan indikator visual dinamis (contoh: *pulse* pada status pending) untuk kemudahan pemantauan.
+
+### Fixed — Validasi NIK & Duplikasi
+- **Verifikasi Harian**: Implementasi pencegahan pengajuan ganda untuk NIK yang sama pada jenis surat yang sama dalam satu hari kalender guna mengurangi redundansi data.
+- **Perbaikan Rute**: Memperbaiki eror rute `destroy` yang sebelumnya tidak terdaftar.
+
+### Improved — Standarisasi Kewajiban Berkas Pendukung
+- **Wajib Upload**: Semua kolom unggahan berkas pendukung pada seluruh jenis surat kini bersifat wajib diisi (*mandatory*) untuk memastikan kelengkapan berkas administrasi.
+- **Pengecualian SPN**: Khusus untuk formulir **SPN (Surat Nikah)**, bagian **Lampiran Tambahan** (seperti Akta Cerai, Izin Poligami, dll) tetap bersifat **opsional** agar tidak menghambat pemohon yang tidak memerlukan dokumen tersebut.
+- **Sinkronisasi Validasi**: Penyesuaian aturan validasi di sisi server (*backend*) agar selaras dengan indikator wajib pada antarmuka pengguna (*frontend*).
+
+### Instruksi Deployment (Migration)
+Untuk menerapkan fitur penghapusan, izin baru, dan sinkronisasi validasi dokumen di server, wajib menjalankan perintah migrasi berikut:
+
+```bash
+php artisan migrate --path=database/migrations/2026_04_06_014616_add_delete_permohonan_permission.php
+```
+
+---
+
 ## [v1.0.4] - 2026-03-31
 
 ### Added — Integrasi Jenis Surat Baru (SKJD, SKSI, SKG)
