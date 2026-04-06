@@ -315,4 +315,28 @@ class PermohonanSuratController extends Controller
                 ->with('error', $e->getMessage());
         }
     }
+
+    /**
+     * Reset permohonan status to pending.
+     * Only available to Super Admin.
+     */
+    public function resetStatus($id)
+    {
+        // Check if user is Super Admin
+        if (!Auth::user()->hasRole('super_admin')) {
+            return redirect()->back()->with('error', 'Hanya Super Admin yang dapat me-reset status permohonan.');
+        }
+
+        try {
+            $this->service->resetPermohonanStatus($id);
+
+            return redirect()
+                ->route('admin.permohonan-surat.show', $id)
+                ->with('success', 'Status permohonan berhasil di-reset ke Pending.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal reset status: ' . $e->getMessage());
+        }
+    }
 }

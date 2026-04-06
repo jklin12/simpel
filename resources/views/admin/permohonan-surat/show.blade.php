@@ -3,27 +3,38 @@
 @section('title', 'Detail Permohonan')
 
 @section('content')
-<div class="mb-6">
-    <div class="flex items-center gap-2 text-sm text-gray-500 mb-2">
-        <a href="{{ route('admin.permohonan-surat.index') }}" class="hover:text-blue-600">Daftar Permohonan</a>
-        <span>/</span>
-        <span class="text-gray-800">Detail</span>
+<div class="mb-10">
+    <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-[#757682] mb-4">
+        <a href="{{ route('admin.permohonan-surat.index') }}" class="hover:text-[#00236f] transition-colors">Daftar Permohonan</a>
+        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" /></svg>
+        <span class="text-[#191c1e]">Detail Permohonan</span>
     </div>
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-            <h1 class="text-2xl font-bold text-gray-800">Detail Permohonan Surat</h1>
-            <p class="text-gray-500">{{ $permohonanSurat->nomor_permohonan }}
+            <h1 class="text-4xl font-extrabold text-[#191c1e] tracking-tight leading-tight mb-2">Detail Permohonan</h1>
+            <div class="flex items-center gap-3">
+                <span class="text-lg font-medium text-[#444651]">{{ $permohonanSurat->nomor_permohonan }}</span>
                 @if(($permohonanSurat->revision_count ?? 0) > 0)
-                <span class="inline-flex items-center gap-1 mt-2 px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">
-                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#ffdbcb] text-[#773205]">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
-                    Revisi ke-{{ $permohonanSurat->revision_count }}
+                    Revisi Ke-{{ $permohonanSurat->revision_count }}
                 </span>
                 @endif
-            </p>
+            </div>
         </div>
-        <div>
+        <div class="flex flex-wrap items-center gap-3">
+            @if(auth()->user()->hasRole('super_admin') && in_array($permohonanSurat->status, ['approved', 'completed']))
+            <form id="form-reset-status" action="{{ route('admin.permohonan-surat.reset-status', $permohonanSurat->id) }}" method="POST">
+                @csrf
+                <button type="button" onclick="confirmAction('form-reset-status', 'Reset Status?', 'Semua riwayat persetujuan akan diulang kembali menjadi Pending.', 'warning', 'Ya, Reset sekarang')" class="px-5 py-2.5 bg-white text-[#ba1a1a] border border-[#ba1a1a]/20 rounded-xl hover:bg-[#ffdad6] font-bold transition-all flex items-center gap-2 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    Reset ke Pending
+                </button>
+            </form>
+            @endif
+
             @if($permohonanSurat->status == 'pending' || $permohonanSurat->status == 'in_review')
             @php
             $currentApproval = $permohonanSurat->approvals()->where('status', 'pending')->where('step_order', $permohonanSurat->current_step)->first();
@@ -31,71 +42,53 @@
             @endphp
 
             @if($canApprove)
-                <div class="flex gap-2">
-                    <a href="{{ route('admin.permohonan-surat.edit', $permohonanSurat->id) }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                        Edit Data
-                    </a>
-                    
-                    @if(Auth::user()->can('delete_permohonan') && $permohonanSurat->status === 'pending')
-                    <form action="{{ route('admin.permohonan-surat.destroy', $permohonanSurat->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus permohonan ini? Tindakan ini tidak dapat dibatalkan.')" class="inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="px-4 py-2 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition shadow-sm flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                            Hapus
-                        </button>
-                    </form>
-                    @endif
+                <a href="{{ route('admin.permohonan-surat.edit', $permohonanSurat->id) }}" class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                    Edit Data
+                </a>
+                
+                @if(Auth::user()->can('delete_permohonan') && $permohonanSurat->status === 'pending')
+                <form id="form-delete-permohonan" action="{{ route('admin.permohonan-surat.destroy', $permohonanSurat->id) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" onclick="confirmAction('form-delete-permohonan', 'Hapus Permohonan?', 'Data yang dihapus tidak dapat dikembalikan.', 'error', 'Ya, Hapus')" class="px-5 py-2.5 bg-white text-[#ba1a1a] border border-[#ffdad6] rounded-xl hover:bg-[#ffdad6] font-bold transition-all flex items-center gap-2 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                        Hapus
+                    </button>
+                </form>
+                @endif
 
-                    <button onclick="showApproveModal()" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-sm">
-                        Setujui
-                    </button>
-                    <button onclick="showRejectModal()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition shadow-sm">
-                        Tolak
-                    </button>
-                </div>
+                <button onclick="showApproveModal()" class="px-6 py-2.5 bg-gradient-to-br from-[#00236f] to-[#1e3a8a] text-white rounded-xl hover:shadow-lg font-bold transition-all">
+                    Setujui
+                </button>
+                <button onclick="showRejectModal()" class="px-6 py-2.5 bg-white text-[#ba1a1a] border border-[#ba1a1a] rounded-xl hover:bg-[#ba1a1a] hover:text-white font-bold transition-all">
+                    Tolak
+                </button>
             @endif
 
             @elseif($permohonanSurat->status == 'approved')
-            {{-- Surat sudah disetujui, menunggu upload TTD --}}
-            <div class="flex items-center gap-3">
-                <a href="{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}" target="_blank"
-                    class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Download PDF
-                </a>
-                <button onclick="document.getElementById('upload-signed-panel').classList.toggle('hidden')"
-                    class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition shadow-sm flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    Upload TTD
-                </button>
-            </div>
+            <a href="{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}" target="_blank"
+                class="px-6 py-2.5 bg-gradient-to-br from-[#00236f] to-[#1e3a8a] text-white rounded-xl hover:shadow-lg font-bold transition-all flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                Download PDF
+            </a>
+            <button onclick="document.getElementById('upload-signed-panel').classList.toggle('hidden')"
+                class="px-6 py-2.5 bg-[#4059aa] text-white rounded-xl hover:shadow-lg font-bold transition-all flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                Upload TTD
+            </button>
 
             @elseif($permohonanSurat->status == 'completed')
             @if($permohonanSurat->signed_file_path)
             <a href="{{ Storage::url($permohonanSurat->signed_file_path) }}" target="_blank"
-                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-sm flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Download Surat (TTD)
+                class="px-6 py-2.5 bg-gradient-to-br from-[#0058be] to-[#2170e4] text-white rounded-xl hover:shadow-lg font-bold transition-all flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                Download Surat Selesai (TTD)
             </a>
             @else
             <a href="{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}"
-                class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                Download Surat
+                class="px-6 py-2.5 bg-gradient-to-br from-[#00236f] to-[#1e3a8a] text-white rounded-xl hover:shadow-lg font-bold transition-all flex items-center gap-2">
+                Download Draft Surat
             </a>
             @endif
             @endif
@@ -140,123 +133,114 @@
 @endif
 
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
     <!-- Main Content -->
-    <div class="lg:col-span-2 space-y-6">
+    <div class="lg:col-span-8 space-y-8">
         <!-- Data Pemohon -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">Data Pemohon</h2>
-            <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white rounded-[24px] shadow-sm p-8 transition-all hover:shadow-md border border-[#f3f4f6]">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 bg-[#eff6ff] rounded-2xl flex items-center justify-center text-[#1d4ed8]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                </div>
+                <h2 class="text-xl font-bold text-[#191c1e] tracking-tight">Data Pemohon</h2>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
                 <div>
-                    <label class="text-sm font-medium text-gray-500">Nama Lengkap</label>
-                    <p class="text-gray-800 font-medium">{{ $permohonanSurat->nama_pemohon }}</p>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Nama Lengkap</label>
+                    <p class="text-lg font-bold text-[#191c1e] leading-tight">{{ $permohonanSurat->nama_pemohon }}</p>
                 </div>
                 <div>
-                    <label class="text-sm font-medium text-gray-500">NIK</label>
-                    <p class="text-gray-800 font-medium">{{ $permohonanSurat->nik_pemohon }}</p>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">NIK</label>
+                    <p class="text-lg font-bold text-[#191c1e] leading-tight tracking-wider">{{ $permohonanSurat->nik_pemohon }}</p>
                 </div>
-                <div class="col-span-2">
-                    <label class="text-sm font-medium text-gray-500">Alamat</label>
-                    <p class="text-gray-800">{{ $permohonanSurat->alamat_pemohon }}</p>
-                </div>
-                <div>
-                    <label class="text-sm font-medium text-gray-500">No. Telepon</label>
-                    <p class="text-gray-800">{{ $permohonanSurat->phone_pemohon ?? '-' }}</p>
+                <div class="md:col-span-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Alamat Tinggal</label>
+                    <p class="text-lg text-[#191c1e] leading-relaxed">{{ $permohonanSurat->alamat_pemohon }}</p>
                 </div>
                 <div>
-                    <label class="text-sm font-medium text-gray-500">Kelurahan</label>
-                    <p class="text-gray-800">{{ $permohonanSurat->kelurahan->nama ?? '-' }}</p>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Nomor Telepon</label>
+                    <p class="text-lg text-[#191c1e] font-semibold">{{ $permohonanSurat->phone_pemohon ?? '-' }}</p>
                 </div>
                 <div>
-                    <label class="text-sm font-medium text-gray-500">Kecamatan</label>
-                    <p class="text-gray-800">{{ $permohonanSurat->kelurahan->kecamatan->nama ?? '-' }}</p>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Kelurahan / Kecamatan</label>
+                    <p class="text-lg text-[#191c1e] font-semibold">{{ $permohonanSurat->kelurahan->nama ?? '-' }} / {{ $permohonanSurat->kelurahan->kecamatan->nama ?? '-' }}</p>
                 </div>
             </div>
         </div>
 
         <!-- Data Permohonan -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-lg font-bold text-gray-800 mb-4">Data Permohonan</h2>
-            <div class="space-y-3">
+        <div class="bg-white rounded-[24px] shadow-sm p-8 transition-all hover:shadow-md border border-[#f3f4f6]">
+            <div class="flex items-center gap-3 mb-8">
+                <div class="w-10 h-10 bg-[#fefcff] rounded-2xl flex items-center justify-center text-[#4059aa]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                </div>
+                <h2 class="text-xl font-bold text-[#191c1e] tracking-tight">Data Permohonan</h2>
+            </div>
+            
+            <div class="space-y-6">
                 <div>
-                    <label class="text-sm font-medium text-gray-500">Jenis Surat</label>
-                    <p class="text-gray-800 font-medium">{{ $permohonanSurat->jenisSurat->nama }}</p>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Jenis Surat</label>
+                    <p class="text-xl font-extrabold text-[#00236f] leading-tight">{{ $permohonanSurat->jenisSurat->nama }}</p>
                 </div>
                 <div>
-                    <label class="text-sm font-medium text-gray-500">Keperluan</label>
-                    <p class="text-gray-800">{{ $permohonanSurat->keperluan }}</p>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Tujuan / Keperluan</label>
+                    <p class="text-lg text-[#191c1e] leading-relaxed">{{ $permohonanSurat->keperluan }}</p>
                 </div>
 
                 @if($permohonanSurat->data_permohonan)
-                <div class="border-t border-gray-100 pt-3 mt-3">
-                    <label class="text-sm font-medium text-gray-500 mb-2 block">Data Tambahan</label>
-                    <div class="grid grid-cols-2 gap-3">
+                <div class="pt-6 border-t border-[#f3f4f6]">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-4 block underline decoration-[#dce1ff] decoration-2 underline-offset-4">Spesifikasi Layanan</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
                         @foreach($permohonanSurat->data_permohonan as $key => $value)
                         <div>
-                            <label class="text-xs text-gray-400">{{ ucwords(str_replace('_', ' ', $key)) }}</label>
-                            <p class="text-sm text-gray-800">{{ $value }}</p>
+                            <label class="text-[9px] font-extrabold uppercase text-[#757682] opacity-70 mb-1 block">{{ ucwords(str_replace('_', ' ', $key)) }}</label>
+                            <p class="text-base font-bold text-[#191c1e]">{{ $value }}</p>
                         </div>
                         @endforeach
                     </div>
                 </div>
                 @endif
 
-                @if($permohonanSurat->catatan)
-                <div class="border-t border-gray-100 pt-3 mt-3">
-                    <label class="text-sm font-medium text-gray-500">Catatan</label>
-                    <p class="text-gray-800">{{ $permohonanSurat->catatan }}</p>
-                </div>
-                @endif
-
                 @if($permohonanSurat->rejected_reason)
-                <div class="border-t border-gray-100 pt-3 mt-3">
-                    <label class="text-sm font-medium text-red-600">Alasan Penolakan</label>
-                    <p class="text-red-700 bg-red-50 p-3 rounded-lg">{{ $permohonanSurat->rejected_reason }}</p>
+                <div class="pt-6 border-t border-[#f3f4f6]">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#ba1a1a] mb-2 block">Alasan Penolakan</label>
+                    <div class="bg-[#ffdad6] bg-opacity-30 border border-[#ba1a1a]/10 p-4 rounded-2xl">
+                        <p class="text-[#ba1a1a] font-medium leading-relaxed italic">"{{ $permohonanSurat->rejected_reason }}"</p>
+                    </div>
                 </div>
                 @endif
             </div>
         </div>
 
         <!-- Dokumen Pendukung -->
-        @if($permohonanSurat->dokumens && $permohonanSurat->dokumens->count() > 0)
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                </svg>
+        @if($permohonanSurat->dokumens->isNotEmpty())
+        <div class="bg-white rounded-[24px] shadow-sm p-8 transition-all hover:shadow-md border border-[#f3f4f6]">
+            <h2 class="text-xl font-bold text-[#191c1e] mb-8 flex items-center gap-3">
+                <div class="w-10 h-10 bg-[#fdeee4] rounded-2xl flex items-center justify-center text-[#4b1c00]">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                </div>
                 Dokumen Pendukung
-                <span class="text-sm font-normal text-gray-400">({{ $permohonanSurat->dokumens->count() }} file)</span>
+                <span class="text-sm font-medium text-[#757682] bg-[#f3f4f6] px-3 py-1 rounded-lg">{{ $permohonanSurat->dokumens->count() }} Files</span>
             </h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @foreach($permohonanSurat->dokumens as $dokumen)
-                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-100 hover:bg-gray-100 transition">
-                    {{-- Icon berdasarkan tipe file --}}
-                    <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0
-                        {{ str_contains($dokumen->mime_type ?? '', 'pdf') ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600' }}">
+                <div class="group flex items-center gap-4 p-4 bg-white rounded-2xl border border-[#f3f4f6] hover:border-[#4059aa]/30 hover:bg-[#edeef0]/30 transition-all duration-300">
+                    <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors
+                        {{ str_contains($dokumen->mime_type ?? '', 'pdf') ? 'bg-[#ffdad6] text-[#ba1a1a]' : 'bg-[#dce1ff] text-[#00236f]' }}">
                         @if(str_contains($dokumen->mime_type ?? '', 'pdf'))
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" />
-                        </svg>
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd" /></svg>
                         @else
-                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
-                        </svg>
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>
                         @endif
                     </div>
                     <div class="flex-1 min-w-0">
-                        <p class="text-sm font-medium text-gray-800 truncate">{{ $dokumen->nama_dokumen }}</p>
-                        <p class="text-xs text-gray-400">
-                            {{ $dokumen->original_name }}
-                            @if($dokumen->file_size)
-                            · {{ number_format($dokumen->file_size / 1024, 0) }} KB
-                            @endif
-                        </p>
+                        <p class="text-sm font-bold text-[#191c1e] truncate group-hover:text-[#00236f] transition-colors">{{ $dokumen->nama_dokumen }}</p>
+                        <p class="text-[11px] font-medium text-[#757682] mt-0.5 truncate uppercase opacity-60">{{ $dokumen->original_name }}</p>
                     </div>
                     <a href="{{ route('admin.permohonan-surat.download-dokumen', [$permohonanSurat->id, $dokumen->id]) }}"
-                        class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition flex-shrink-0" title="Download">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                        </svg>
+                        class="w-10 h-10 flex items-center justify-center bg-[#f8f9fb] text-[#757682] hover:bg-[#00236f] hover:text-white rounded-xl transition-all" title="Download">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
                     </a>
                 </div>
                 @endforeach
@@ -266,88 +250,129 @@
     </div>
 
     <!-- Sidebar -->
-    <div class="space-y-6">
+    <div class="lg:col-span-4 space-y-8">
         <!-- Status Card -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 class="text-sm font-medium text-gray-500 mb-3">Status Permohonan</h3>
-            <div class="text-center">
+        <div class="bg-white rounded-[24px] shadow-sm p-8 border border-[#f3f4f6]">
+            <h3 class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-6 block text-center">Status Progress</h3>
+            
+            <div class="text-center mb-8">
                 @if($permohonanSurat->status == 'pending')
-                <span class="inline-flex px-4 py-2 text-sm font-medium rounded-full bg-yellow-100 text-yellow-700">Menunggu Verifikasi</span>
+                <div class="inline-flex flex-col items-center">
+                    <span class="px-6 py-2.5 text-sm font-extrabold rounded-2xl bg-[#ffdbcb] text-[#773205] shadow-[0_4px_12px_rgba(119,50,5,0.12)]">MENUNGGU VERIFIKASI</span>
+                    <p class="text-xs font-semibold text-[#757682] mt-3">Menunggu pengecekan awal admin</p>
+                </div>
                 @elseif($permohonanSurat->status == 'in_review')
-                <span class="inline-flex px-4 py-2 text-sm font-medium rounded-full bg-blue-100 text-blue-700">Sedang Diproses</span>
+                <div class="inline-flex flex-col items-center">
+                    <span class="px-6 py-2.5 text-sm font-extrabold rounded-2xl bg-[#dce1ff] text-[#00236f] shadow-[0_4px_12px_rgba(0,35,111,0.12)]">SEDANG DIPROSES</span>
+                    <p class="text-xs font-semibold text-[#757682] mt-3">Sedang direview oleh pejabat terkait</p>
+                </div>
+                @elseif($permohonanSurat->status == 'approved')
+                <div class="inline-flex flex-col items-center">
+                    <span class="px-6 py-2.5 text-sm font-extrabold rounded-2xl bg-green-100 text-green-700 shadow-[0_4px_12px_rgba(21,128,61,0.12)]">DISETUJUI</span>
+                    <p class="text-xs font-semibold text-[#757682] mt-3">Menunggu upload tanda tangan (TTD)</p>
+                </div>
                 @elseif($permohonanSurat->status == 'completed')
-                <span class="inline-flex px-4 py-2 text-sm font-medium rounded-full bg-green-100 text-green-700">Selesai</span>
+                <div class="inline-flex flex-col items-center">
+                    <span class="px-6 py-2.5 text-sm font-extrabold rounded-2xl bg-[#edeef0] text-[#191c1e] shadow-[0_4px_12px_rgba(0,0,0,0.05)]">SELESAI</span>
+                    <p class="text-xs font-semibold text-[#757682] mt-3">Permohonan telah tuntas diproses</p>
+                </div>
                 @elseif($permohonanSurat->status == 'rejected')
-                <span class="inline-flex px-4 py-2 text-sm font-medium rounded-full bg-red-100 text-red-700">Ditolak</span>
+                <div class="inline-flex flex-col items-center">
+                    <span class="px-6 py-2.5 text-sm font-extrabold rounded-2xl bg-[#ffdad6] text-[#ba1a1a] shadow-[0_4px_12px_rgba(186,26,26,0.12)]">DITOLAK</span>
+                    <p class="text-xs font-semibold text-[#757682] mt-3">Permohonan perlu diperbaiki/direvisi</p>
+                </div>
                 @endif
             </div>
 
             @if($permohonanSurat->nomor_surat)
-            <div class="mt-4 pt-4 border-t border-gray-100">
-                <label class="text-xs text-gray-400 block mb-1">Nomor Surat</label>
-                <p class="text-lg font-bold text-green-600">{{ $permohonanSurat->nomor_surat }}</p>
+            <div class="pt-6 border-t border-[#f3f4f6]">
+                <label class="text-[9px] font-extrabold uppercase text-[#757682] mb-1 block">Nomor Surat Resmi</label>
+                <div class="bg-gradient-to-br from-[#f8f9fb] to-[#edeef0] p-4 rounded-2xl border border-[#dce1ff]/50">
+                    <p class="text-[17px] font-black text-[#00236f] tracking-tight text-center">{{ $permohonanSurat->nomor_surat }}</p>
+                </div>
             </div>
             @endif
 
-            <div class="mt-4 pt-4 border-t border-gray-100 text-xs text-gray-500 space-y-1">
-                <p>Dibuat: {{ $permohonanSurat->created_at->format('d M Y H:i') }}</p>
+            <div class="mt-6 space-y-2">
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-[10px] font-bold text-[#757682] uppercase">Diajukan Pada</span>
+                    <span class="text-[11px] font-bold text-[#191c1e]">{{ $permohonanSurat->created_at->format('d M Y, H:i') }}</span>
+                </div>
                 @if($permohonanSurat->completed_at)
-                <p>Selesai: {{ $permohonanSurat->completed_at->format('d M Y H:i') }}</p>
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-[10px] font-bold text-[#757682] uppercase">Selesai Pada</span>
+                    <span class="text-[11px] font-bold text-[#191c1e]">{{ $permohonanSurat->completed_at->format('d M Y, H:i') }}</span>
+                </div>
                 @endif
             </div>
         </div>
 
         <!-- Approval Timeline -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h3 class="text-sm font-medium text-gray-800 mb-4">Timeline Persetujuan</h3>
-            <div class="space-y-4">
+        <div class="bg-white rounded-[24px] shadow-sm p-8 border border-[#f3f4f6]">
+            <h3 class="text-lg font-bold text-[#191c1e] mb-8 tracking-tight flex items-center gap-2">
+                Timeline Persetujuan
+                <div class="h-px flex-1 bg-[#edeef0]"></div>
+            </h3>
+            
+            <div class="space-y-0 relative">
                 @foreach($approvals as $approval)
-                <div class="flex gap-3">
-                    <div class="flex flex-col items-center">
+                <div class="flex gap-6 pb-8 relative group">
+                    @if(!$loop->last)
+                    <div class="absolute left-4 top-8 bottom-0 w-px bg-gradient-to-b from-[#edeef0] to-transparent"></div>
+                    @endif
+                    
+                    <div class="relative z-10">
                         @if($approval->status == 'approved')
-                        <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
+                        <div class="w-8 h-8 rounded-[10px] bg-[#dce1ff] flex items-center justify-center text-[#00236f] ring-4 ring-white">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                         </div>
                         @elseif($approval->status == 'rejected')
-                        <div class="w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                        <div class="w-8 h-8 rounded-[10px] bg-[#ffdad6] flex items-center justify-center text-[#ba1a1a] ring-4 ring-white">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" /></svg>
                         </div>
-                        @elseif($approval->status == 'pending')
-                        <div class="w-8 h-8 rounded-full bg-yellow-100 flex items-center justify-center">
-                            <svg class="w-5 h-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                        @else
+                        <div class="w-8 h-8 rounded-[10px] bg-[#f8f9fb] flex items-center justify-center text-[#c5c5d3] ring-4 ring-white animate-pulse">
+                            <div class="w-2 h-2 rounded-full bg-[#c5c5d3]"></div>
                         </div>
-                        @endif
-                        @if(!$loop->last)
-                        <div class="w-0.5 h-12 {{ $approval->status == 'approved' ? 'bg-green-200' : 'bg-gray-200' }}"></div>
                         @endif
                     </div>
-                    <div class="flex-1 pb-4">
-                        <p class="text-sm font-medium text-gray-800">{{ $approval->step_name }}</p>
-                        <p class="text-xs text-gray-500">{{ ucwords(str_replace('_', ' ', $approval->target_role)) }}</p>
+                    
+                    <div class="flex-1">
+                        <div class="flex justify-between items-start mb-0.5">
+                            <h4 class="text-sm font-black text-[#191c1e]">{{ $approval->step_name }}</h4>
+                        </div>
+                        <span class="text-[10px] font-bold text-[#757682] uppercase tracking-wide">{{ ucwords(str_replace('_', ' ', $approval->target_role)) }}</span>
+                        
                         @if($approval->status == 'approved')
-                        <p class="text-xs text-green-600 mt-1">
-                            Disetujui {{ $approval->approver ? 'oleh ' . $approval->approver->name : '' }}
-                            <br>{{ $approval->approved_at->format('d M Y H:i') }}
-                        </p>
-                        @if($approval->catatan)
-                        <p class="text-xs text-gray-500 mt-1 italic">"{{ $approval->catatan }}"</p>
-                        @endif
+                        <div class="mt-3 bg-[#f8f9fb] p-3 rounded-2xl border border-[#f3f4f6]">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-5 h-5 rounded-full bg-white flex items-center justify-center text-[10px] shadow-xs">✅</div>
+                                <p class="text-[10px] font-bold text-[#191c1e]">{{ $approval->approver ? $approval->approver->name : 'System' }}</p>
+                                <span class="text-[9px] text-[#757682] font-semibold ml-auto">{{ $approval->approved_at->format('d/m/y H:i') }}</span>
+                            </div>
+                            @if($approval->catatan)
+                            <p class="text-[11px] text-[#444651] italic leading-relaxed">"{{ $approval->catatan }}"</p>
+                            @endif
+                        </div>
                         @elseif($approval->status == 'rejected')
-                        <p class="text-xs text-red-600 mt-1">
-                            Ditolak {{ $approval->approver ? 'oleh ' . $approval->approver->name : '' }}
-                            <br>{{ $approval->approved_at->format('d M Y H:i') }}
-                        </p>
-                        @if($approval->catatan)
-                        <p class="text-xs text-red-600 mt-1 italic">"{{ $approval->catatan }}"</p>
-                        @endif
+                        <div class="mt-3 bg-[#ffdad6]/20 p-3 rounded-2xl border border-[#ba1a1a]/10">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-5 h-5 rounded-full bg-white flex items-center justify-center text-[10px] shadow-xs">❌</div>
+                                <p class="text-[10px] font-bold text-[#ba1a1a]">{{ $approval->approver ? $approval->approver->name : 'System' }}</p>
+                                <span class="text-[9px] text-[#ba1a1a]/60 font-semibold ml-auto">{{ $approval->approved_at->format('d/m/y H:i') }}</span>
+                            </div>
+                            @if($approval->catatan)
+                            <p class="text-[11px] text-[#ba1a1a] italic leading-relaxed font-medium">"{{ $approval->catatan }}"</p>
+                            @endif
+                        </div>
                         @elseif($approval->status == 'pending')
-                        <p class="text-xs text-yellow-600 mt-1">Menunggu persetujuan</p>
+                        <div class="mt-2 flex items-center gap-2 px-1">
+                            <span class="flex h-2 w-2 relative">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                            </span>
+                            <span class="text-[10px] font-bold text-amber-600 uppercase">Menunggu Antrean</span>
+                        </div>
                         @endif
                     </div>
                 </div>
@@ -395,6 +420,29 @@
 
 @push('scripts')
 <script>
+    function confirmAction(formId, title, text, icon = 'warning', confirmBtnText = 'Ya, Lanjutkan') {
+        Swal.fire({
+            title: title,
+            text: text,
+            icon: icon,
+            showCancelButton: true,
+            confirmButtonColor: icon === 'error' ? '#ba1a1a' : '#00236f',
+            cancelButtonColor: '#757682',
+            confirmButtonText: confirmBtnText,
+            cancelButtonText: 'Batal',
+            reverseButtons: true,
+            customClass: {
+                popup: 'rounded-[24px]',
+                confirmButton: 'rounded-xl px-6 py-2.5 font-bold',
+                cancelButton: 'rounded-xl px-6 py-2.5 font-bold'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
+    }
+
     function showApproveModal() {
         document.getElementById('approveModal').classList.remove('hidden');
     }

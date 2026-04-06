@@ -511,6 +511,48 @@ class PermohonanSuratService
     }
 
     /**
+     * Reset permohonan status to pending.
+     * Only for Super Admin.
+     */
+    public function resetPermohonanStatus($id)
+    {
+        DB::beginTransaction();
+        try {
+            $permohonan = $this->repository->find($id);
+
+            if (!$permohonan) {
+                throw new \Exception('Permohonan tidak ditemukan.');
+            }
+
+            // Reset permohonan main fields
+            $permohonan->update([
+                'status'           => 'pending',
+                'current_step'    => 1,
+                'nomor_surat'     => null,
+                'tanggal_surat'   => null,
+                'signed_file_path' => null,
+                'completed_at'     => null,
+                'rejected_reason' => null,
+            ]);
+
+            // Reset all approval records for this permohonan
+            PermohonanApproval::where('permohonan_surat_id', $id)->update([
+                'status'      => 'pending',
+                'user_id'     => null,
+                'catatan'     => 'Status di-reset oleh Super Admin',
+                'approved_at' => null,
+            ]);
+
+            DB::commit();
+            return $permohonan->fresh();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to reset permohonan status: ' . $e->getMessage());
+            throw new \Exception('Gagal reset status permohonan: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Convert integer month (1-12) to Roman numeral string.
      */
     private function toRoman(int $month): string

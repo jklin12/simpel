@@ -107,7 +107,14 @@ class PermohonanController extends Controller
                 StorePermohonanRequest::fileFields(),
                 $dynamicFileNames
             ));
-            $dataPermohonan = array_map(fn($v) => is_string($v) ? strtoupper($v) : $v, $request->except($excludeFields));
+            $rawData = $request->except($excludeFields);
+
+            // Sanitize numeric fields (remove thousands separator dots)
+            if (isset($rawData['jumlah_penghasilan'])) {
+                $rawData['jumlah_penghasilan'] = str_replace('.', '', $rawData['jumlah_penghasilan']);
+            }
+
+            $dataPermohonan = array_map(fn($v) => is_string($v) ? strtoupper($v) : $v, $rawData);
 
             // Generate Nomor Permohonan: REG/YYYYMMDD/RANDOM
             $nomorPermohonan = 'REG/' . date('Ymd') . '/' . strtoupper(Str::random(5));
@@ -309,6 +316,12 @@ class PermohonanController extends Controller
                 $dynamicFileNames
             ));
             $rawData = $request->except($excludeFields);
+
+            // Sanitize numeric fields (remove thousands separator dots)
+            if (isset($rawData['jumlah_penghasilan'])) {
+                $rawData['jumlah_penghasilan'] = str_replace('.', '', $rawData['jumlah_penghasilan']);
+            }
+
             $dataPermohonan = array_map(fn($v) => is_string($v) ? strtoupper($v) : $v, $rawData);
 
             // Resolve pemohon fields based on jenis surat kode

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Surat Keterangan Belum Memiliki Rumah</title>
+    <title>Surat Keterangan Penghasilan</title>
     <style>
         * {
             margin: 0;
@@ -327,11 +327,11 @@
             Berdasarkan surat pengantar Ketua RT. {{ $rtPad }}
             RW. {{ $rwPad }}
             Nomor: {{ $data['no_surat_pengantar'] ?? '....' }}
-            tanggal {{ $tglPengantar }}, dan surat pernyataan pemohon bahwa yang namanya tersebut diatas, memiliki penghasilan rata-rata Rp. {{ number_format($data['jumlah_penghasilan'] ?? 0, 0, ',', '.') }}/Bulan.
+            tanggal {{ $tglPengantar }}, dan surat pernyataan pemohon bahwa yang namanya tersebut diatas, memiliki penghasilan rata-rata Rp. {{ number_format(str_replace('.', '', $data['jumlah_penghasilan'] ?? 0), 0, ',', '.') }}/Bulan.
         </p>
 
         <p class="penutup">
-            Demikian surat keterangan belum memiliki rumah ini diberikan untuk dapat dpergunakan
+            Demikian surat keterangan penghasilan ini diberikan untuk dapat dipergunakan
             sebagaimana mestinya.
         </p>
 
