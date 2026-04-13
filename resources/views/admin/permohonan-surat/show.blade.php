@@ -166,6 +166,10 @@
                     <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Kelurahan / Kecamatan</label>
                     <p class="text-lg text-[#191c1e] font-semibold">{{ $permohonanSurat->kelurahan->nama ?? '-' }} / {{ $permohonanSurat->kelurahan->kecamatan->nama ?? '-' }}</p>
                 </div>
+                <div>
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Kode Check</label>
+                    <p class="text-lg text-[#191c1e] font-semibold">{{ $permohonanSurat->track_token ?? '-' }}</p>
+                </div>
             </div>
         </div>
 

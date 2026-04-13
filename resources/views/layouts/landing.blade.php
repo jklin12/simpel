@@ -97,7 +97,7 @@
                         </button>
                         <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" style="display: none;">
                             <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                                <a href="{{ route('layanan.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600" role="menuitem">Buat Surat</a>
+                                <a href="{{ route('layanan.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600" role="menuitem">Ajukan Surat</a>
                                 <a href="{{ route('layanan.surat.tracking') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600" role="menuitem">Cek Status</a>
                                 <div class="border-t border-gray-100 my-1"></div>
                                 <a href="{{ route('layanan.surat.template.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600" role="menuitem">Download Template</a>
@@ -193,7 +193,7 @@
                     <h4 class="font-bold text-gray-900 mb-6">Navigasi</h4>
                     <ul class="space-y-3">
                         <li><a href="#" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">Home</a></li>
-                        <li><a href="#buat-surat" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">Buat Surat</a></li>
+                        <li><a href="#buat-surat" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">Ajukan Surat</a></li>
                         <li><a href="#cek-status" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">Cek Status</a></li>
                         <li><a href="#faq" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">FAQ</a></li>
                     </ul>
