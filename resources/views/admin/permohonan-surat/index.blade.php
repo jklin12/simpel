@@ -27,7 +27,7 @@
 <!-- Advanced Filters -->
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 mb-6">
     <form action="{{ route('admin.permohonan-surat.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-12 gap-4">
-        <div class="md:col-span-4">
+        <div class="md:col-span-3">
             <label class="block text-xs font-bold text-gray-400 uppercase mb-1.5 ml-1">Pencarian</label>
             <div class="relative group">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition-colors">
@@ -57,7 +57,14 @@
                 <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Ditolak</option>
             </select>
         </div>
-        <div class="md:col-span-3 flex items-end gap-2">
+        <div class="md:col-span-2">
+            <label class="block text-xs font-bold text-gray-400 uppercase mb-1.5 ml-1">Urutan</label>
+            <select name="sort" class="w-full rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-sm transition-all">
+                <option value="desc" {{ request('sort') == 'desc' ? 'selected' : '' }}>Terbaru</option>
+                <option value="asc" {{ request('sort') == 'asc' ? 'selected' : '' }}>Terlama</option>
+            </select>
+        </div>
+        <div class="md:col-span-2 flex items-end gap-2">
             <button type="submit" class="flex-1 px-4 py-2 bg-gray-900 text-white rounded-xl hover:bg-black transition-all text-sm font-bold shadow-lg shadow-gray-200 active:scale-95">
                 Terapkan
             </button>

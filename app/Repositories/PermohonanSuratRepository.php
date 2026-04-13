@@ -88,7 +88,9 @@ class PermohonanSuratRepository implements PermohonanSuratRepositoryInterface
         }
         // super_admin sees all
 
-        return $query->latest()->paginate($perPage);
+        // Sorting
+        $sort = $filters['sort'] ?? 'desc';
+        return $query->orderBy('created_at', $sort)->paginate($perPage);
     }
 
     public function updateStatus($id, $status, array $additionalData = [])

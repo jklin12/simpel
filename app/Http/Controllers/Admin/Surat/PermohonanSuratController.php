@@ -27,7 +27,7 @@ class PermohonanSuratController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $filters = $request->only(['search', 'status', 'jenis_surat_id']);
+        $filters = $request->only(['search', 'status', 'jenis_surat_id', 'sort']);
 
         $permohonanSurats = $this->service->getPermohonanByUserRole($user, $filters, 15);
         $jenisSurats = JenisSurat::where('is_active', true)->orderBy('nama')->get();
