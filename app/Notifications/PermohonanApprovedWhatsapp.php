@@ -33,8 +33,8 @@ class PermohonanApprovedWhatsapp extends Notification
                 "✅ Permohonan surat *{$p->jenisSurat->nama}* Anda telah *SELESAI* diproses dan ditandatangai secara elektronik.\n\n" .
                 "Nomor Surat: *{$p->nomor_surat}*\n" .
                 "Tanggal Surat: {$p->tanggal_surat->format('d/m/Y')}\n\n" .
-                "Silahkan download file surat pian melalui link\n" .
-                route('layanan.surat.tracking') . " dan masukkan Kode Tracking: *{$p->track_token}*\n\n" .
+                "Silahkan download file surat pian melalui link berikut:\n" .
+                route('layanan.surat.tracking.search', ['track_token' => $p->track_token]) . "\n\n" .
                 "Atau jika kesulitan, Silakan datang ke kantor kelurahan untuk mengambil surat Anda.\n\n" .
                 "Terima kasih.";
         }
@@ -43,7 +43,8 @@ class PermohonanApprovedWhatsapp extends Notification
         return "Halo {$p->nama_pemohon},\n\n" .
             "📋 Permohonan surat *{$p->jenisSurat->nama}* Anda telah *DISETUJUI* pada tahap verifikasi saat ini.\n\n" .
             "Permohonan Anda sedang dilanjutkan ke tahap berikutnya.\n\n" .
-            "Kode Tracking: *{$p->track_token}*\n" .
+            "Pantau status permohonan Anda di sini:\n" .
+            route('layanan.surat.tracking.search', ['track_token' => $p->track_token]) . "\n\n" .
             "Terima kasih atas kesabarannya.";
     }
 }

@@ -32,9 +32,9 @@ class PermohonanRevisiWhatsapp extends Notification
 
         return "Halo {$this->permohonan->nama_pemohon},\n\n" .
             "Revisi permohonan *{$this->permohonan->jenisSurat->nama}* Anda (Revisi ke-{$revisiKe}) telah berhasil diajukan ulang.\n\n" .
-            "Kode Tracking: *{$this->permohonan->track_token}*\n\n" .
+            "Pantau status permohonan Anda di sini:\n" .
+            route('layanan.surat.tracking.search', ['track_token' => $this->permohonan->track_token]) . "\n\n" .
             "Permohonan Anda sedang dalam antrian verifikasi kembali oleh petugas kelurahan.\n" .
-            "Gunakan kode tracking di atas untuk memantau status terbaru.\n\n" .
             "Terima kasih.";
     }
 }

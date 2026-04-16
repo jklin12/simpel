@@ -32,8 +32,9 @@ class PermohonanRejectedWhatsapp extends Notification
         return "Halo {$p->nama_pemohon},\n\n" .
             "❌ Mohon maaf, permohonan surat *{$p->jenisSurat->nama}* Anda *BELUM DAPAT DISETUJUI*.\n\n" .
             "Alasan: {$this->reason}\n\n" .
-            "Silakan perbaiki data dan ajukan kembali, atau hubungi kantor kelurahan untuk informasi lebih lanjut.\n\n" .
-            "Kode Tracking: *{$p->track_token}*\n" .
+            "Silakan perbaiki data dan ajukan kembali melalui link berikut:\n" .
+            route('layanan.surat.tracking.search', ['track_token' => $p->track_token]) . "\n\n" .
+            "Atau hubungi kantor kelurahan untuk informasi lebih lanjut.\n\n" .
             "Terima kasih.";
     }
 }
