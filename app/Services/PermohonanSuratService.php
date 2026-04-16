@@ -7,6 +7,7 @@ use App\Models\PermohonanApproval;
 use App\Models\SuratCounter;
 use App\Models\User;
 use App\Notifications\PermohonanApprovedWhatsapp;
+use App\Notifications\PermohonanSignRequestWhatsapp;
 use App\Notifications\PermohonanBaruNotification;
 use App\Notifications\PermohonanRejectedWhatsapp;
 use App\Notifications\PermohonanRevisiNotification;
@@ -160,10 +161,11 @@ class PermohonanSuratService
                     $namaPejabat = 'Bapak/Ibu Lurah';
                 }
 
+
                 if (!empty($noHp)) {
-                    // Send via On-Demand Notification
+                    // Send via On-Demand Notification 
                     \Illuminate\Support\Facades\Notification::route('whatsapp', $noHp)
-                        ->notify(new PermohonanApprovedWhatsapp($permohonan->fresh(), $namaPejabat));
+                        ->notify(new PermohonanSignRequestWhatsapp($permohonan->fresh(), $namaPejabat));
                 }
             } catch (\Exception $e) {
                 Log::error('WA Signer notification failed: ' . $e->getMessage());
@@ -498,7 +500,7 @@ class PermohonanSuratService
     public function deletePermohonan($id)
     {
         $permohonan = $this->repository->find($id);
-        
+
         if (!$permohonan) {
             throw new \Exception('Permohonan tidak ditemukan.');
         }

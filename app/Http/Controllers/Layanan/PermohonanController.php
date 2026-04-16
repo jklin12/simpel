@@ -202,9 +202,6 @@ class PermohonanController extends Controller
                 if ($jenisSurat === 'SDNH') {
                     $pejabatHp = $permohonanContext->kelurahan->kecamatan->camat_no_hp ?? null;
                     $namaPejabat = 'Bapak/Ibu Camat';
-                } else {
-                    $pejabatHp = $permohonanContext->kelurahan->lurah_no_hp ?? null;
-                    $namaPejabat = 'Bapak/Ibu Lurah';
                 }
 
                 if (!empty($pejabatHp)) {
