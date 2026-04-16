@@ -30,6 +30,7 @@ class PermohonanController extends Controller
         $serviceId = $request->query('service_id');
         $kelurahanId = $request->query('kelurahan_id');
 
+        //dd($serviceId,$kelurahanId);
         if (!$serviceId || !$kelurahanId) {
             return redirect()->route('services.index')->with('error', 'Silakan pilih layanan dan lokasi terlebih dahulu.');
         }
@@ -38,9 +39,9 @@ class PermohonanController extends Controller
         $kelurahan = Kelurahan::findOrFail($kelurahanId);
 
         // Piloting restriction
-        if ($kelurahanId != '6372010006') {
+        /*if ($kelurahanId != '6372010006') {
             return redirect()->route('layanan.index')->with('error', 'Layanan saat ini hanya tersedia untuk wilayah piloting (Syamsudin Noor).');
-        }
+        }*/
 
         $pekerjaanList = \App\Models\Pekerjaan::orderBy('nama')->pluck('nama')->toArray();
 

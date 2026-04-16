@@ -4,7 +4,7 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="relative bg-white overflow-hidden lg:pt-[110px]">
+{{--<section class="relative bg-white overflow-hidden lg:pt-[110px]">
     <div class="max-w-7xl mx-auto pt-24">
         <div class="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
             <main class="mt-10 mx-auto max-w-7xl px-4 sm:mt-12 sm:px-6 md:mt-16 lg:mt-24 lg:px-8 xl:mt-28">
@@ -35,26 +35,7 @@
     <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2 mt-8 lg:mt-0">
         <img class="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full" src="{{ asset('images/banner.png') }}" alt="Pelayanan Publik">
     </div>
-</section>
-
-<!-- Alur Permohonan Section -->
-<section class="py-16 bg-gray-50 overflow-hidden border-t border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-12">
-            <h2 class="text-base text-primary-600 font-semibold tracking-wide uppercase">Alur Proses</h2>
-            <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Mudahnya Mengurus Surat
-            </p>
-            <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
-                Ikuti langkah-langkah sederhana berikut untuk mengajukan permohonan surat secara online.
-            </p>
-        </div>
-
-        <div class="relative">
-            <img src="{{ asset('images/infographic.png') }}" alt="Infografis Alur" class="w-full rounded-2xl shadow-xl transform hover:scale-[1.01] transition-transform duration-300">
-        </div>
-    </div>
-</section>
+</section>--}}
 
 <!-- Jenis Surat Section / All Services -->
 <section id="buat-surat" class="py-16 bg-white" x-data="{
@@ -214,6 +195,25 @@
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- Alur Permohonan Section -->
+<section class="py-16 bg-gray-50 overflow-hidden border-t border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+            <h2 class="text-base text-primary-600 font-semibold tracking-wide uppercase">Alur Proses</h2>
+            <p class="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                Mudahnya Mengurus Surat
+            </p>
+            <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+                Ikuti langkah-langkah sederhana berikut untuk mengajukan permohonan surat secara online.
+            </p>
+        </div>
+
+        <div class="relative">
+            <img src="{{ asset('images/infographic.png') }}" alt="Infografis Alur" class="w-full rounded-2xl shadow-xl transform hover:scale-[1.01] transition-transform duration-300">
         </div>
     </div>
 </section>
