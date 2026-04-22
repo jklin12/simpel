@@ -28,7 +28,7 @@
             bottom: 1cm;
             left: 2cm;
             right: 2cm;
-            font-size: 7pt;
+            font-size: 5pt;
             color: #333;
             border-top: 1px solid #000;
             padding-top: 5px;
@@ -108,7 +108,7 @@
         table.data-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 6px;
+            margin-bottom: 3px;
         }
 
         table.data-table td {
@@ -134,8 +134,8 @@
         .narasi {
             font-size: 11pt;
             text-align: justify;
-            margin-bottom: 10px;
-            line-height: 1.7;
+            margin-bottom: 5px;
+            line-height: 1.2;
         }
 
         .narasi .hl {
@@ -147,8 +147,8 @@
         .penutup {
             font-size: 11pt;
             text-align: justify;
-            margin-bottom: 20px;
-            line-height: 1.7;
+            margin-bottom: 5px;
+            line-height: 1.2;
         }
 
         /* TTD */
@@ -248,18 +248,18 @@
         @php
         $data = $permohonan->data_permohonan ?? [];
         $tglLahir = isset($data['tanggal_lahir'])
-        ? \Carbon\Carbon::parse($data['tanggal_lahir'])->translatedFormat('d F Y')
+        ? ($data['tanggal_lahir'])
         : '-';
         
         $istriTglLahir = isset($data['istri_tanggal_lahir'])
-        ? \Carbon\Carbon::parse($data['istri_tanggal_lahir'])->translatedFormat('d F Y')
+        ? ($data['istri_tanggal_lahir'])
         : '-';
 
         $tglPengantar = isset($data['tanggal_surat_pengantar'])
-        ? \Carbon\Carbon::parse($data['tanggal_surat_pengantar'])->translatedFormat('d F Y')
+        ? ($data['tanggal_surat_pengantar'])
         : '-';
         $tglSuratPernyataan = isset($data['tanggal_surat_pernyataan'])
-        ? \Carbon\Carbon::parse($data['tanggal_surat_pernyataan'])->translatedFormat('d F Y')
+        ? ($data['tanggal_surat_pernyataan'])
         : '-';
         @endphp
 
@@ -300,9 +300,6 @@
                 <td class="col-value">
                     {{ $data['alamat_lengkap'] ?? $permohonan->alamat_pemohon }}
                     RT. {{ $data['rt'] ?? '-' }} RW. {{ $data['rw'] ?? '-' }}
-                    KEL. {{ strtoupper($kelurahan->nama) }}
-                    KEC. {{ strtoupper($kelurahan->kecamatan->nama) }}
-                    KOTA BANJARBARU
                 </td>
             </tr>
         </table>

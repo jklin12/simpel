@@ -28,7 +28,7 @@
             bottom: 1cm;
             left: 2cm;
             right: 2cm;
-            font-size: 7pt;
+            font-size: 5pt;
             color: #333;
             border-top: 1px solid #000;
             padding-top: 5px;
@@ -63,12 +63,12 @@
         }
 
         .header-text-line1 {
-            font-size: 11pt;
+            font-size: 10pt;
             font-weight: normal;
         }
 
         .header-text-line2 {
-            font-size: 11pt;
+            font-size: 10pt;
             font-weight: normal;
         }
 
@@ -101,7 +101,7 @@
 
         .surat-nomor {
             text-align: center;
-            font-size: 11pt;
+            font-size: 10pt;
             margin-bottom: 14px;
         }
 
@@ -113,9 +113,9 @@
         }
 
         table.data-table td {
-            font-size: 11pt;
+            font-size: 10pt;
             vertical-align: top;
-            padding: 1.5px 0;
+            padding: 1px 0;
         }
 
         table.data-table td.col-label {
@@ -133,9 +133,9 @@
 
         /* NARASI */
         .narasi {
-            font-size: 11pt;
+            font-size: 10pt;
             text-align: justify;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             line-height: 1.7;
         }
 
@@ -146,23 +146,23 @@
 
         /* PENUTUP */
         .penutup {
-            font-size: 11pt;
+            font-size: 10pt;
             text-align: justify;
             margin-bottom: 20px;
-            line-height: 1.7;
+            line-height: 1.5;
         }
 
         /* TTD */
         table.ttd-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 16px;
+            margin-top: 10px;
         }
 
         .ttd-right-cell {
             text-align: center;
             width: 50%;
-            font-size: 11pt;
+            font-size: 10pt;
         }
 
         .ttd-spacer {
@@ -170,11 +170,11 @@
         }
 
         .ttd-nama {
-            font-size: 11pt;
+            font-size: 10pt;
         }
 
         .ttd-nip {
-            font-size: 11pt;
+            font-size: 10pt;
         }
 
         .section-margin {
@@ -221,7 +221,7 @@
         </div>
 
         {{-- ===== PEMBUKA ===== --}}
-        <p style="font-size:11pt; margin-bottom:8px;">Yang bertanda tangan di bawah ini :</p>
+        <p style="font-size:10pt; margin-bottom:5px;">Yang bertanda tangan di bawah ini :</p>
 
         {{-- DATA LURAH --}}
         <table class="data-table">
@@ -243,7 +243,7 @@
         </table>
 
         {{-- MENERANGKAN --}}
-        <p class="section-margin" style="font-size:11pt;">Menerangkan dengan sebenarnya bahwa &nbsp;:</p>
+        <p class="section-margin" style="font-size:10pt;">Menerangkan dengan sebenarnya bahwa &nbsp;:</p>
 
         {{-- DATA PEMOHON --}}
         @php
@@ -251,7 +251,7 @@
         $tglLahir = isset($data['tanggal_lahir'])
         ? \Carbon\Carbon::parse($data['tanggal_lahir'])->translatedFormat('d F Y')
         : '-';
-        
+
         $gaibTglLahir = isset($data['gaib_tanggal_lahir'])
         ? \Carbon\Carbon::parse($data['gaib_tanggal_lahir'])->translatedFormat('d F Y')
         : '-';
@@ -301,14 +301,11 @@
                 <td class="col-value">
                     {{ $data['alamat_lengkap'] ?? $permohonan->alamat_pemohon }}
                     RT. {{ $data['rt'] ?? '-' }} RW. {{ $data['rw'] ?? '-' }}
-                    KEL. {{ strtoupper($kelurahan->nama) }}
-                    KEC. {{ strtoupper($kelurahan->kecamatan->nama) }}
-                    KOTA BANJARBARU
                 </td>
             </tr>
         </table>
 
-        <p class="section-margin" style="font-size:11pt;">Adalah benar <b>Suami/Istri</b> dari nama di bawah ini &nbsp;:</p>
+        <p class="section-margin" style="font-size:10pt;">Adalah benar <b>Suami/Istri</b> dari nama di bawah ini &nbsp;:</p>
 
         {{-- DATA ORANG GAIB --}}
         <table class="data-table">
@@ -363,15 +360,12 @@
 
         <p class="narasi">
             Adapun surat keterangan ini dibuat untuk keperluan <span>{{ $data['keperluan'] ?? '-' }}</span>.
-        </p>
-
-        <p class="penutup">
             Demikian Surat Keterangan Gaib ini diberikan agar dapat dipergunakan
             sebagaimana mestinya.
         </p>
 
         {{-- ===== TANDA TANGAN ===== --}}
-        <table class="ttd-table" style="margin-top: 10px;">
+        <table class="ttd-table">
             <tr>
                 <td style="width:50%;"></td>
                 <td class="ttd-right-cell">

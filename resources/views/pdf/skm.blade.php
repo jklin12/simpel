@@ -28,7 +28,7 @@
             bottom: 1cm;
             left: 2cm;
             right: 2cm;
-            font-size: 7pt;
+            font-size: 5pt;
             color: #333;
             border-top: 1px solid #000;
             padding-top: 5px;

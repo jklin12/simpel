@@ -216,6 +216,7 @@ class PermohonanSuratController extends Controller
 
             return $pdf->stream($filename);
         } catch (\Exception $e) {
+            dd($e); 
             return redirect()
                 ->back()
                 ->with('error', 'Gagal generate PDF: ' . $e->getMessage());
@@ -228,11 +229,11 @@ class PermohonanSuratController extends Controller
     public function uploadSignedLetter(Request $request, $id)
     {
         $request->validate([
-            'signed_letter' => 'required|file|mimes:pdf|max:5120',
+            'signed_letter' => 'required|file|mimes:pdf|max:10240',
         ], [
             'signed_letter.required' => 'File surat yang sudah ditandatangani wajib diupload.',
             'signed_letter.mimes'    => 'File harus berformat PDF.',
-            'signed_letter.max'      => 'Ukuran file maksimal 5MB.',
+            'signed_letter.max'      => 'Ukuran file maksimal 10MB.',
         ]);
 
         try {

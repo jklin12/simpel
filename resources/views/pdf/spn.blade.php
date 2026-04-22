@@ -237,7 +237,7 @@
             bottom: 0.8cm;
             left: 1.5cm;
             right: 1.5cm;
-            font-size: 6.5pt;
+            font-size: 5pt;
             color: #333;
             border-top: 1px solid #000;
             padding-top: 4px;
@@ -268,16 +268,16 @@
     @php
     $data = $permohonan->data_permohonan ?? [];
     $tglLahir = isset($data['tanggal_lahir'])
-    ? \Carbon\Carbon::parse($data['tanggal_lahir'])->translatedFormat('d F Y')
+    ? ($data['tanggal_lahir'])
     : '-';
     $tglSurat = $permohonan->tanggal_surat
-    ? \Carbon\Carbon::parse($permohonan->tanggal_surat)->translatedFormat('d F Y')
+    ? ($permohonan->tanggal_surat)
     : \Carbon\Carbon::now()->translatedFormat('d F Y');
     $tglAyahLahir = isset($data['ayah_tanggal_lahir'])
-    ? \Carbon\Carbon::parse($data['ayah_tanggal_lahir'])->translatedFormat('d F Y')
+    ? ($data['ayah_tanggal_lahir'])
     : '-';
     $tglIbuLahir = isset($data['ibu_tanggal_lahir'])
-    ? \Carbon\Carbon::parse($data['ibu_tanggal_lahir'])->translatedFormat('d F Y')
+    ? ($data['ibu_tanggal_lahir'])
     : '-';
 
     // Tentukan bin/binti berdasarkan jenis kelamin
@@ -480,8 +480,7 @@
                 <td style="vertical-align:top; padding:1.5px 0;">:</td>
                 <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">
                     {{ $alamatLengkap }},<br>
-                    KEL. {{ (strtoupper($kelurahan->nama)) }}, KEC. {{ (strtoupper($kelurahan->kecamatan->nama ?? 'Landasan Ulin')) }}, KOTA BANJARBARU
-                </td>
+                 </td>
             </tr>
             <tr>
                 <td style="vertical-align:top; padding:1.5px 0;">9.</td>
@@ -609,10 +608,10 @@
         {{-- ===== TANDA TANGAN ===== --}}
         <table class="ttd-table">
             <tr>
-                <td style="width:50%; vertical-align: bottom; text-align: center; padding-bottom: 20px;">
+                <td style="width:50%; vertical-align: bottom; text-align: right; padding-bottom: 20px;">
                     @if(isset($pasFotoBase64))
                     <img src="data:image/jpeg;base64,{{ $pasFotoBase64 }}"
-                        style="width: 80px; height: 110px; border: 1px solid #ccc; object-fit: cover;"
+                        style=" height: 110px; border: 1px solid #ccc; object-fit: cover;"
                         alt="Pas Foto">
                     @endif
                 </td>
