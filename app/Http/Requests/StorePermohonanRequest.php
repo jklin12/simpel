@@ -135,6 +135,7 @@ class StorePermohonanRequest extends FormRequest
             'skmh_izin_atasan',
             'skmh_izin_poligami',
             'skmh_rekom_dp3a',
+            'skmh_surat_imunisasi_catin',
             'skmh_bukti_pbb',
             // SKJD
             'skjd_surat_pengantar_rtrw',
@@ -142,6 +143,7 @@ class StorePermohonanRequest extends FormRequest
             'skjd_ktp_kk_bersangkutan',
             'skjd_ktp_saksi',
             'skjd_bukti_lunas_pbb',
+            'skjd_akta_kematian_perceraian',
             // SDNH
             'sdnh_surat_pengantar',
             'sdnh_ktp_kk',
@@ -154,6 +156,7 @@ class StorePermohonanRequest extends FormRequest
             'sksi_ktp_kk_bersangkutan',
             'sksi_ktp_saksi',
             'sksi_bukti_lunas_pbb',
+            'sksi_surat_pernyataan_penikah',
             // SKG
             'skg_surat_pengantar_rtrw',
             'skg_blangko_pernyataan',
@@ -257,6 +260,7 @@ class StorePermohonanRequest extends FormRequest
             'sksi_ktp_kk_bersangkutan'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sksi_ktp_saksi'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sksi_bukti_lunas_pbb'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sksi_surat_pernyataan_penikah' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
@@ -293,6 +297,7 @@ class StorePermohonanRequest extends FormRequest
             'skjd_ktp_kk_bersangkutan'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skjd_ktp_saksi'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skjd_bukti_lunas_pbb'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skjd_akta_kematian_perceraian' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
@@ -530,6 +535,7 @@ class StorePermohonanRequest extends FormRequest
             'skmh_izin_atasan'              => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skmh_izin_poligami'            => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skmh_rekom_dp3a'               => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_surat_imunisasi_catin'    => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skmh_bukti_pbb'                => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }

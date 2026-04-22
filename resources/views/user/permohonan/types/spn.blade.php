@@ -444,6 +444,13 @@
                         <input type="file" name="skmh_rekom_dp3a" accept=".jpg,.jpeg,.png,.pdf" class="{{ $fileInputClass }}">
                         @error('skmh_rekom_dp3a') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Surat Imunisasi Catin
+                        </label>
+                        <input type="file" name="skmh_surat_imunisasi_catin" accept=".jpg,.jpeg,.png,.pdf" class="{{ $fileInputClass }}">
+                        @error('skmh_surat_imunisasi_catin') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
                 </div>
             </div>
 
