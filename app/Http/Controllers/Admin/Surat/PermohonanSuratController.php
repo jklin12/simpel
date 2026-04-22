@@ -150,12 +150,7 @@ class PermohonanSuratController extends Controller
     {
         try {
             $permohonan = $this->service->getPermohonanById($id);
-
-            if (!in_array($permohonan->status, ['approved', 'completed'])) {
-                return redirect()
-                    ->back()
-                    ->with('error', 'Surat belum selesai diproses');
-            }
+ 
 
             // Load relations
             $permohonan->load(['jenisSurat', 'kelurahan.kecamatan', 'dokumens']);
@@ -210,9 +205,12 @@ class PermohonanSuratController extends Controller
 
             $pdf->setPaper('a4', 'portrait');
 
-            $filename = ($permohonan->nomor_surat)
-                ? str_replace('/', '-', $permohonan->nomor_surat) . '.pdf'
-                : $permohonan->nomor_permohonan . '.pdf';
+            // Generate filename: gunakan nomor_surat jika ada, atau nomor_permohonan dengan DRAFT prefix
+            if ($permohonan->nomor_surat) {
+                $filename = str_replace('/', '-', $permohonan->nomor_surat) . '.pdf';
+            } else {
+                $filename = 'DRAFT_' . str_replace('/', '-', $permohonan->nomor_permohonan) . '.pdf';
+            }
 
             return $pdf->stream($filename);
         } catch (\Exception $e) {
