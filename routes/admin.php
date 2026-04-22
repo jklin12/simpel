@@ -46,6 +46,10 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
             Route::resource('roles', App\Http\Controllers\Admin\AccessControl\RoleController::class);
             Route::resource('permissions', App\Http\Controllers\Admin\AccessControl\PermissionController::class);
 
+            // WhatsApp Logs
+            Route::get('whatsapp-logs', [App\Http\Controllers\Admin\WhatsappNotificationLogController::class, 'index'])->name('whatsapp-logs.index');
+            Route::post('whatsapp-logs/{log}/retry', [App\Http\Controllers\Admin\WhatsappNotificationLogController::class, 'retry'])->name('whatsapp-logs.retry');
+
             // Master Data
             Route::prefix('master')->name('master.')->group(function () {
                 Route::resource('kabupaten', App\Http\Controllers\Admin\Master\KabupatenController::class);
@@ -74,6 +78,7 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
             Route::get('permohonan-surat/{permohonanSurat}/dokumen/{dokumen}/download', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'downloadDokumen'])->name('permohonan-surat.download-dokumen');
             Route::post('permohonan-surat/{permohonanSurat}/upload-signed', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'uploadSignedLetter'])->name('permohonan-surat.upload-signed');
             Route::post('permohonan-surat/{permohonanSurat}/reset-status', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'resetStatus'])->name('permohonan-surat.reset-status');
+            Route::post('permohonan-surat/{permohonanSurat}/retry-whatsapp', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'retryWhatsapp'])->name('permohonan-surat.retry-whatsapp');
             Route::delete('permohonan-surat/{permohonanSurat}', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'destroy'])->name('permohonan-surat.destroy');
         });
 

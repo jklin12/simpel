@@ -42,6 +42,10 @@
             @endphp
 
             @if($canApprove)
+                <a href="{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}" target="_blank" class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    Preview PDF
+                </a>
                 <a href="{{ route('admin.permohonan-surat.edit', $permohonanSurat->id) }}" class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                     Edit Data
@@ -382,6 +386,112 @@
                 </div>
                 @endforeach
             </div>
+        </div>
+
+        <!-- WhatsApp Notification Logs -->
+        <div class="bg-white rounded-[24px] shadow-sm p-8 border border-[#f3f4f6]">
+            <h3 class="text-lg font-bold text-[#191c1e] mb-8 tracking-tight flex items-center gap-2">
+                Notifikasi WhatsApp
+                <div class="h-px flex-1 bg-[#edeef0]"></div>
+            </h3>
+
+            @php
+            $whatsappLogs = $permohonanSurat->whatsappLogs()->latest()->get();
+            @endphp
+
+            @if($whatsappLogs->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-[#edeef0]">
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-[#757682] uppercase">No</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-[#757682] uppercase">Tipe</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-[#757682] uppercase">Nomor Tujuan</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-[#757682] uppercase">Status</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-[#757682] uppercase">Percobaan</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-[#757682] uppercase">Waktu</th>
+                                <th class="px-3 py-3 text-left text-[11px] font-bold text-[#757682] uppercase">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#edeef0]">
+                            @foreach($whatsappLogs as $index => $log)
+                            <tr class="hover:bg-[#fafbfc] transition">
+                                <td class="px-3 py-3 text-[12px] font-semibold text-[#191c1e]">{{ $index + 1 }}</td>
+                                <td class="px-3 py-3 text-[12px] font-semibold text-[#191c1e]">
+                                    @switch($log->notification_type)
+                                        @case('created')
+                                            <span class="px-2 py-1 rounded-md bg-[#e3f2fd] text-[#1976d2] text-[11px] font-bold">Dibuat</span>
+                                            @break
+                                        @case('approved')
+                                            <span class="px-2 py-1 rounded-md bg-[#e8f5e9] text-[#388e3c] text-[11px] font-bold">Disetujui</span>
+                                            @break
+                                        @case('rejected')
+                                            <span class="px-2 py-1 rounded-md bg-[#ffebee] text-[#d32f2f] text-[11px] font-bold">Ditolak</span>
+                                            @break
+                                        @case('revisi')
+                                            <span class="px-2 py-1 rounded-md bg-[#fff3e0] text-[#f57c00] text-[11px] font-bold">Revisi</span>
+                                            @break
+                                        @case('sign_request')
+                                            <span class="px-2 py-1 rounded-md bg-[#f3e5f5] text-[#7b1fa2] text-[11px] font-bold">TTD</span>
+                                            @break
+                                        @default
+                                            <span class="px-2 py-1 rounded-md bg-[#f5f5f5] text-[#616161] text-[11px] font-bold">{{ ucfirst($log->notification_type) }}</span>
+                                    @endswitch
+                                </td>
+                                <td class="px-3 py-3 text-[12px] font-semibold text-[#191c1e] font-mono">{{ $log->phone_to }}</td>
+                                <td class="px-3 py-3 text-[12px] font-semibold">
+                                    @if($log->status === 'sent')
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#c8e6c9] text-[#2e7d32]">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                            Terkirim
+                                        </span>
+                                    @elseif($log->status === 'failed')
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#ffcdd2] text-[#c62828]">
+                                            <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+                                            Gagal
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#fff9c4] text-[#f57f17]">
+                                            <svg class="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                            Pending
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="px-3 py-3 text-[12px] font-semibold text-[#191c1e] text-center">{{ $log->attempt }}</td>
+                                <td class="px-3 py-3 text-[11px] text-[#757682]">{{ $log->updated_at->format('d/m/y H:i') }}</td>
+                                <td class="px-3 py-3">
+                                    @if($log->status === 'failed')
+                                        <form action="{{ route('admin.permohonan-surat.retry-whatsapp', $permohonanSurat->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-bold text-white bg-[#00236f] hover:bg-[#1e3a8a] rounded-lg transition">
+                                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                                                Kirim Ulang
+                                            </button>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
+                            @if($log->error_message)
+                            <tr class="bg-[#fafbfc] border-b border-[#edeef0]">
+                                <td colspan="7" class="px-3 py-2">
+                                    <div class="text-[11px] text-[#d32f2f] font-medium">
+                                        <span class="font-bold">Error:</span> {{ $log->error_message }}
+                                    </div>
+                                </td>
+                            </tr>
+                            @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="text-center py-8">
+                    <svg class="w-12 h-12 mx-auto text-[#c5c5d3] mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                    <p class="text-[12px] text-[#757682] font-medium">Belum ada notifikasi WhatsApp</p>
+                </div>
+            @endif
         </div>
     </div>
 </div>

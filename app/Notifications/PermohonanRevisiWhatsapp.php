@@ -3,16 +3,18 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use App\Channels\WhatsAppChannel;
 use App\Models\PermohonanSurat;
 
-/**
- * WhatsApp notification ke pemohon saat revisi berhasil diajukan ulang.
- */
-class PermohonanRevisiWhatsapp extends Notification
+class PermohonanRevisiWhatsapp extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public int $tries = 3;
+    public array $backoff = [60, 300, 600];
+    public string $whatsappType = 'revisi';
 
     public $permohonan;
 

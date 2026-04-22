@@ -3,13 +3,18 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 use App\Channels\WhatsAppChannel;
 use App\Models\PermohonanSurat;
 
-class PermohonanRejectedWhatsapp extends Notification
+class PermohonanRejectedWhatsapp extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public int $tries = 3;
+    public array $backoff = [60, 300, 600];
+    public string $whatsappType = 'rejected';
 
     public $permohonan;
     public $reason;

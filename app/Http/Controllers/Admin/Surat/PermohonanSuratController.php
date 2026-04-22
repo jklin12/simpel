@@ -340,4 +340,45 @@ class PermohonanSuratController extends Controller
                 ->with('error', 'Gagal reset status: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Retry WhatsApp notification for failed attempts.
+     */
+    public function retryWhatsapp($id)
+    {
+        try {
+            $permohonan = $this->service->getPermohonanById($id);
+
+            $failedLog = \App\Models\WhatsappNotificationLog::where('permohonan_id', $id)
+                ->where('status', 'failed')
+                ->latest()
+                ->first();
+
+            if (!$failedLog) {
+                return redirect()->back()->with('error', 'Tidak ada log notifikasi yang gagal untuk di-retry.');
+            }
+
+            $notification = match($failedLog->notification_type) {
+                'created' => new \App\Notifications\PermohonanCreatedWhatsapp($permohonan),
+                'approved' => new \App\Notifications\PermohonanApprovedWhatsapp($permohonan),
+                'rejected' => new \App\Notifications\PermohonanRejectedWhatsapp($permohonan, $permohonan->rejected_reason ?? 'Tidak sesuai kriteria'),
+                'revisi' => new \App\Notifications\PermohonanRevisiWhatsapp($permohonan),
+                'sign_request' => new \App\Notifications\PermohonanSignRequestWhatsapp(
+                    $permohonan,
+                    $permohonan->currentApprovalStep?->approval_pejabat_name ?? 'Bapak/Ibu'
+                ),
+                default => throw new \Exception('Tipe notifikasi tidak dikenal: ' . $failedLog->notification_type)
+            };
+
+            $permohonan->notify($notification);
+
+            return redirect()
+                ->route('admin.permohonan-surat.show', $id)
+                ->with('success', 'Notifikasi WhatsApp sedang dikirim ulang ke antrian.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->back()
+                ->with('error', 'Gagal retry notifikasi: ' . $e->getMessage());
+        }
+    }
 }

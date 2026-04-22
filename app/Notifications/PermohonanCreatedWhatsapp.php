@@ -8,9 +8,13 @@ use Illuminate\Notifications\Notification;
 use App\Channels\WhatsAppChannel;
 use App\Models\PermohonanSurat;
 
-class PermohonanCreatedWhatsapp extends Notification
+class PermohonanCreatedWhatsapp extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    public int $tries = 3;
+    public array $backoff = [60, 300, 600];
+    public string $whatsappType = 'created';
 
     public $permohonan;
     public $namaPejabat;

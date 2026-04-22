@@ -59,6 +59,11 @@ class PermohonanSurat extends Model
         return $this->hasMany(PermohonanDokumen::class);
     }
 
+    public function whatsappLogs(): HasMany
+    {
+        return $this->hasMany(WhatsappNotificationLog::class,'permohonan_id','id');
+    }
+
     public function currentApprovalStep(): BelongsTo
     {
         return $this->belongsTo(ApprovalStep::class, 'current_step', 'step_order');

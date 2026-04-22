@@ -2,8 +2,11 @@
 
 namespace App\Channels;
 
+use App\Models\PermohonanSurat;
+use App\Models\WhatsappNotificationLog;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class WhatsAppChannel
 {
@@ -41,34 +44,77 @@ class WhatsAppChannel
             $to = '085600200913';
         }
 
+        // Create log entry
+        $permohonanId = $notifiable instanceof PermohonanSurat ? $notifiable->id : null;
+        $notificationType = $notification->whatsappType ?? 'unknown';
+        $messagePreview = substr(str_replace("\n", ' ', $message), 0, 200);
+
+        $log = WhatsappNotificationLog::create([
+            'permohonan_id' => $permohonanId,
+            'notification_type' => $notificationType,
+            'notifiable_type' => get_class($notifiable),
+            'notifiable_id' => $notifiable->id,
+            'phone_to' => $to,
+            'message_preview' => $messagePreview,
+            'has_file' => (bool) $fileContent,
+            'status' => 'pending',
+        ]);
+
         $baseUrl = config('services.whatsapp.base_url', 'http://127.0.0.1:5003');
         $username = config('services.whatsapp.username', '');
         $password = config('services.whatsapp.password', '');
 
         $client = Http::withBasicAuth($username, $password);
 
-        if ($fileContent) {
-            // Write temp file to attach
-            $tempPath = sys_get_temp_dir() . '/' . uniqid() . '_' . $filename;
-            file_put_contents($tempPath, $fileContent);
+        try {
+            if ($fileContent) {
+                // Write temp file to attach
+                $tempPath = sys_get_temp_dir() . '/' . uniqid() . '_' . $filename;
+                file_put_contents($tempPath, $fileContent);
 
-            $client->attach(
-                'file',
-                file_get_contents($tempPath),
-                $filename
-            )->post($baseUrl . '/send-media', [
-                'number' => $to,
-                'caption' => $message
+                $response = $client->attach(
+                    'file',
+                    file_get_contents($tempPath),
+                    $filename
+                )->post($baseUrl . '/send-media', [
+                    'number' => $to,
+                    'caption' => $message
+                ]);
+
+                @unlink($tempPath);
+            } else {
+                $response = $client->post($baseUrl . '/send-message', [
+                    'number' => $to,
+                    'message' => $message
+                ]);
+            }
+
+            // Check response status
+            if (!$response->successful() || $response->json('status') === 'false') {
+                $log->update([
+                    'status' => 'failed',
+                    'error_message' => 'API returned failure: ' . $response->body(),
+                    'response_code' => $response->status(),
+                ]);
+
+                Log::error("WhatsApp send failed to {$to}: " . $response->body());
+                throw new \Exception('WhatsApp API returned failure');
+            }
+
+            $log->update([
+                'status' => 'sent',
+                'sent_at' => now(),
             ]);
 
-            @unlink($tempPath);
-            \Illuminate\Support\Facades\Log::info("WhatsApp (Media) sent to {$to}");
-        } else {
-            $client->post($baseUrl . '/send-message', [
-                'number' => $to,
-                'message' => $message
+            Log::info("WhatsApp sent to {$to}" . ($fileContent ? ' (with media)' : ''));
+        } catch (\Exception $e) {
+            $log->update([
+                'status' => 'failed',
+                'error_message' => $e->getMessage(),
             ]);
-            \Illuminate\Support\Facades\Log::info("WhatsApp sent to {$to}: {$message}");
+
+            Log::error("WhatsApp send exception: " . $e->getMessage());
+            throw $e;
         }
     }
 }

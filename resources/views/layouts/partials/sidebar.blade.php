@@ -165,6 +165,14 @@
                     </div>
                 </div>
 
+                <!-- WhatsApp Logs -->
+                <a href="{{ route('admin.whatsapp-logs.index') }}" class="flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group {{ request()->routeIs('admin.whatsapp-logs*') ? 'bg-blue-50 text-blue-600 shadow-sm' : '' }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-400 transition-colors group-hover:text-blue-600 {{ request()->routeIs('admin.whatsapp-logs*') ? 'text-blue-600' : '' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    <span class="font-medium">Log WhatsApp</span>
+                </a>
+
                 <!-- Access Control Group -->
                 <div x-data="{ open: {{ request()->routeIs('admin.roles*', 'admin.permissions*') ? 'true' : 'false' }} }">
                     <button @click="open = !open" type="button" class="w-full flex items-center gap-3 px-4 py-3 text-gray-600 rounded-xl hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group justify-between {{ request()->routeIs('admin.roles*', 'admin.permissions*') ? 'bg-blue-50 text-blue-600' : '' }}">
