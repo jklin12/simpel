@@ -267,18 +267,24 @@
 
     @php
     $data = $permohonan->data_permohonan ?? [];
-    $tglLahir = isset($data['tanggal_lahir'])
-    ? ($data['tanggal_lahir'])
-    : '-';
+
+    $formatDate = function($date) {
+        if (!$date || $date === '-' || empty($date)) {
+            return '-';
+        }
+        try {
+            return \Carbon\Carbon::parse($date)->translatedFormat('d F Y');
+        } catch (\Exception $e) {
+            return $date;
+        }
+    };
+
+    $tglLahir = $formatDate($data['tanggal_lahir'] ?? null);
     $tglSurat = $permohonan->tanggal_surat
     ? ($permohonan->tanggal_surat)
     : \Carbon\Carbon::now()->translatedFormat('d F Y');
-    $tglAyahLahir = isset($data['ayah_tanggal_lahir'])
-    ? ($data['ayah_tanggal_lahir'])
-    : '-';
-    $tglIbuLahir = isset($data['ibu_tanggal_lahir'])
-    ? ($data['ibu_tanggal_lahir'])
-    : '-';
+    $tglAyahLahir = $formatDate($data['ayah_tanggal_lahir'] ?? null);
+    $tglIbuLahir = $formatDate($data['ibu_tanggal_lahir'] ?? null);
 
     // Tentukan bin/binti berdasarkan jenis kelamin
     $jk = strtolower($data['jenis_kelamin'] ?? '');

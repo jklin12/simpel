@@ -40,7 +40,7 @@ class PermohonanApprovedWhatsapp extends Notification implements ShouldQueue
                 "Tanggal Surat: {$p->tanggal_surat->format('d/m/Y')}\n\n" .
                 "Silahkan download file surat pian melalui link berikut:\n" .
                 route('layanan.surat.tracking.search', ['track_token' => $p->track_token]) . "\n\n" .
-                "Atau jika kesulitan, Silakan datang ke kantor kelurahan untuk mengambil surat Anda.\n\n" .
+                "*Bapak/Ibu tidak perlu khawatir jika memerlukan dokumen dalam bentuk fisik. Petugas kami di kantor kelurahan siap membantu mencetakkannya untuk Anda. Apabila ada kendala, silakan langsung datang ke kantor agar kami dapat menyerahkan surat Anda secara langsung pada Senin-Kamis pukul 08.00 - 16.30WITA dan Jumat pukul 07.30 - 11.00 WITA*\n\n" .
                 "Terima kasih.";
         }
 

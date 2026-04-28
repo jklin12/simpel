@@ -378,7 +378,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Pas Foto Warna Gandeng Pasangan (Latar Biru) <span class="text-red-500">*</span></label>
-                        <input type="file" name="skmh_pas_foto" accept=".jpg,.jpeg,.png,.pdf" class="{{ $fileInputClass }}" required>
+                        <input type="file" name="skmh_pas_foto" accept=".jpg,.jpeg" class="{{ $fileInputClass }}" required>
                         @error('skmh_pas_foto') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>

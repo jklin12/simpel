@@ -26,6 +26,7 @@ class DashboardController extends Controller
     public function kabupaten()
     {
         $data = $this->dashboardService->getDashboardData(Auth::user());
+        
         return view('dashboard', $data);
     }
 

@@ -468,7 +468,7 @@ class PermohonanSuratService
         } elseif ($kodeJenis === 'SKSI') {
             // Format requested: 400.12.3.2 / 012 / I / KEC.LU / 2026
             $nomorSurat = sprintf(
-                '400.12.3/%03d-SMPL/%s/%s/%s',
+                '400.12.3./%03d-SMPL/%s/%s/%s',
                 $counter->counter,
                 $this->toRoman($now->month),
                 $kodeKelurahan,
@@ -477,7 +477,7 @@ class PermohonanSuratService
         } elseif ($kodeJenis === 'SKG') {
             // Format requested: 400.12.3.2 / 012 / I / KEC.LU / 2026
             $nomorSurat = sprintf(
-                '400.12/%03d-SMPL/%s/%s/%s',
+                '400.12./%03d-SMPL/%s/%s/%s',
                 $counter->counter,
                 $this->toRoman($now->month),
                 $kodeKelurahan,

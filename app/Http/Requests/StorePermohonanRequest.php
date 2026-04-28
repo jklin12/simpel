@@ -527,7 +527,7 @@ class StorePermohonanRequest extends FormRequest
             'skmh_akta_ijazah_catin'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skmh_ktp_kk_catin'             => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skmh_ktp_kk_ortu'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'skmh_pas_foto'                 => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skmh_pas_foto'                 => 'required|file|mimes:jpg,jpeg|max:5120',
             'skmh_ktp_saksi'                => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skmh_form_n2_n5'               => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skmh_akta_cerai_kematian'      => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',

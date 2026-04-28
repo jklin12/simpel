@@ -37,10 +37,9 @@ class DashboardService
         // ── Permohonan Terbaru ─────────────────────────────────────────────
         $permohonanTerbaru = (clone $baseQuery)
             ->with(['jenisSurat:id,nama,kode', 'kelurahan:id,nama'])
-            ->latest()
-            ->limit(8)
+            ->limit(10)
             ->get(['id', 'nomor_permohonan', 'nama_pemohon', 'nik_pemohon', 'jenis_surat_id', 'kelurahan_id', 'status', 'created_at']);
-
+    
         return [
             'stats' => [
                 'permohonan_masuk'    => $permohonanMasukBulanIni,
