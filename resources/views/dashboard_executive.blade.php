@@ -129,72 +129,26 @@
     </div>
 </div>
 
-<!-- Daily Chart + SLA -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-    <!-- Daily submission chart -->
-    <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div class="flex justify-between items-start mb-4">
-            <div>
-                <h3 class="font-bold text-gray-800">Pengajuan Surat Harian</h3>
-                @php $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']; @endphp
-                <p class="text-xs text-gray-500 mt-0.5">
-                    {{ $months[$current_month - 1] }} {{ $current_year }}
-                </p>
-            </div>
-        </div>
-        <div class="h-72">
-            <canvas id="dailyChart"></canvas>
+<!-- Daily Chart -->
+<div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-8">
+    <div class="flex justify-between items-start mb-4">
+        <div>
+            <h3 class="font-bold text-gray-800">Pengajuan Surat Harian</h3>
+            @php $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']; @endphp
+            <p class="text-xs text-gray-500 mt-0.5">
+                {{ $months[$current_month - 1] }} {{ $current_year }}
+            </p>
         </div>
     </div>
-
-    <!-- SLA card -->
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div class="flex justify-between items-start mb-4">
-            <div>
-                <h3 class="font-bold text-gray-800">SLA Proses Surat</h3>
-                <p class="text-xs text-gray-500 mt-0.5">Target: {{ $sla_metrics['target_hours'] }} jam</p>
-            </div>
-            <div class="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </div>
-        </div>
-
-        <!-- Within target progress -->
-        <div class="mb-5">
-            <div class="flex justify-between items-baseline mb-2">
-                <span class="text-xs font-medium text-gray-500">Tepat Waktu</span>
-                <span class="text-2xl font-bold text-gray-800">{{ $sla_metrics['within_pct'] }}%</span>
-            </div>
-            <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div class="h-full rounded-full {{ $sla_metrics['within_pct'] >= 80 ? 'bg-green-500' : ($sla_metrics['within_pct'] >= 50 ? 'bg-amber-500' : 'bg-red-500') }}" style="width: {{ $sla_metrics['within_pct'] }}%"></div>
-            </div>
-            <p class="text-xs text-gray-400 mt-1">Dari {{ number_format($sla_metrics['total']) }} surat selesai</p>
-        </div>
-
-        <!-- Min/Avg/Max -->
-        <div class="grid grid-cols-3 gap-2 pt-4 border-t border-gray-100">
-            <div>
-                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Tercepat</p>
-                <p class="text-sm font-bold text-green-600 mt-1">{{ $sla_metrics['min_human'] }}</p>
-            </div>
-            <div>
-                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Rata-rata</p>
-                <p class="text-sm font-bold text-gray-800 mt-1">{{ $sla_metrics['avg_human'] }}</p>
-            </div>
-            <div>
-                <p class="text-[10px] uppercase tracking-wider text-gray-400 font-semibold">Terlama</p>
-                <p class="text-sm font-bold text-red-600 mt-1">{{ $sla_metrics['max_human'] }}</p>
-            </div>
-        </div>
+    <div class="h-72">
+        <canvas id="dailyChart"></canvas>
     </div>
 </div>
 
 <!-- Map + Top Jenis Surat -->
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
     <!-- Map -->
-    <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div class="flex justify-between items-start mb-4">
             <div>
                 <h3 class="font-bold text-gray-800">Sebaran Pengajuan per Kelurahan</h3>
@@ -239,6 +193,49 @@
         @else
         <div class="h-72">
             <canvas id="topJenisChart"></canvas>
+        </div>
+        @endif
+    </div>
+</div>
+
+<!-- SLA Proses Surat per Kelurahan -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
+    <div class="p-6 border-b border-gray-50">
+        <h3 class="font-bold text-gray-800">SLA Proses Surat per Kelurahan</h3>
+        @php $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']; @endphp
+        <p class="text-xs text-gray-500 mt-1">{{ $months[$current_month - 1] }} {{ $current_year }}</p>
+    </div>
+    <div class="overflow-x-auto">
+        @if(!empty($sla_per_kelurahan) && count($sla_per_kelurahan) > 0)
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-gray-50/50">
+                <tr>
+                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelurahan</th>
+                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Total Selesai</th>
+                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Rata-rata</th>
+                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Tercepat</th>
+                    <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Terlama</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                @foreach($sla_per_kelurahan as $sla)
+                <tr class="hover:bg-gray-50/50 transition-colors">
+                    <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ $sla['kelurahan_nama'] }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600 text-right">
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700">
+                            {{ $sla['total'] }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600 text-right font-medium">{{ $sla['avg_human'] }}</td>
+                    <td class="px-6 py-4 text-sm text-green-600 text-right font-medium">{{ $sla['min_human'] }}</td>
+                    <td class="px-6 py-4 text-sm text-red-600 text-right font-medium">{{ $sla['max_human'] }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @else
+        <div class="p-8 text-center text-gray-500">
+            <p>Belum ada surat yang selesai diproses pada periode ini.</p>
         </div>
         @endif
     </div>
@@ -426,7 +423,7 @@
         const center = mapData.center || { lat: -3.4421, lng: 114.7567 };
         const map = L.map('kelurahanMap', {
             scrollWheelZoom: false
-        }).setView([center.lat, center.lng], 12);
+        }).setView([center.lat, center.lng], 10);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -435,26 +432,90 @@
 
         const maxCount = Math.max(mapData.max_count, 1);
 
-        // Color scale berdasarkan rasio count/maxCount.
-        const colorFor = (count) => {
-            if (count === 0) return '#9ca3af';
-            const t = count / maxCount;
-            if (t > 0.75) return '#1d4ed8';
-            if (t > 0.5)  return '#2563eb';
-            if (t > 0.25) return '#3b82f6';
-            return '#93c5fd';
+        // Palet warna tegas untuk setiap kelurahan (distinct colors)
+        const kelurahanColors = [
+            '#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e',
+            '#10b981', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1',
+            '#8b5cf6', '#d946ef', '#ec4899', '#f43f5e', '#a16207',
+            '#7c3aed', '#059669', '#0891b2', '#1e40af', '#dc2626'
+        ];
+
+        // Generate warna based on index (cycling through palette jika lebih dari 20 kelurahan)
+        const colorByIndex = (index) => {
+            return kelurahanColors[index % kelurahanColors.length];
         };
 
-        // Radius proporsional (px) untuk circle marker.
-        const radiusFor = (count) => {
-            const min = 8, max = 28;
-            const t = count / maxCount;
-            return min + (max - min) * t;
+        // Intensitas warna berdasarkan count (untuk menunjukkan volume)
+        const intensifyColor = (hexColor, count) => {
+            if (count === 0) {
+                return '#e5e7eb'; // grey untuk 0
+            }
+            const t = count / maxCount; // 0 to 1
+            // Jika count rendah, use lighter shade; tinggi = saturated
+            if (t < 0.3) {
+                // Lighten: convert hex to lighter version
+                const r = parseInt(hexColor.slice(1,3), 16);
+                const g = parseInt(hexColor.slice(3,5), 16);
+                const b = parseInt(hexColor.slice(5,7), 16);
+                const lighter = Math.round(r * 0.7 + 255 * 0.3);
+                const lightg = Math.round(g * 0.7 + 255 * 0.3);
+                const lightb = Math.round(b * 0.7 + 255 * 0.3);
+                return '#' + [lighter, lightg, lightb].map(x => x.toString(16).padStart(2, '0')).join('');
+            }
+            return hexColor;
+        };
+
+        // Hitung centroid dari polygon geometry
+        const getCentroid = (geometry) => {
+            let latSum = 0, lngSum = 0, count = 0;
+            const processCoords = (coords, depth) => {
+                if (depth === 2) {
+                    coords.forEach(c => {
+                        lngSum += c[0]; latSum += c[1]; count++;
+                    });
+                } else {
+                    coords.forEach(c => processCoords(c, depth + 1));
+                }
+            };
+            if (geometry.type === 'MultiPolygon') {
+                processCoords(geometry.coordinates, 0);
+            } else if (geometry.type === 'Polygon') {
+                processCoords(geometry.coordinates, 0);
+            }
+            return count > 0 ? [latSum / count, lngSum / count] : null;
+        };
+
+        // Custom icon untuk menampilkan count badge
+        const countBadgeIcon = (count, color) => {
+            return L.divIcon({
+                html: `<div style="
+                    background: ${color};
+                    color: white;
+                    border-radius: 50%;
+                    width: 32px;
+                    height: 32px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-weight: bold;
+                    font-size: 13px;
+                    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+                    border: 2px solid white;
+                ">${count}</div>`,
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                className: 'leaflet-count-badge'
+            });
         };
 
         const bounds = [];
 
-        mapData.features.forEach((f) => {
+        mapData.features.forEach((f, index) => {
+            // Assign warna unik untuk setiap kelurahan (solid base color)
+            const baseColor = colorByIndex(index);
+            // Intensity hanya untuk count badge
+            const badgeColor = intensifyColor(baseColor, f.count);
+
             const popupHtml = `
                 <div class="text-sm">
                     <div class="font-semibold text-gray-800">${f.nama}</div>
@@ -469,25 +530,45 @@
                     .then(geo => {
                         const layer = L.geoJSON(geo, {
                             style: {
-                                color: colorFor(f.count),
-                                weight: 2,
-                                fillColor: colorFor(f.count),
-                                fillOpacity: 0.4
+                                color: baseColor,
+                                weight: 2.5,
+                                fillColor: baseColor,
+                                fillOpacity: 0.4,
+                                dashArray: f.count === 0 ? '5,5' : ''
+                            },
+                            onEachFeature: (feature, layer) => {
+                                layer.bindPopup(popupHtml);
+                                layer.on('mouseover', function() { this.setStyle({ weight: 3.5, fillOpacity: 0.6 }); });
+                                layer.on('mouseout', function() { this.setStyle({ weight: 2.5, fillOpacity: 0.4 }); });
                             }
-                        }).bindPopup(popupHtml).addTo(map);
+                        }).addTo(map);
+
+                        // Hitung centroid dan tampilkan count badge dengan intensity color
+                        if (geo.features && geo.features[0] && geo.features[0].geometry) {
+                            const centroid = getCentroid(geo.features[0].geometry);
+                            if (centroid) {
+                                L.marker(centroid, {
+                                    icon: countBadgeIcon(f.count, badgeColor),
+                                    interactive: false,
+                                    zIndexOffset: 100
+                                }).addTo(map);
+                            }
+                        }
                         try { map.fitBounds(layer.getBounds().pad(0.1)); } catch(e) {}
                     })
-                    .catch(() => {});
+                    .catch(err => console.error(`GeoJSON fetch error for ${f.nama}:`, err));
             }
 
-            // Circle marker tetap ditampilkan sebagai indikator titik (dan fallback)
+            // Circle marker sebagai indikator titik + fallback
             if (f.lat !== null && f.lng !== null) {
                 L.circleMarker([f.lat, f.lng], {
-                    radius: radiusFor(f.count),
-                    color: colorFor(f.count),
-                    fillColor: colorFor(f.count),
-                    fillOpacity: 0.6,
-                    weight: 2
+                    radius: 7,
+                    color: baseColor,
+                    fillColor: baseColor,
+                    fillOpacity: 0.8,
+                    weight: 2.5,
+                    stroke: true,
+                    opacity: 1
                 }).bindPopup(popupHtml).addTo(map);
                 bounds.push([f.lat, f.lng]);
             }
@@ -495,6 +576,8 @@
 
         if (bounds.length > 1) {
             map.fitBounds(bounds, { padding: [30, 30] });
+        } else if (bounds.length === 1) {
+            map.setView(bounds[0], 13);
         }
     }
 })();

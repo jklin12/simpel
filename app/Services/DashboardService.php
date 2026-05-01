@@ -70,13 +70,14 @@ class DashboardService
 
         // ── Executive widgets (kabupaten / super_admin) ────────────────────
         if ($user->hasAnyRole(['admin_kabupaten', 'super_admin'])) {
-            $data['is_executive']     = true;
-            $data['current_month']    = $month;
-            $data['current_year']     = $year;
-            $data['daily_chart']      = $this->getDailySubmissionChart($baseQuery, $startMonth, $now);
-            $data['kelurahan_map']    = $this->getKelurahanMapData($user, $startMonth, $now);
-            $data['top_jenis_surat']  = $this->getTopJenisSurat($baseQuery, 8, $startMonth, $now);
-            $data['sla_metrics']      = $this->getSlaMetrics($baseQuery, $startMonth, $now);
+            $data['is_executive']        = true;
+            $data['current_month']       = $month;
+            $data['current_year']        = $year;
+            $data['daily_chart']         = $this->getDailySubmissionChart($baseQuery, $startMonth, $now);
+            $data['kelurahan_map']       = $this->getKelurahanMapData($user, $startMonth, $now);
+            $data['top_jenis_surat']     = $this->getTopJenisSurat($baseQuery, 8, $startMonth, $now);
+            $data['sla_metrics']         = $this->getSlaMetrics($baseQuery, $startMonth, $now);
+            $data['sla_per_kelurahan']   = $this->getSlaPerKelurahan($baseQuery, $startMonth, $now);
         } else {
             $data['is_executive'] = false;
         }
@@ -208,9 +209,9 @@ class DashboardService
 
     /**
      * Data peta per-kelurahan: jumlah pengajuan + koordinat + geojson.
+     * Ambil geojson_path dari database m_kelurahans.
      * Untuk kabupaten user → semua kelurahan dalam kabupaten.
-     * Untuk super_admin → seluruh kelurahan yang punya pengajuan ATAU yang punya
-     * koordinat (agar peta tetap menampilkan semua wilayah scope-nya).
+     * Untuk super_admin → seluruh kelurahan yang punya pengajuan ATAU koordinat.
      */
     private function getKelurahanMapData(User $user, Carbon $start, Carbon $end): array
     {
@@ -229,12 +230,9 @@ class DashboardService
             $kelurahanQuery->whereHas('kecamatan', fn($q) => $q->where('kabupaten_id', $user->kabupaten_id));
         }
 
-        // Hanya yang punya minimal koordinat (lat/lng) atau geojson; agar map tidak
-        // menampilkan ribuan kelurahan se-Indonesia untuk super_admin.
-        $kelurahanQuery->where(function ($q) {
-            $q->whereNotNull('latitude')
-                ->orWhereNotNull('geojson_path');
-        });
+        // Hanya yang punya minimal koordinat (lat/lng); agar map tidak menampilkan
+        // ribuan kelurahan se-Indonesia untuk super_admin.
+        $kelurahanQuery->whereNotNull('latitude');
 
         $kelurahans = $kelurahanQuery->get();
 
@@ -260,6 +258,7 @@ class DashboardService
             $count = (int) ($counts[$kel->id] ?? 0);
             $maxCount = max($maxCount, $count);
 
+            // Get GeoJSON URL dari database path
             $geojsonUrl = null;
             if ($kel->geojson_path && Storage::disk('public')->exists($kel->geojson_path)) {
                 $geojsonUrl = Storage::disk('public')->url($kel->geojson_path);
@@ -364,6 +363,50 @@ class DashboardService
             'within_pct'   => $total > 0 ? round(((int) $stats->within_target / $total) * 100) : 0,
             'target_hours' => self::SLA_TARGET_HOURS,
         ];
+    }
+
+    /**
+     * SLA breakdown per kelurahan dalam periode.
+     * Return array of SLA metrics untuk setiap kelurahan.
+     */
+    private function getSlaPerKelurahan($baseQuery, Carbon $start = null, Carbon $end = null): array
+    {
+        // Ambil kelurahans yang punya data completed
+        $query = (clone $baseQuery)
+            ->whereNotNull('completed_at')
+            ->where('status', 'completed');
+
+        if ($start && $end) {
+            $query->whereBetween('completed_at', [$start, $end]);
+        }
+
+        $slaData = $query
+            ->join('m_kelurahans', 'permohonan_surats.kelurahan_id', '=', 'm_kelurahans.id')
+            ->select([
+                'permohonan_surats.kelurahan_id',
+                'm_kelurahans.nama as kelurahan_nama',
+                DB::raw('COUNT(*) as total'),
+                DB::raw('AVG(TIMESTAMPDIFF(MINUTE, permohonan_surats.created_at, permohonan_surats.completed_at)) as avg_minutes'),
+                DB::raw('MIN(TIMESTAMPDIFF(MINUTE, permohonan_surats.created_at, permohonan_surats.completed_at)) as min_minutes'),
+                DB::raw('MAX(TIMESTAMPDIFF(MINUTE, permohonan_surats.created_at, permohonan_surats.completed_at)) as max_minutes'),
+            ])
+            ->groupBy('permohonan_surats.kelurahan_id', 'm_kelurahans.nama')
+            ->orderByDesc('total')
+            ->get();
+
+        $result = [];
+        foreach ($slaData as $row) {
+            $result[] = [
+                'kelurahan_id'   => $row->kelurahan_id,
+                'kelurahan_nama' => $row->kelurahan_nama,
+                'total'          => (int) $row->total,
+                'avg_human'      => $this->formatMinutes((float) $row->avg_minutes),
+                'min_human'      => $this->formatMinutes((float) $row->min_minutes),
+                'max_human'      => $this->formatMinutes((float) $row->max_minutes),
+            ];
+        }
+
+        return $result;
     }
 
     /**
