@@ -523,40 +523,35 @@
                     <div class="mt-1.5 text-xs">Pengajuan: <strong>${f.count}</strong></div>
                 </div>`;
 
-            // Polygon dari geojson kalau ada
-            if (f.geojson_url) {
-                fetch(f.geojson_url)
-                    .then(r => r.json())
-                    .then(geo => {
-                        const layer = L.geoJSON(geo, {
-                            style: {
-                                color: baseColor,
-                                weight: 2.5,
-                                fillColor: baseColor,
-                                fillOpacity: 0.4,
-                                dashArray: f.count === 0 ? '5,5' : ''
-                            },
-                            onEachFeature: (feature, layer) => {
-                                layer.bindPopup(popupHtml);
-                                layer.on('mouseover', function() { this.setStyle({ weight: 3.5, fillOpacity: 0.6 }); });
-                                layer.on('mouseout', function() { this.setStyle({ weight: 2.5, fillOpacity: 0.4 }); });
-                            }
-                        }).addTo(map);
+            // Polygon dari geojson data (sudah di-load di backend)
+            if (f.geojson) {
+                const layer = L.geoJSON(f.geojson, {
+                    style: {
+                        color: baseColor,
+                        weight: 2.5,
+                        fillColor: baseColor,
+                        fillOpacity: 0.4,
+                        dashArray: f.count === 0 ? '5,5' : ''
+                    },
+                    onEachFeature: (feature, layer) => {
+                        layer.bindPopup(popupHtml);
+                        layer.on('mouseover', function() { this.setStyle({ weight: 3.5, fillOpacity: 0.6 }); });
+                        layer.on('mouseout', function() { this.setStyle({ weight: 2.5, fillOpacity: 0.4 }); });
+                    }
+                }).addTo(map);
 
-                        // Hitung centroid dan tampilkan count badge dengan intensity color
-                        if (geo.features && geo.features[0] && geo.features[0].geometry) {
-                            const centroid = getCentroid(geo.features[0].geometry);
-                            if (centroid) {
-                                L.marker(centroid, {
-                                    icon: countBadgeIcon(f.count, badgeColor),
-                                    interactive: false,
-                                    zIndexOffset: 100
-                                }).addTo(map);
-                            }
-                        }
-                        try { map.fitBounds(layer.getBounds().pad(0.1)); } catch(e) {}
-                    })
-                    .catch(err => console.error(`GeoJSON fetch error for ${f.nama}:`, err));
+                // Hitung centroid dan tampilkan count badge dengan intensity color
+                if (f.geojson.features && f.geojson.features[0] && f.geojson.features[0].geometry) {
+                    const centroid = getCentroid(f.geojson.features[0].geometry);
+                    if (centroid) {
+                        L.marker(centroid, {
+                            icon: countBadgeIcon(f.count, badgeColor),
+                            interactive: false,
+                            zIndexOffset: 100
+                        }).addTo(map);
+                    }
+                }
+                try { map.fitBounds(layer.getBounds().pad(0.1)); } catch(e) {}
             }
 
             // Circle marker sebagai indikator titik + fallback

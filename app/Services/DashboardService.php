@@ -258,10 +258,15 @@ class DashboardService
             $count = (int) ($counts[$kel->id] ?? 0);
             $maxCount = max($maxCount, $count);
 
-            // Get GeoJSON URL dari database path
-            $geojsonUrl = null;
+            // Load GeoJSON data langsung (tidak perlu fetch di frontend)
+            $geojsonData = null;
             if ($kel->geojson_path && Storage::disk('public')->exists($kel->geojson_path)) {
-                $geojsonUrl = Storage::disk('public')->url($kel->geojson_path);
+                try {
+                    $content = Storage::disk('public')->get($kel->geojson_path);
+                    $geojsonData = json_decode($content, true);
+                } catch (\Exception $e) {
+                    \Log::error("Failed to load GeoJSON for {$kel->nama}: " . $e->getMessage());
+                }
             }
 
             $features[] = [
@@ -270,7 +275,7 @@ class DashboardService
                 'kecamatan'   => $kel->kecamatan->nama ?? null,
                 'lat'         => $kel->latitude !== null ? (float) $kel->latitude : null,
                 'lng'         => $kel->longitude !== null ? (float) $kel->longitude : null,
-                'geojson_url' => $geojsonUrl,
+                'geojson'     => $geojsonData,
                 'count'       => $count,
             ];
 
