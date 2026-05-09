@@ -215,7 +215,7 @@
         {{-- ===== JUDUL ===== --}}
         <div class="surat-title">SURAT DISPENSASI NIKAH</div>
         <div class="surat-nomor">
-            Nomor : {!! str_replace(['/', ' '], ['<span style="color:red">/</span>', ' '], $permohonan->nomor_surat ?? '400.12.3.2 / 000 / I / KEC.LU / ' . date('Y')) !!}</div>
+            Nomor : {!! str_replace(['/', ' '], ['<span>/</span>', ' '], $permohonan->nomor_surat ?? '400.12.3.2 / 000 / I / KEC.LU / ' . date('Y')) !!}</div>
 
         @php
         $data = $permohonan->data_permohonan ?? [];
