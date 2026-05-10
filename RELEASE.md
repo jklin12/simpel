@@ -1,5 +1,91 @@
 # Release Notes
 
+## [v1.0.6] - 2026-05-10
+
+### Added — Alur Permintaan Revisi Surat (Revision Request Workflow)
+
+- **Model PermohonanRevisiRequest**: Model baru untuk mengelola permintaan revisi pada surat yang sudah disetujui (`approved` status).
+- **Workflow Revisi Lengkap**: Admin kelurahan/kecamatan dapat mengajukan request perubahan surat yang sudah approved, dengan approval flow terstruktur:
+  - `admin_kelurahan` atau `admin_kecamatan` mengajukan request perubahan via `requestPerubahan()`
+  - Request masuk ke tahap review dengan status `revision_requested` 
+  - `admin_kecamatan` dan `super_admin` dapat **approve** atau **reject** revision request
+  - Jika approve: surat kembali ke status `approved` dengan `revision_count` bertambah
+  - Jika reject: surat tetap `approved` dengan catatan reject di notification
+- **Notifikasi Multi-Channel (Database + WhatsApp)**: 
+  - `RevisiRequestedNotification` & `RevisiRequestedWhatsapp` — dikirim ke admin_kecamatan/super_admin saat ada request perubahan
+  - `RevisiRequestApprovedNotification` & `RevisiRequestApprovedWhatsapp` — notifikasi approval revisi
+  - `RevisiRequestRejectedNotification` & `RevisiRequestRejectedWhatsapp` — notifikasi rejection revisi
+- **UI Admin untuk Revision Requests**: 
+  - Halaman show permohonan menampilkan daftar revision requests dengan status timeline
+  - Button actions untuk approve/reject revision requests dengan modal form (optional catatan)
+  - Visual indicators untuk revisi yang masuk dan status perubahannya
+
+### Fixed — WhatsApp Notification Tidak Terproses pada requestPerubahan
+
+- **Silent Failure pada WhatsAppChannel**: Masalah dimana notifikasi WhatsApp tidak terkirim tanpa log/error ketika recipient (User) tidak memiliki phone number.
+  - **Root Cause**: Admin users di-create tanpa phone number di seeder, dan WhatsAppChannel return silent jika no phone found
+  - **Fix#1**: Tambah warning log di WhatsAppChannel ketika notifikasi skip karena no phone number
+  - **Fix#2**: Update `UserRoleSeeder` untuk set phone numbers ke semua admin users:
+    - `super_admin`: +6281234567890
+    - `admin_kecamatan`: +6282234567890
+    - `admin_kelurahan`: +6283234567890
+  - **Fix#3**: Migration untuk update existing admin users dengan phone numbers
+  - **Fix#4**: Enhanced logging di `requestPerubahan()` untuk track recipient email & phone sebelum & sesudah notifikasi terkirim
+
+### Improved — Logging & Observability
+
+- Detailed logging di `PermohonanSuratService::requestPerubahan()` dengan recipient phone number tracking
+- Warning log di `WhatsAppChannel::send()` untuk missing phone number scenarios
+- Better error context untuk notification failures di revision request workflow
+
+### Database Schema Changes
+
+```bash
+# Migrations yang ditambahkan:
+- 2026_05_10_000001_add_revision_statuses_to_permohonan_surats.php
+  → Tambah columns: revision_count (int), revision_requested_at (timestamp)
+  
+- 2026_05_10_000002_create_permohonan_revisi_requests_table.php
+  → Buat table permohonan_revisi_requests dengan fields:
+    - permohonan_surat_id
+    - requested_by_user_id
+    - approved_by_user_id (nullable)
+    - alasan (text)
+    - status (enum: pending, approved, rejected)
+    - revision_number
+    - approved_at, rejected_at (timestamps nullable)
+
+- 2026_05_10_223453_update_admin_users_with_phone_numbers.php
+  → Update admin users (super_admin, admin_kecamatan, admin_kelurahan) dengan phone numbers
+```
+
+### Instruksi Deployment
+
+```bash
+# 1. Run migrations untuk create/update tables dan admin phone numbers
+php artisan migrate
+
+# 2. (Jika re-seed diperlukan - hanya jika database baru)
+php artisan db:seed --class=UserRoleSeeder
+
+# 3. Restart queue worker untuk menjalankan notification jobs
+sudo supervisorctl restart simpel-queue:*
+```
+
+### Notes untuk Production
+
+- Pastikan semua admin users memiliki phone number yang valid sebelum menggunakan revision request feature
+- WhatsApp gateway harus ter-konfigurasi dengan benar di `.env`:
+  ```env
+  WHATSAPP_BASE_URL=http://127.0.0.1:5003
+  WHATSAPP_USERNAME=...
+  WHATSAPP_PASSWORD=...
+  WHATSAPP_TEST_NUMBER=  # Untuk env local, optional
+  ```
+- Monitor `whatsapp_notification_logs` table untuk tracking pengiriman notifikasi revisi
+
+---
+
 ## [v1.0.5] - 2026-04-06
 
 ### Added — Fitur Hapus Permohonan & Soft Delete
