@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\Contracts\PermohonanSuratRepositoryInterface;
 use App\Models\PermohonanApproval;
+use App\Models\PermohonanRevisiRequest;
 use App\Models\SuratCounter;
 use App\Models\User;
 use App\Notifications\PermohonanApprovedWhatsapp;
@@ -12,6 +13,12 @@ use App\Notifications\PermohonanBaruNotification;
 use App\Notifications\PermohonanRejectedWhatsapp;
 use App\Notifications\PermohonanRevisiNotification;
 use App\Notifications\PermohonanRevisiWhatsapp;
+use App\Notifications\RevisiRequestedNotification;
+use App\Notifications\RevisiRequestApprovedNotification;
+use App\Notifications\RevisiRequestRejectedNotification;
+use App\Notifications\RevisiRequestedWhatsapp;
+use App\Notifications\RevisiRequestApprovedWhatsapp;
+use App\Notifications\RevisiRequestRejectedWhatsapp;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
@@ -55,9 +62,9 @@ class PermohonanSuratService
         try {
             $permohonan = $this->repository->find($id);
 
-            // Allow update as long as it's not completed or rejected yet
-            if (in_array($permohonan->status, ['completed', 'rejected'])) {
-                throw new \Exception('Surat sudah selesai atau ditolak, tidak bisa diubah.');
+            // Whitelist allowed statuses for editing
+            if (!in_array($permohonan->status, ['draft', 'pending', 'in_review', 'revision_open'])) {
+                throw new \Exception('Surat tidak dapat diubah pada status saat ini.');
             }
 
             // Update allowed fields
@@ -453,7 +460,7 @@ class PermohonanSuratService
             $nomorSurat = sprintf(
                 '400.12.3.2/%03d-SMPL/%s/KEC.LU/%s',
                 $counter->counter,
-                $this->toRoman($now->month), 
+                $this->toRoman($now->month),
                 $now->format('Y')
             );
         } elseif ($kodeJenis === 'SKJD') {
@@ -577,5 +584,188 @@ class PermohonanSuratService
             12 => 'XII'
         ];
         return $map[$month] ?? (string)$month;
+    }
+
+    /**
+     * Admin kelurahan mengajukan request perubahan untuk surat yang sudah approved.
+     */
+    public function requestPerubahan($id, $userId, string $alasan): \App\Models\PermohonanSurat
+    {
+        DB::beginTransaction();
+        try {
+            $permohonan = $this->repository->find($id);
+
+            if ($permohonan->status !== 'approved') {
+                throw new \Exception('Request perubahan hanya dapat diajukan pada surat yang sudah disetujui.');
+            }
+
+            PermohonanRevisiRequest::create([
+                'permohonan_surat_id'   => $permohonan->id,
+                'requested_by_user_id'  => $userId,
+                'alasan'                => $alasan,
+                'status'                => 'pending',
+                'revision_number'       => $permohonan->revision_count + 1,
+            ]);
+
+            $this->repository->updateStatus($id, 'revision_requested');
+
+            DB::commit();
+
+            try {
+                $permohonanFresh = $permohonan->fresh()->load('jenisSurat');
+                $recipients = User::role(['admin_kecamatan', 'super_admin'])->get();
+                Log::info('RevisiRequested - Found ' . $recipients->count() . ' recipients');
+                foreach ($recipients as $recipient) {
+                    Log::info('Sending RevisiRequested notification to: ' . $recipient->email, [
+                        'user_id' => $recipient->id,
+                        'phone' => $recipient->phone,
+                    ]);
+                    $recipient->notify(new RevisiRequestedNotification($permohonanFresh));
+                    $recipient->notify(new RevisiRequestedWhatsapp($permohonanFresh, $alasan));
+                    Log::info('RevisiRequested notification sent successfully to: ' . $recipient->email);
+                }
+            } catch (\Exception $e) {
+                Log::error('Notif RevisiRequested gagal: ' . $e->getMessage(), ['exception' => $e]);
+            }
+
+            return $permohonan->fresh();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('requestPerubahan gagal: ' . $e->getMessage());
+            throw new \Exception('Gagal mengajukan request perubahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Admin kecamatan/super admin menyetujui request perubahan.
+     */
+    public function approveRevisiRequest($permohonanId, $userId, $catatan = null): \App\Models\PermohonanSurat
+    {
+        DB::beginTransaction();
+        try {
+            $permohonan = $this->repository->find($permohonanId);
+
+            if ($permohonan->status !== 'revision_requested') {
+                throw new \Exception('Permohonan tidak dalam status menunggu review perubahan.');
+            }
+
+            $revisiRequest = PermohonanRevisiRequest::where('permohonan_surat_id', $permohonanId)
+                ->where('status', 'pending')
+                ->latest()
+                ->firstOrFail();
+
+            $revisiRequest->update([
+                'status'             => 'approved',
+                'reviewed_by_user_id' => $userId,
+                'catatan_reviewer'   => $catatan,
+                'reviewed_at'        => now(),
+            ]);
+
+            $this->repository->updateStatus($permohonanId, 'revision_open', [
+                'revision_count' => $permohonan->revision_count + 1,
+            ]);
+
+            DB::commit();
+
+            try {
+                $permohonanFresh = $permohonan->fresh()->load('jenisSurat');
+                $adminKelurahan = User::role('admin_kelurahan')
+                    ->where('kelurahan_id', $permohonan->kelurahan_id)
+                    ->get();
+                foreach ($adminKelurahan as $admin) {
+                    $admin->notify(new RevisiRequestApprovedNotification($permohonanFresh));
+                    $admin->notify(new RevisiRequestApprovedWhatsapp($permohonanFresh));
+                }
+            } catch (\Exception $e) {
+                Log::error('Notif RevisiRequestApproved gagal: ' . $e->getMessage());
+            }
+
+            return $permohonan->fresh();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('approveRevisiRequest gagal: ' . $e->getMessage());
+            throw new \Exception('Gagal menyetujui request perubahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Admin kecamatan/super admin menolak request perubahan.
+     */
+    public function rejectRevisiRequest($permohonanId, $userId, string $catatan): \App\Models\PermohonanSurat
+    {
+        DB::beginTransaction();
+        try {
+            $permohonan = $this->repository->find($permohonanId);
+
+            if ($permohonan->status !== 'revision_requested') {
+                throw new \Exception('Permohonan tidak dalam status menunggu review perubahan.');
+            }
+
+            $revisiRequest = PermohonanRevisiRequest::where('permohonan_surat_id', $permohonanId)
+                ->where('status', 'pending')
+                ->latest()
+                ->firstOrFail();
+
+            $revisiRequest->update([
+                'status'              => 'rejected',
+                'reviewed_by_user_id' => $userId,
+                'catatan_reviewer'    => $catatan,
+                'reviewed_at'         => now(),
+            ]);
+
+            $this->repository->updateStatus($permohonanId, 'approved');
+
+            DB::commit();
+
+            try {
+                $permohonanFresh = $permohonan->fresh()->load('jenisSurat');
+                $adminKelurahan = User::role('admin_kelurahan')
+                    ->where('kelurahan_id', $permohonan->kelurahan_id)
+                    ->get();
+                foreach ($adminKelurahan as $admin) {
+                    $admin->notify(new RevisiRequestRejectedNotification($permohonanFresh));
+                    $admin->notify(new RevisiRequestRejectedWhatsapp($permohonanFresh, $catatan));
+                }
+            } catch (\Exception $e) {
+                Log::error('Notif RevisiRequestRejected gagal: ' . $e->getMessage());
+            }
+
+            return $permohonan->fresh();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('rejectRevisiRequest gagal: ' . $e->getMessage());
+            throw new \Exception('Gagal menolak request perubahan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Admin kelurahan mengkonfirmasi selesai edit dan surat kembali ke approved.
+     */
+    public function confirmEditDone($permohonanId, $userId): \App\Models\PermohonanSurat
+    {
+        DB::beginTransaction();
+        try {
+            $permohonan = $this->repository->find($permohonanId);
+
+            if ($permohonan->status !== 'revision_open') {
+                throw new \Exception('Permohonan tidak dalam status revisi terbuka.');
+            }
+
+            $this->repository->updateStatus($permohonanId, 'approved');
+
+            DB::commit();
+
+            Log::info('Revisi selesai, status kembali ke approved', [
+                'permohonan_id' => $permohonanId,
+                'confirmed_by'  => $userId,
+                'nomor_surat'   => $permohonan->nomor_surat,
+            ]);
+
+            return $permohonan->fresh();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('confirmEditDone gagal: ' . $e->getMessage());
+            throw new \Exception('Gagal konfirmasi selesai edit: ' . $e->getMessage());
+        }
     }
 }

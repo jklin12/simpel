@@ -132,6 +132,15 @@
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-red-50 text-red-600 border border-red-100">
                             Ditolak
                         </span>
+                        @elseif($permohonan->status == 'revision_requested')
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-amber-50 text-amber-600 border border-amber-100 shadow-sm shadow-amber-50">
+                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                            Menunggu Review Perubahan
+                        </span>
+                        @elseif($permohonan->status == 'revision_open')
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-orange-50 text-orange-600 border border-orange-100">
+                            Revisi Dibuka
+                        </span>
                         @else
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full bg-gray-50 text-gray-600 border border-gray-200">
                             {{ $permohonan->status }}

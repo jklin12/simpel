@@ -39,6 +39,7 @@ return [
         'base_url' => env('WHATSAPP_BASE_URL', 'http://127.0.0.1:5003'),
         'username' => env('WHATSAPP_USERNAME', ''),
         'password' => env('WHATSAPP_PASSWORD', ''),
+        'test_number' => env('WHATSAPP_TEST_NUMBER', ''),
     ],
 
 ];

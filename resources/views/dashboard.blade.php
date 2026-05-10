@@ -144,6 +144,8 @@
                 'approved' => ['bg' => 'bg-blue-100 text-blue-700 border-blue-100', 'label' => 'Disetujui'],
                 'completed' => ['bg' => 'bg-green-100 text-green-700 border-green-100', 'label' => 'Selesai'],
                 'rejected' => ['bg' => 'bg-red-100 text-red-700 border-red-100', 'label' => 'Ditolak'],
+                'revision_requested' => ['bg' => 'bg-amber-100 text-amber-700 border-amber-100', 'label' => 'Menunggu Review Perubahan'],
+                'revision_open' => ['bg' => 'bg-orange-100 text-orange-700 border-orange-100', 'label' => 'Revisi Dibuka'],
                 'default' => ['bg' => 'bg-gray-100 text-gray-600 border-gray-100', 'label' => ucfirst($item->status)],
                 };
                 @endphp

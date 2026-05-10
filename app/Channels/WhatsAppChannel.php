@@ -36,12 +36,16 @@ class WhatsAppChannel
         $to = $customTo ?? $notifiable->routeNotificationFor('whatsapp') ?? $notifiable->phone ?? $notifiable->phone_pemohon;
 
         if (!$to) {
-            return; // No phone number found
+            Log::warning("WhatsApp notification skipped - no phone number for " . get_class($notifiable) . " #{$notifiable->id}");
+            return;
         }
 
         // Override destination number for local development
         if (config('app.env') === 'local') {
-            $to = '085600200913';
+            $testNumber = config('services.whatsapp.test_number');
+            if ($testNumber) {
+                $to = $testNumber;
+            }
         }
 
         // Create log entry

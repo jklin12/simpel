@@ -79,6 +79,13 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
             Route::post('permohonan-surat/{permohonanSurat}/upload-signed', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'uploadSignedLetter'])->name('permohonan-surat.upload-signed');
             Route::post('permohonan-surat/{permohonanSurat}/reset-status', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'resetStatus'])->name('permohonan-surat.reset-status');
             Route::post('permohonan-surat/{permohonanSurat}/retry-whatsapp', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'retryWhatsapp'])->name('permohonan-surat.retry-whatsapp');
+
+            // Change Request (Request Perubahan) workflow
+            Route::post('permohonan-surat/{permohonanSurat}/request-perubahan', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'requestPerubahan'])->name('permohonan-surat.request-perubahan');
+            Route::post('permohonan-surat/{permohonanSurat}/approve-revisi', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'approveRevisiRequest'])->name('permohonan-surat.approve-revisi');
+            Route::post('permohonan-surat/{permohonanSurat}/reject-revisi', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'rejectRevisiRequest'])->name('permohonan-surat.reject-revisi');
+            Route::post('permohonan-surat/{permohonanSurat}/confirm-edit-done', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'confirmEditDone'])->name('permohonan-surat.confirm-edit-done');
+
             Route::delete('permohonan-surat/{permohonanSurat}', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'destroy'])->name('permohonan-surat.destroy');
         });
 

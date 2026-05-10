@@ -64,11 +64,16 @@ class PermohonanSurat extends Model
         return $this->hasMany(WhatsappNotificationLog::class,'permohonan_id','id');
     }
 
+    public function revisiRequests(): HasMany
+    {
+        return $this->hasMany(PermohonanRevisiRequest::class);
+    }
+
     public function currentApprovalStep(): BelongsTo
     {
         return $this->belongsTo(ApprovalStep::class, 'current_step', 'step_order');
-        // Note: Relation logic depends on how we define current_step. 
-        // If it's step_order integer it's not a direct FK to ID. 
+        // Note: Relation logic depends on how we define current_step.
+        // If it's step_order integer it's not a direct FK to ID.
         // Helper method might be better.
     }
 }

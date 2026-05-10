@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin\Surat;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ApprovePermohonanRequest;
 use App\Http\Requests\RejectPermohonanRequest;
+use App\Http\Requests\RequestPerubahanRequest;
 use App\Services\PermohonanSuratService;
 use App\Models\JenisSurat;
 use App\Models\PermohonanDokumen;
@@ -42,10 +43,11 @@ class PermohonanSuratController extends Controller
     {
         try {
             $permohonanSurat = $this->service->getPermohonanById($id);
-            $permohonanSurat->load('dokumens'); // Eager load documents
+            $permohonanSurat->load('dokumens', 'revisiRequests.requestedBy', 'revisiRequests.reviewedBy');
             $approvals = $permohonanSurat->approvals()->orderBy('step_order')->get();
+            $revisiRequests = $permohonanSurat->revisiRequests()->latest()->get();
 
-            return view('admin.permohonan-surat.show', compact('permohonanSurat', 'approvals'));
+            return view('admin.permohonan-surat.show', compact('permohonanSurat', 'approvals', 'revisiRequests'));
         } catch (\Exception $e) {
             return redirect()
                 ->route('admin.permohonan-surat.index')
@@ -61,10 +63,10 @@ class PermohonanSuratController extends Controller
         try {
             $permohonanSurat = $this->service->getPermohonanById($id);
 
-            // Check if still editable
-            if (in_array($permohonanSurat->status, ['completed', 'rejected'])) {
+            // Check if still editable — whitelist allowed statuses
+            if (!in_array($permohonanSurat->status, ['draft', 'pending', 'in_review', 'revision_open'])) {
                 return redirect()->route('admin.permohonan-surat.show', $id)
-                    ->with('error', 'Permohonan sudah diproses dan tidak bisa diubah.');
+                    ->with('error', 'Permohonan tidak dapat diubah pada status saat ini.');
             }
 
             return view('admin.permohonan-surat.edit', compact('permohonanSurat'));
@@ -377,6 +379,88 @@ class PermohonanSuratController extends Controller
             return redirect()
                 ->back()
                 ->with('error', 'Gagal retry notifikasi: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Admin kelurahan mengajukan request perubahan untuk surat yang sudah approved.
+     */
+    public function requestPerubahan(RequestPerubahanRequest $request, $id)
+    {
+        if (!Auth::user()->hasRole(['admin_kelurahan', 'super_admin'])) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengajukan request perubahan.');
+        }
+
+        try {
+            $this->service->requestPerubahan($id, Auth::id(), $request->alasan);
+
+            return redirect()
+                ->route('admin.permohonan-surat.show', $id)
+                ->with('success', 'Request perubahan berhasil diajukan. Menunggu persetujuan admin kecamatan.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Admin kecamatan/super admin menyetujui request perubahan.
+     */
+    public function approveRevisiRequest(Request $request, $id)
+    {
+        if (!Auth::user()->hasRole(['admin_kecamatan', 'super_admin'])) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyetujui request perubahan.');
+        }
+
+        try {
+            $this->service->approveRevisiRequest($id, Auth::id(), $request->catatan);
+
+            return redirect()
+                ->route('admin.permohonan-surat.show', $id)
+                ->with('success', 'Request perubahan disetujui. Admin kelurahan sekarang dapat mengedit data.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Admin kecamatan/super admin menolak request perubahan.
+     */
+    public function rejectRevisiRequest(Request $request, $id)
+    {
+        $request->validate(['catatan_reviewer' => 'required|string|max:500']);
+
+        if (!Auth::user()->hasRole(['admin_kecamatan', 'super_admin'])) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menolak request perubahan.');
+        }
+
+        try {
+            $this->service->rejectRevisiRequest($id, Auth::id(), $request->catatan_reviewer);
+
+            return redirect()
+                ->route('admin.permohonan-surat.show', $id)
+                ->with('success', 'Request perubahan ditolak. Status surat kembali ke Disetujui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    /**
+     * Admin kelurahan mengkonfirmasi selesai edit dari status revision_open.
+     */
+    public function confirmEditDone($id)
+    {
+        if (!Auth::user()->hasRole(['admin_kelurahan', 'super_admin'])) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses.');
+        }
+
+        try {
+            $this->service->confirmEditDone($id, Auth::id());
+
+            return redirect()
+                ->route('admin.permohonan-surat.show', $id)
+                ->with('success', 'Edit selesai. Status permohonan kembali ke Disetujui.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 }

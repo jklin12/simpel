@@ -87,6 +87,56 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
                 Upload TTD
             </button>
+            @if(auth()->user()->hasRole('admin_kelurahan'))
+            <button onclick="showRequestPerubahanModal()"
+                class="px-5 py-2.5 bg-white text-amber-700 border border-amber-300 rounded-xl hover:bg-amber-50 font-bold transition-all flex items-center gap-2 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Request Perubahan
+            </button>
+            @endif
+
+            @elseif($permohonanSurat->status == 'revision_requested')
+            <a href="{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}" target="_blank"
+                class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
+                Preview PDF
+            </a>
+            @if(auth()->user()->hasRole(['admin_kecamatan', 'super_admin']))
+                @php $latestRevisiRequest = $revisiRequests->where('status','pending')->first(); @endphp
+                @if($latestRevisiRequest)
+                <button onclick="showApproveRevisiModal()"
+                    class="px-6 py-2.5 bg-gradient-to-br from-[#00236f] to-[#1e3a8a] text-white rounded-xl hover:shadow-lg font-bold transition-all">
+                    Setujui Perubahan
+                </button>
+                <button onclick="showRejectRevisiModal()"
+                    class="px-6 py-2.5 bg-white text-[#ba1a1a] border border-[#ba1a1a] rounded-xl hover:bg-[#ba1a1a] hover:text-white font-bold transition-all">
+                    Tolak Perubahan
+                </button>
+                @endif
+            @endif
+
+            @elseif($permohonanSurat->status == 'revision_open')
+            <a href="{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}" target="_blank"
+                class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                Preview PDF
+            </a>
+            <a href="{{ route('admin.permohonan-surat.edit', $permohonanSurat->id) }}"
+                class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
+                Edit Data
+            </a>
+            @if(auth()->user()->hasRole(['admin_kelurahan', 'super_admin']))
+            <form id="form-confirm-edit-done"
+                action="{{ route('admin.permohonan-surat.confirm-edit-done', $permohonanSurat->id) }}" method="POST" style="display: inline;">
+                @csrf
+                <button type="button"
+                    onclick="confirmAction('form-confirm-edit-done', 'Konfirmasi Selesai Edit?', 'Pastikan semua perubahan sudah benar. Status surat akan kembali ke Disetujui.', 'warning', 'Ya, Selesai Edit')"
+                    class="px-6 py-2.5 bg-gradient-to-br from-[#00236f] to-[#1e3a8a] text-white rounded-xl hover:shadow-lg font-bold transition-all">
+                    Konfirmasi Selesai Edit
+                </button>
+            </form>
+            @endif
 
             @elseif($permohonanSurat->status == 'completed')
             @if($permohonanSurat->signed_file_path)
@@ -295,6 +345,16 @@
                     <span class="px-6 py-2.5 text-sm font-extrabold rounded-2xl bg-[#ffdad6] text-[#ba1a1a] shadow-[0_4px_12px_rgba(186,26,26,0.12)]">DITOLAK</span>
                     <p class="text-xs font-semibold text-[#757682] mt-3">Permohonan perlu diperbaiki/direvisi</p>
                 </div>
+                @elseif($permohonanSurat->status == 'revision_requested')
+                <div class="inline-flex flex-col items-center">
+                    <span class="px-6 py-2.5 text-sm font-extrabold rounded-2xl bg-amber-100 text-amber-700 shadow-[0_4px_12px_rgba(180,83,9,0.12)]">MENUNGGU REVIEW PERUBAHAN</span>
+                    <p class="text-xs font-semibold text-[#757682] mt-3">Request perubahan sedang ditinjau admin kecamatan</p>
+                </div>
+                @elseif($permohonanSurat->status == 'revision_open')
+                <div class="inline-flex flex-col items-center">
+                    <span class="px-6 py-2.5 text-sm font-extrabold rounded-2xl bg-orange-100 text-orange-700 shadow-[0_4px_12px_rgba(194,65,12,0.12)]">REVISI DIBUKA</span>
+                    <p class="text-xs font-semibold text-[#757682] mt-3">Admin kelurahan sedang mengedit data</p>
+                </div>
                 @endif
             </div>
 
@@ -393,6 +453,42 @@
                 @endforeach
             </div>
         </div>
+
+        <!-- Riwayat Request Perubahan -->
+        @if($revisiRequests->count() > 0)
+        <div class="bg-white rounded-[24px] shadow-sm p-8 border border-[#f3f4f6]">
+            <h3 class="text-lg font-bold text-[#191c1e] mb-8 tracking-tight flex items-center gap-2">
+                Riwayat Request Perubahan
+                <div class="h-px flex-1 bg-[#edeef0]"></div>
+                <span class="text-xs font-bold bg-amber-100 text-amber-700 px-2 py-1 rounded-lg">{{ $revisiRequests->count() }}x</span>
+            </h3>
+            <div class="space-y-4">
+                @foreach($revisiRequests->sortByDesc('created_at') as $rr)
+                <div class="rounded-2xl border p-4
+                    {{ $rr->status === 'approved' ? 'border-green-200 bg-green-50' :
+                       ($rr->status === 'rejected' ? 'border-red-100 bg-red-50' : 'border-amber-200 bg-amber-50') }}">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-[10px] font-extrabold uppercase tracking-widest
+                            {{ $rr->status === 'approved' ? 'text-green-700' :
+                               ($rr->status === 'rejected' ? 'text-red-700' : 'text-amber-700') }}">
+                            Revisi #{{ $rr->revision_number }} —
+                            {{ $rr->status === 'approved' ? 'Disetujui' : ($rr->status === 'rejected' ? 'Ditolak' : 'Menunggu Review') }}
+                        </span>
+                        <span class="text-[9px] text-[#757682]">{{ $rr->created_at->format('d/m/y H:i') }}</span>
+                    </div>
+                    <p class="text-[11px] text-gray-700 italic mb-1">"{{ $rr->alasan }}"</p>
+                    <p class="text-[10px] text-[#757682]">Diajukan oleh: {{ $rr->requestedBy?->name ?? '-' }}</p>
+                    @if($rr->catatan_reviewer)
+                    <div class="mt-2 pt-2 border-t border-gray-200">
+                        <p class="text-[10px] text-[#757682]">Catatan reviewer: <span class="italic">"{{ $rr->catatan_reviewer }}"</span></p>
+                        <p class="text-[10px] text-[#757682]">oleh {{ $rr->reviewedBy?->name ?? '-' }} — {{ $rr->reviewed_at?->format('d/m/y H:i') }}</p>
+                    </div>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
 
         <!-- WhatsApp Notification Logs -->
         <div class="bg-white rounded-[24px] shadow-sm p-8 border border-[#f3f4f6]">
@@ -538,6 +634,74 @@
     </div>
 </div>
 
+<!-- Request Perubahan Modal -->
+@if($permohonanSurat->status == 'approved' && auth()->user()->hasRole('admin_kelurahan'))
+<div id="requestPerubahanModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-2">Request Perubahan Data</h3>
+        <p class="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+            Nomor surat <strong>{{ $permohonanSurat->nomor_surat }}</strong> tidak akan berubah. Anda hanya mengubah data pemohon/isian.
+        </p>
+        <form action="{{ route('admin.permohonan-surat.request-perubahan', $permohonanSurat->id) }}" method="POST">
+            @csrf
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Alasan Perubahan <span class="text-red-500">*</span></label>
+                <textarea name="alasan" rows="4" class="w-full rounded-lg border-gray-300 focus:ring-amber-500 focus:border-amber-500"
+                    placeholder="Jelaskan data apa yang perlu diubah dan mengapa..." required minlength="10"></textarea>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeRequestPerubahanModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 font-medium transition">Ajukan Request</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
+<!-- Approve Revisi Modal -->
+@if($permohonanSurat->status == 'revision_requested' && auth()->user()->hasRole(['admin_kecamatan', 'super_admin']))
+<div id="approveRevisiModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Setujui Request Perubahan</h3>
+        @if($revisiRequests->where('status','pending')->first())
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-3 mb-4 text-sm">
+            <span class="font-semibold text-gray-700">Alasan yang diajukan:</span>
+            <p class="text-gray-600 mt-1 italic">"{{ $revisiRequests->where('status','pending')->first()->alasan }}"</p>
+        </div>
+        @endif
+        <form action="{{ route('admin.permohonan-surat.approve-revisi', $permohonanSurat->id) }}" method="POST">
+            @csrf
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Catatan (Opsional)</label>
+                <textarea name="catatan" rows="3" class="w-full rounded-lg border-gray-300 focus:ring-green-500 focus:border-green-500" placeholder="Catatan persetujuan..."></textarea>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeApproveRevisiModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">Setujui</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Reject Revisi Modal -->
+<div id="rejectRevisiModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Tolak Request Perubahan</h3>
+        <form action="{{ route('admin.permohonan-surat.reject-revisi', $permohonanSurat->id) }}" method="POST">
+            @csrf
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Alasan Penolakan <span class="text-red-500">*</span></label>
+                <textarea name="catatan_reviewer" rows="3" class="w-full rounded-lg border-gray-300 focus:ring-red-500 focus:border-red-500" placeholder="Jelaskan mengapa request ini ditolak..." required></textarea>
+            </div>
+            <div class="flex justify-end gap-3">
+                <button type="button" onclick="closeRejectRevisiModal()" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 font-medium">Batal</button>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium">Tolak</button>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
 @push('scripts')
 <script>
     function confirmAction(formId, title, text, icon = 'warning', confirmBtnText = 'Ya, Lanjutkan') {
@@ -586,6 +750,40 @@
 
     document.getElementById('rejectModal')?.addEventListener('click', function(e) {
         if (e.target === this) closeRejectModal();
+    });
+
+    // New modal functions for revision request workflow
+    function showRequestPerubahanModal() {
+        document.getElementById('requestPerubahanModal')?.classList.remove('hidden');
+    }
+
+    function closeRequestPerubahanModal() {
+        document.getElementById('requestPerubahanModal')?.classList.add('hidden');
+    }
+
+    function showApproveRevisiModal() {
+        document.getElementById('approveRevisiModal')?.classList.remove('hidden');
+    }
+
+    function closeApproveRevisiModal() {
+        document.getElementById('approveRevisiModal')?.classList.add('hidden');
+    }
+
+    function showRejectRevisiModal() {
+        document.getElementById('rejectRevisiModal')?.classList.remove('hidden');
+    }
+
+    function closeRejectRevisiModal() {
+        document.getElementById('rejectRevisiModal')?.classList.add('hidden');
+    }
+
+    // Backdrop-click close for new modals
+    ['requestPerubahanModal', 'approveRevisiModal', 'rejectRevisiModal'].forEach(id => {
+        document.getElementById(id)?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
     });
 </script>
 @endpush
