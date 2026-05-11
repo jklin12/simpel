@@ -26,6 +26,7 @@ class SdnhSeeder extends Seeder
                     ['name' => 'sdnh_ktp_kk', 'label' => 'KTP dan KK', 'type' => 'file', 'is_required' => true],
                     ['name' => 'sdnh_formulir_n', 'label' => 'Formulir N1-N5', 'type' => 'file', 'is_required' => true],
                     ['name' => 'sdnh_lunas_pbb', 'label' => 'Bukti Tanda Lunas PBB', 'type' => 'file', 'is_required' => true],
+                    ['name' => 'sdnh_rekom_kua', 'label' => 'Surat Rekomendasi KUA', 'type' => 'file', 'is_required' => true],
                     ['name' => 'sdnh_akta_cerai_mati', 'label' => 'Akta Cerai/Mati', 'type' => 'file', 'is_required' => false],
                 ],
                 'is_active' => true,

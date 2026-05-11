@@ -149,6 +149,7 @@ class StorePermohonanRequest extends FormRequest
             'sdnh_ktp_kk',
             'sdnh_formulir_n',
             'sdnh_lunas_pbb',
+            'sdnh_rekom_kua',
             'sdnh_akta_cerai_mati',
             // SKSI
             'sksi_surat_pengantar_rtrw',
@@ -577,6 +578,7 @@ class StorePermohonanRequest extends FormRequest
             'sdnh_ktp_kk'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sdnh_formulir_n'      => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sdnh_lunas_pbb'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sdnh_rekom_kua'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sdnh_akta_cerai_mati' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }

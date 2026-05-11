@@ -330,6 +330,12 @@
                 <input type="file" name="sdnh_lunas_pbb" required accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
             </div>
 
+            <!-- Surat Rekomendasi KUA -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Surat Rekomendasi KUA <span class="text-red-500">*</span></label>
+                <input type="file" name="sdnh_rekom_kua" required accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+            </div>
+
             <!-- Akta Cerai/Kematian -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Fotokopi Akta Cerai atau Kematian <span class="font-normal text-gray-500">(Jika janda/duda)</span></label>
