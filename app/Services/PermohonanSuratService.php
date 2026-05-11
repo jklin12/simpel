@@ -595,7 +595,7 @@ class PermohonanSuratService
         try {
             $permohonan = $this->repository->find($id);
 
-            if ($permohonan->status !== 'approved') {
+            if (!in_array($permohonan->status, ['approved', 'completed'])) {
                 throw new \Exception('Request perubahan hanya dapat diajukan pada surat yang sudah disetujui.');
             }
 
@@ -751,7 +751,10 @@ class PermohonanSuratService
                 throw new \Exception('Permohonan tidak dalam status revisi terbuka.');
             }
 
-            $this->repository->updateStatus($permohonanId, 'approved');
+            $this->repository->updateStatus($permohonanId, 'approved', [
+                'signed_file_path' => null,
+                'completed_at'     => null,
+            ]);
 
             DB::commit();
 
