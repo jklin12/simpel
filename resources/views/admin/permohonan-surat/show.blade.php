@@ -253,13 +253,237 @@
                 </div>
 
                 @if($permohonanSurat->data_permohonan)
+                @php
+                $kode = strtoupper($permohonanSurat->jenisSurat->kode ?? '');
+                $data = $permohonanSurat->data_permohonan;
+
+                // Field order maps per static type (urutan sama dengan form user)
+                $fieldMaps = [
+                    'SKTM' => [
+                        'jenis_kelamin'          => 'Jenis Kelamin',
+                        'agama'                  => 'Agama',
+                        'tempat_lahir'           => 'Tempat Lahir',
+                        'tanggal_lahir'          => 'Tanggal Lahir',
+                        'status_perkawinan'      => 'Status Perkawinan',
+                        'pekerjaan'              => 'Pekerjaan',
+                        'keperluan_sktm'         => 'Keperluan SKTM',
+                        'keterangan_sktm'        => 'Keterangan Tambahan',
+                        'rt'                     => 'RT',
+                        'rw'                     => 'RW',
+                        'no_surat_pengantar'     => 'No. Surat Pengantar',
+                        'tanggal_surat_pengantar'=> 'Tanggal Surat Pengantar',
+                        'tanggal_surat_pernyataan' => 'Tanggal Surat Pernyataan',
+                    ],
+                    'SKTMR' => [
+                        'jenis_kelamin'          => 'Jenis Kelamin',
+                        'agama'                  => 'Agama',
+                        'tempat_lahir'           => 'Tempat Lahir',
+                        'tanggal_lahir'          => 'Tanggal Lahir',
+                        'status_perkawinan'      => 'Status Perkawinan',
+                        'pekerjaan'              => 'Pekerjaan',
+                        'pendidikan_terakhir'    => 'Pendidikan Terakhir',
+                        'keperluan'              => 'Keperluan',
+                        'rt'                     => 'RT',
+                        'rw'                     => 'RW',
+                        'no_surat_pengantar'     => 'No. Surat Pengantar',
+                        'tanggal_surat_pengantar'=> 'Tanggal Surat Pengantar',
+                        'tanggal_surat_pernyataan' => 'Tanggal Surat Pernyataan',
+                    ],
+                    'SKM' => [
+                        'nomor_pengantar'        => 'No. Surat Pengantar',
+                        'tanggal_pengantar'      => 'Tanggal Surat Pengantar',
+                        'rt'                     => 'RT',
+                        'rw'                     => 'RW',
+                        'nama_jenazah'           => 'Nama Almarhum/Almarhumah',
+                        'nik_jenazah'            => 'NIK Jenazah',
+                        'jk_jenazah'             => 'Jenis Kelamin Jenazah',
+                        'tempat_lahir_jenazah'   => 'Tempat Lahir Jenazah',
+                        'tanggal_lahir_jenazah'  => 'Tanggal Lahir Jenazah',
+                        'alamat_jenazah'         => 'Alamat Terakhir Jenazah',
+                        'agama_jenazah'          => 'Agama Jenazah',
+                        'pekerjaan_jenazah'      => 'Pekerjaan Terakhir Jenazah',
+                        'hari_meninggal'         => 'Hari Meninggal',
+                        'tanggal_meninggal'      => 'Tanggal Meninggal',
+                        'pukul_meninggal'        => 'Pukul Meninggal',
+                        'tempat_meninggal'       => 'Tempat Meninggal',
+                        'sebab_kematian'         => 'Penyebab Kematian',
+                        'tempat_pemakaman'       => 'Tempat Pemakaman',
+                        'hubungan_pelapor'       => 'Hubungan dengan Jenazah',
+                    ],
+                    'SKG' => [
+                        'jenis_kelamin'          => 'Jenis Kelamin',
+                        'agama'                  => 'Agama',
+                        'tempat_lahir'           => 'Tempat Lahir',
+                        'tanggal_lahir'          => 'Tanggal Lahir',
+                        'pekerjaan'              => 'Pekerjaan',
+                        'keperluan'              => 'Keperluan',
+                        'gaib_nama'              => 'Nama Orang Gaib',
+                        'gaib_nik'               => 'NIK Orang Gaib',
+                        'gaib_jenis_kelamin'     => 'Jenis Kelamin Orang Gaib',
+                        'gaib_agama'             => 'Agama Orang Gaib',
+                        'gaib_tempat_lahir'      => 'Tempat Lahir Orang Gaib',
+                        'gaib_tanggal_lahir'     => 'Tanggal Lahir Orang Gaib',
+                        'gaib_pekerjaan'         => 'Pekerjaan Orang Gaib',
+                        'gaib_alamat'            => 'Alamat Orang Gaib',
+                        'rt'                     => 'RT',
+                        'rw'                     => 'RW',
+                        'no_surat_pengantar'     => 'No. Surat Pengantar',
+                        'tanggal_surat_pengantar'=> 'Tanggal Surat Pengantar',
+                        'tanggal_surat_pernyataan' => 'Tanggal Surat Pernyataan',
+                    ],
+                    'SKSI' => [
+                        'jenis_kelamin'          => 'Jenis Kelamin',
+                        'agama'                  => 'Agama',
+                        'tempat_lahir'           => 'Tempat Lahir',
+                        'tanggal_lahir'          => 'Tanggal Lahir',
+                        'pekerjaan'              => 'Pekerjaan',
+                        'istri_nama'             => 'Nama Istri/Suami',
+                        'istri_nik'              => 'NIK Istri/Suami',
+                        'istri_jenis_kelamin'    => 'Jenis Kelamin Istri/Suami',
+                        'istri_agama'            => 'Agama Istri/Suami',
+                        'istri_tempat_lahir'     => 'Tempat Lahir Istri/Suami',
+                        'istri_tanggal_lahir'    => 'Tanggal Lahir Istri/Suami',
+                        'istri_pekerjaan'        => 'Pekerjaan Istri/Suami',
+                        'istri_alamat'           => 'Alamat Istri/Suami',
+                        'rt'                     => 'RT',
+                        'rw'                     => 'RW',
+                        'no_surat_pengantar'     => 'No. Surat Pengantar',
+                        'tanggal_surat_pengantar'=> 'Tanggal Surat Pengantar',
+                        'tanggal_surat_pernyataan' => 'Tanggal Surat Pernyataan',
+                    ],
+                    'SKJD' => [
+                        'jenis_kelamin'          => 'Jenis Kelamin',
+                        'agama'                  => 'Agama',
+                        'tempat_lahir'           => 'Tempat Lahir',
+                        'tanggal_lahir'          => 'Tanggal Lahir',
+                        'status_perkawinan'      => 'Status Perkawinan',
+                        'pekerjaan'              => 'Pekerjaan',
+                        'keperluan'              => 'Keperluan',
+                        'rt'                     => 'RT',
+                        'rw'                     => 'RW',
+                        'no_surat_pengantar'     => 'No. Surat Pengantar',
+                        'tanggal_surat_pengantar'=> 'Tanggal Surat Pengantar',
+                        'tanggal_surat_pernyataan' => 'Tanggal Surat Pernyataan',
+                    ],
+                    'SKP' => [
+                        'jenis_kelamin'          => 'Jenis Kelamin',
+                        'agama'                  => 'Agama',
+                        'tempat_lahir'           => 'Tempat Lahir',
+                        'tanggal_lahir'          => 'Tanggal Lahir',
+                        'status_perkawinan'      => 'Status Perkawinan',
+                        'pekerjaan'              => 'Pekerjaan',
+                        'pendidikan_terakhir'    => 'Pendidikan Terakhir',
+                        'jumlah_penghasilan'     => 'Jumlah Penghasilan',
+                        'keperluan'              => 'Keperluan',
+                        'rt'                     => 'RT',
+                        'rw'                     => 'RW',
+                        'no_surat_pengantar'     => 'No. Surat Pengantar',
+                        'tanggal_surat_pengantar'=> 'Tanggal Surat Pengantar',
+                    ],
+                    'SKBM' => [
+                        'jenis_kelamin'          => 'Jenis Kelamin',
+                        'agama'                  => 'Agama',
+                        'tempat_lahir'           => 'Tempat Lahir',
+                        'tanggal_lahir'          => 'Tanggal Lahir',
+                        'status_perkawinan'      => 'Status Perkawinan',
+                        'pekerjaan'              => 'Pekerjaan',
+                        'keperluan'              => 'Keperluan',
+                        'rt'                     => 'RT',
+                        'rw'                     => 'RW',
+                        'no_surat_pengantar'     => 'No. Surat Pengantar',
+                        'tanggal_surat_pengantar'=> 'Tanggal Surat Pengantar',
+                        'tanggal_surat_pernyataan' => 'Tanggal Surat Pernyataan',
+                    ],
+                    'SKMH' => [
+                        'kewarganegaraan'        => 'Kewarganegaraan',
+                        'jenis_kelamin'          => 'Jenis Kelamin',
+                        'agama'                  => 'Agama',
+                        'tempat_lahir'           => 'Tempat Lahir',
+                        'tanggal_lahir'          => 'Tanggal Lahir',
+                        'status_perkawinan'      => 'Status Perkawinan',
+                        'pekerjaan'              => 'Pekerjaan',
+                        'ayah_nama'              => 'Nama Ayah',
+                        'ayah_bin'               => 'Bin Ayah',
+                        'ayah_nik'               => 'NIK Ayah',
+                        'ayah_agama'             => 'Agama Ayah',
+                        'ayah_kewarganegaraan'   => 'Kewarganegaraan Ayah',
+                        'ayah_tempat_lahir'      => 'Tempat Lahir Ayah',
+                        'ayah_tanggal_lahir'     => 'Tanggal Lahir Ayah',
+                        'ayah_pekerjaan'         => 'Pekerjaan Ayah',
+                        'ayah_alamat'            => 'Alamat Ayah',
+                        'ibu_nama'               => 'Nama Ibu',
+                        'ibu_binti'              => 'Binti Ibu',
+                        'ibu_nik'                => 'NIK Ibu',
+                        'ibu_agama'              => 'Agama Ibu',
+                        'ibu_kewarganegaraan'    => 'Kewarganegaraan Ibu',
+                        'ibu_tempat_lahir'       => 'Tempat Lahir Ibu',
+                        'ibu_tanggal_lahir'      => 'Tanggal Lahir Ibu',
+                        'ibu_pekerjaan'          => 'Pekerjaan Ibu',
+                        'ibu_alamat'             => 'Alamat Ibu',
+                    ],
+                    'SDNH' => [
+                        'jenis_kelamin'          => 'Jenis Kelamin',
+                        'agama'                  => 'Agama',
+                        'tempat_lahir'           => 'Tempat Lahir',
+                        'tanggal_lahir'          => 'Tanggal Lahir',
+                        'status_perkawinan'      => 'Status Perkawinan',
+                        'pekerjaan'              => 'Pekerjaan',
+                        'nama_pasangan'          => 'Nama Pasangan',
+                        'jenis_kelamin_pasangan' => 'Jenis Kelamin Pasangan',
+                        'agama_pasangan'         => 'Agama Pasangan',
+                        'tempat_lahir_pasangan'  => 'Tempat Lahir Pasangan',
+                        'tanggal_lahir_pasangan' => 'Tanggal Lahir Pasangan',
+                        'status_perkawinan_pasangan' => 'Status Perkawinan Pasangan',
+                        'pekerjaan_pasangan'     => 'Pekerjaan Pasangan',
+                        'alamat_pasangan'        => 'Alamat Pasangan',
+                        'hari_pernikahan'        => 'Hari Pernikahan',
+                        'tanggal_pernikahan'     => 'Tanggal Pernikahan',
+                        'pukul_pernikahan'       => 'Pukul Pernikahan',
+                        'alamat_pernikahan'      => 'Alamat Pernikahan',
+                        'alasan_dispensasi'      => 'Alasan Dispensasi',
+                    ],
+                ];
+
+                // Build ordered fields list
+                if (isset($fieldMaps[$kode])) {
+                    // Static type: render in defined order, skip keys not in data
+                    $orderedFields = collect($fieldMaps[$kode])
+                        ->filter(fn($label, $key) => array_key_exists($key, $data) && $data[$key] !== null && $data[$key] !== '')
+                        ->map(fn($label, $key) => ['label' => $label, 'value' => $data[$key]]);
+
+                    // Append any extra keys not in map (fallback)
+                    $mappedKeys = array_keys($fieldMaps[$kode]);
+                    $extraFields = collect($data)
+                        ->filter(fn($v, $k) => !in_array($k, $mappedKeys) && $v !== null && $v !== '')
+                        ->map(fn($v, $k) => ['label' => ucwords(str_replace('_', ' ', $k)), 'value' => $v]);
+
+                    $orderedFields = $orderedFields->merge($extraFields);
+                } else {
+                    // Dynamic type: use required_fields order from JenisSurat
+                    $requiredFields = $permohonanSurat->jenisSurat->required_fields ?? [];
+                    $orderedFields = collect($requiredFields)
+                        ->filter(fn($f) => is_array($f) && ($f['type'] ?? '') !== 'file' && isset($f['name']) && array_key_exists($f['name'], $data))
+                        ->map(fn($f) => ['label' => $f['label'] ?? ucwords(str_replace('_', ' ', $f['name'])), 'value' => $data[$f['name']]]);
+
+                    // Append any extra keys not in required_fields
+                    $definedKeys = collect($requiredFields)
+                        ->filter(fn($f) => is_array($f))
+                        ->pluck('name')
+                        ->toArray();
+                    $extraFields = collect($data)
+                        ->filter(fn($v, $k) => !in_array($k, $definedKeys) && $v !== null && $v !== '')
+                        ->map(fn($v, $k) => ['label' => ucwords(str_replace('_', ' ', $k)), 'value' => $v]);
+
+                    $orderedFields = $orderedFields->merge($extraFields);
+                }
+                @endphp
                 <div class="pt-6 border-t border-[#f3f4f6]">
                     <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-4 block underline decoration-[#dce1ff] decoration-2 underline-offset-4">Spesifikasi Layanan</label>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8">
-                        @foreach($permohonanSurat->data_permohonan as $key => $value)
+                        @foreach($orderedFields as $field)
                         <div>
-                            <label class="text-[9px] font-extrabold uppercase text-[#757682] opacity-70 mb-1 block">{{ ucwords(str_replace('_', ' ', $key)) }}</label>
-                            <p class="text-base font-bold text-[#191c1e]">{{ $value }}</p>
+                            <label class="text-[9px] font-extrabold uppercase text-[#757682] opacity-70 mb-1 block">{{ $field['label'] }}</label>
+                            <p class="text-base font-bold text-[#191c1e]">{{ $field['value'] }}</p>
                         </div>
                         @endforeach
                     </div>
