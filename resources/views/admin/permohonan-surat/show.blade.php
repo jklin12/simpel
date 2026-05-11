@@ -151,6 +151,13 @@
                 Download Draft Surat
             </a>
             @endif
+            @if(auth()->user()->hasAnyRole(['admin_kelurahan', 'super_admin']))
+            <button type="button" onclick="showRequestPerubahanModal()"
+                class="px-5 py-2.5 bg-amber-500 text-white rounded-xl hover:bg-amber-600 font-bold transition-all flex items-center gap-2 shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                Request Perubahan
+            </button>
+            @endif
             @endif
         </div>
     </div>
@@ -859,7 +866,7 @@
 </div>
 
 <!-- Request Perubahan Modal -->
-@if($permohonanSurat->status == 'approved' && auth()->user()->hasRole('admin_kelurahan'))
+@if(in_array($permohonanSurat->status, ['approved', 'completed']) && auth()->user()->hasAnyRole(['admin_kelurahan', 'super_admin']))
 <div id="requestPerubahanModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
         <h3 class="text-lg font-bold text-gray-800 mb-2">Request Perubahan Data</h3>
