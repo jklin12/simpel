@@ -1,0 +1,414 @@
+            <!-- Bagian 1: Data Diri Pemohon -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8" x-data="spkhHandler()">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                        <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">1</span>
+                        Data Diri Pemohon
+                    </h2>
+                    <div class="flex flex-col items-end">
+                        <button type="button" @click="triggerOCR" :disabled="loading"
+                            class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-60 disabled:cursor-not-allowed">
+                            <template x-if="!loading">
+                                <svg class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </template>
+                            <template x-if="loading">
+                                <svg class="animate-spin h-5 w-5 mr-2 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                                </svg>
+                            </template>
+                            <span x-text="loading ? 'Memproses...' : 'Scan KTP (OCR)'"></span>
+                        </button>
+                        <span class="text-xs text-blue-600 mt-1">*Otomatis isi Nama, NIK, Tgl Lahir, Alamat</span>
+                    </div>
+                    <input type="file" x-ref="ocrInput" class="hidden" accept="image/*" @change="handleFileUpload">
+                </div>
+
+                <!-- OCR Status Message -->
+                <div x-show="statusMsg" x-text="statusMsg"
+                    :class="statusOk ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'"
+                    class="mb-4 text-sm border rounded-lg px-4 py-2" style="display:none"></div>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama <span class="text-red-500">*</span></label>
+                        <input type="text" x-model="nama" name="nama_lengkap" value="{{ old('nama_lengkap') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('nama_lengkap') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">NIK Pemohon <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="nik" name="nik_bersangkutan" value="{{ old('nik_bersangkutan') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" maxlength="16" required>
+                            @error('nik_bersangkutan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">No HP (Wajib WA) <span class="text-red-500">*</span></label>
+                            <input type="text" name="no_wa" value="{{ old('no_wa') }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <p class="mt-1 text-xs text-blue-600">*Nomor WhatsApp aktif untuk notifikasi.</p>
+                            @error('no_wa') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin <span class="text-red-500">*</span></label>
+                            <select x-ref="jenisKelaminSelect" name="jenis_kelamin" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="Laki-laki" {{ old('jenis_kelamin') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                                <option value="Perempuan" {{ old('jenis_kelamin') == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+                            </select>
+                            @error('jenis_kelamin') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Warga Negara <span class="text-red-500">*</span></label>
+                            <select name="warga_negara" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                                <option value="">Pilih Warga Negara</option>
+                                <option value="WNI" {{ old('warga_negara', 'WNI') == 'WNI' ? 'selected' : '' }}>WNI (Warga Negara Indonesia)</option>
+                                <option value="WNA" {{ old('warga_negara') == 'WNA' ? 'selected' : '' }}>WNA (Warga Negara Asing)</option>
+                            </select>
+                            @error('warga_negara') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Agama <span class="text-red-500">*</span></label>
+                            <select x-ref="agamaSelect" name="agama" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                                <option value="">Pilih Agama</option>
+                                <option value="Islam" {{ old('agama') == 'Islam' ? 'selected' : '' }}>Islam</option>
+                                <option value="Kristen" {{ old('agama') == 'Kristen' ? 'selected' : '' }}>Kristen</option>
+                                <option value="Katolik" {{ old('agama') == 'Katolik' ? 'selected' : '' }}>Katolik</option>
+                                <option value="Hindu" {{ old('agama') == 'Hindu' ? 'selected' : '' }}>Hindu</option>
+                                <option value="Buddha" {{ old('agama') == 'Buddha' ? 'selected' : '' }}>Buddha</option>
+                                <option value="Konghucu" {{ old('agama') == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
+                            </select>
+                            @error('agama') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status Perkawinan <span class="text-red-500">*</span></label>
+                            <select x-ref="statusPerkawinanSelect" name="status_perkawinan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                                <option value="">Pilih Status Perkawinan</option>
+                                <option value="Belum Kawin" {{ old('status_perkawinan') == 'Belum Kawin' ? 'selected' : '' }}>Belum Kawin</option>
+                                <option value="Kawin" {{ old('status_perkawinan') == 'Kawin' ? 'selected' : '' }}>Kawin</option>
+                                <option value="Cerai Hidup" {{ old('status_perkawinan') == 'Cerai Hidup' ? 'selected' : '' }}>Cerai Hidup</option>
+                                <option value="Cerai Mati" {{ old('status_perkawinan') == 'Cerai Mati' ? 'selected' : '' }}>Cerai Mati</option>
+                            </select>
+                            @error('status_perkawinan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir <span class="text-red-500">*</span></label>
+                            <input type="text" x-model="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            @error('tempat_lahir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir <span class="text-red-500">*</span></label>
+                            <input type="date" x-model="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            @error('tanggal_lahir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan <span class="text-red-500">*</span></label>
+                        <select name="pekerjaan" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4 select2-pekerjaan" required>
+                            <option value="">Pilih Pekerjaan</option>
+                            @foreach($pekerjaanList ?? [] as $pekerjaan)
+                            <option value="{{ $pekerjaan }}" {{ old('pekerjaan') == $pekerjaan ? 'selected' : '' }}>{{ $pekerjaan }}</option>
+                            @endforeach
+                        </select>
+                        @error('pekerjaan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Sesuai KTP <span class="text-red-500">*</span></label>
+                        <textarea x-model="alamat" name="alamat_lengkap" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('alamat_lengkap') }}</textarea>
+                        @error('alamat_lengkap') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+
+                <script>
+                    window.updateHariKehilangan = function(dateStr) {
+                        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                        if (!dateStr) return;
+                        const d = new Date(dateStr + 'T00:00:00');
+                        const hariEl = document.getElementById('hari_kehilangan');
+                        if (hariEl) hariEl.value = days[d.getDay()];
+                    };
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const tglEl = document.getElementById('tanggal_kehilangan');
+                        if (tglEl && tglEl.value) window.updateHariKehilangan(tglEl.value);
+                    });
+
+                    function spkhHandler() {
+                        return {
+                            nama: '{{ old("nama_lengkap") }}',
+                            nik: '{{ old("nik_bersangkutan") }}',
+                            tempat_lahir: '{{ old("tempat_lahir") }}',
+                            tanggal_lahir: '{{ old("tanggal_lahir") }}',
+                            alamat: '{{ old("alamat_lengkap") }}',
+                            loading: false,
+                            statusMsg: '',
+                            statusOk: true,
+
+                            triggerOCR() {
+                                this.$refs.ocrInput.value = '';
+                                this.$refs.ocrInput.click();
+                            },
+
+                            async handleFileUpload(e) {
+                                const file = e.target.files[0];
+                                if (!file) return;
+
+                                this.loading = true;
+                                this.statusMsg = '';
+
+                                const formData = new FormData();
+                                formData.append('ktp_image', file);
+                                formData.append('_token', '{{ csrf_token() }}');
+
+                                try {
+                                    const response = await fetch('{{ route("layanan.surat.ocr") }}', {
+                                        method: 'POST',
+                                        body: formData
+                                    });
+
+                                    const result = await response.json();
+
+                                    if (result.success) {
+                                        const d = result.data;
+                                        if (d.nama) this.nama = d.nama;
+                                        if (d.nik) this.nik = d.nik;
+                                        if (d.tempat_lahir) this.tempat_lahir = d.tempat_lahir;
+                                        if (d.tanggal_lahir) this.tanggal_lahir = d.tanggal_lahir;
+                                        if (d.alamat) this.alamat = d.alamat;
+                                        if (d.jenis_kelamin) {
+                                            this.$nextTick(() => {
+                                                this.$refs.jenisKelaminSelect.value = d.jenis_kelamin;
+                                            });
+                                        }
+                                        if (d.agama) {
+                                            this.$nextTick(() => {
+                                                let agamaTitleCase = d.agama.charAt(0).toUpperCase() + d.agama.slice(1).toLowerCase();
+                                                this.$refs.agamaSelect.value = agamaTitleCase;
+                                            });
+                                        }
+                                        if (d.status_perkawinan) {
+                                            this.$nextTick(() => {
+                                                const normalizedStatus = d.status_perkawinan.toLowerCase();
+                                                let selectedStatus = '';
+                                                if (normalizedStatus.includes('belum kawin')) selectedStatus = 'Belum Kawin';
+                                                else if (normalizedStatus.includes('cerai mati')) selectedStatus = 'Cerai Mati';
+                                                else if (normalizedStatus.includes('cerai hidup')) selectedStatus = 'Cerai Hidup';
+                                                else if (normalizedStatus.includes('kawin')) selectedStatus = 'Kawin';
+
+                                                if (selectedStatus) {
+                                                    this.$refs.statusPerkawinanSelect.value = selectedStatus;
+                                                }
+                                            });
+                                        }
+                                        if (d.pekerjaan) {
+                                            this.$nextTick(() => {
+                                                const ts = document.querySelector('.select2-pekerjaan').tomselect;
+                                                if (ts) {
+                                                    let jobTitleCase = d.pekerjaan.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+                                                    if (d.pekerjaan.toUpperCase() === 'PNS') jobTitleCase = 'PNS (Pegawai Negeri Sipil)';
+                                                    else if (d.pekerjaan.toUpperCase() === 'TNI') jobTitleCase = 'TNI (Tentara Nasional Indonesia)';
+                                                    else if (d.pekerjaan.toUpperCase() === 'POLRI') jobTitleCase = 'POLRI';
+
+                                                    ts.addOption({ value: jobTitleCase, text: jobTitleCase });
+                                                    ts.setValue(jobTitleCase);
+                                                }
+                                            });
+                                        }
+                                        this.statusOk = true;
+                                        this.statusMsg = '✓ Data KTP berhasil diekstrak!';
+                                    } else {
+                                        this.statusOk = false;
+                                        this.statusMsg = '✗ ' + (result.message || 'Gagal memproses KTP.');
+                                    }
+                                } catch (err) {
+                                    console.error('OCR Error:', err);
+                                    this.statusOk = false;
+                                    this.statusMsg = '✗ Gagal menghubungi server OCR.';
+                                } finally {
+                                    this.loading = false;
+                                }
+                            }
+                        }
+                    }
+                </script>
+            </div>
+
+            <!-- Bagian 2: Data Kehilangan -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">2</span>
+                    Data Kehilangan
+                </h2>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Kehilangan <span class="text-red-500">*</span></label>
+                            <input type="date" name="tanggal_kehilangan" id="tanggal_kehilangan" value="{{ old('tanggal_kehilangan') }}"
+                                onchange="updateHariKehilangan(this.value)"
+                                class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            @error('tanggal_kehilangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Hari <span class="text-red-500">*</span></label>
+                            <input type="text" name="hari_kehilangan" id="hari_kehilangan" value="{{ old('hari_kehilangan') }}" placeholder="Otomatis dari tanggal" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required readonly>
+                            @error('hari_kehilangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jam Kehilangan <span class="text-red-500">*</span></label>
+                        <input type="time" name="jam_kehilangan" value="{{ old('jam_kehilangan') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('jam_kehilangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Lokasi Kehilangan <span class="text-red-500">*</span></label>
+                        <input type="text" name="lokasi_kehilangan" value="{{ old('lokasi_kehilangan') }}" placeholder="Contoh: Jl. Landasan Ulin Utara, depan Minimarket X" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('lokasi_kehilangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div x-data="{
+                        items: {{ json_encode(
+                            old('barang_hilang')
+                                ? array_values(array_filter(array_map('trim', explode('\n', old('barang_hilang')))))
+                                : ['']
+                        ) }},
+                        addItem() { if (this.items.length < 3) { this.items.push(''); this.$nextTick(() => this.$refs['item_' + (this.items.length - 1)]?.focus()); } },
+                        removeItem(i) { if (this.items.length > 1) this.items.splice(i, 1); },
+                        get joinedValue() { return this.items.filter(v => v.trim() !== '').join('\n'); }
+                    }">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Barang Yang Hilang/Tercecer <span class="text-red-500">*</span></label>
+                        <input type="hidden" name="barang_hilang" :value="joinedValue">
+                        <div class="space-y-2">
+                            <template x-for="(item, index) in items" :key="index">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm font-medium text-gray-500 w-6 text-right flex-shrink-0" x-text="(index + 1) + '.'"></span>
+                                    <input type="text"
+                                        x-model="items[index]"
+                                        :x-ref="'item_' + index"
+                                        :placeholder="index === 0 ? 'Contoh: 1 (satu) buah dompet warna coklat' : 'Barang ' + (index + 1)"
+                                        class="flex-1 rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-2.5 px-3"
+                                        :required="index === 0">
+                                    <button type="button" @click="removeItem(index)"
+                                        :disabled="items.length === 1"
+                                        class="flex-shrink-0 text-red-400 hover:text-red-600 disabled:opacity-30 disabled:cursor-not-allowed p-1">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+                        <button type="button" @click="addItem()" x-show="items.length < 3"
+                            class="mt-3 inline-flex items-center gap-1.5 text-sm text-primary-600 hover:text-primary-800 font-medium">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                            </svg>
+                            Tambah Barang
+                        </button>
+                        @error('barang_hilang') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian 3: Surat Pengantar RT/RW -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">3</span>
+                    Pengantar RT/RW
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">RT <span class="text-red-500">*</span></label>
+                        <input type="text" name="rt" value="{{ old('rt') }}" placeholder="Contoh: 001" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('rt') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">RW <span class="text-red-500">*</span></label>
+                        <input type="text" name="rw" value="{{ old('rw') }}" placeholder="Contoh: 005" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('rw') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">No. Surat Pengantar <span class="text-red-500">*</span></label>
+                        <input type="text" name="no_surat_pengantar" value="{{ old('no_surat_pengantar') }}" placeholder="Contoh: 044/RW.009/I/2026" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('no_surat_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Surat <span class="text-red-500">*</span></label>
+                        <input type="date" name="tanggal_surat_pengantar" value="{{ old('tanggal_surat_pengantar') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('tanggal_surat_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bagian 4: Upload Berkas Pendukung -->
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">4</span>
+                    Upload Berkas Pendukung
+                </h2>
+
+                <div class="bg-amber-50 border border-amber-100 rounded-lg p-4 mb-6">
+                    <p class="text-sm text-amber-700">
+                        <strong>Catatan:</strong> Upload dokumen dalam format JPG, PNG, atau PDF. Maksimal 5MB per file. File yang digabung harap dijadikan 1 file PDF.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Surat Pengantar RT/RW Setempat <span class="text-red-500">*</span>
+                        </label>
+                        <input type="file" name="spkh_surat_pengantar_rtrw" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('spkh_surat_pengantar_rtrw') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            KTP dan KK Pemohon <span class="text-red-500">*</span>
+                            <span class="ml-1 text-xs text-gray-500 font-normal">(Dijadikan 1 File)</span>
+                        </label>
+                        <input type="file" name="spkh_ktp_kk_pemohon" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('spkh_ktp_kk_pemohon') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Surat Pernyataan Pemohon <span class="text-red-500">*</span>
+                        </label>
+                        <input type="file" name="spkh_surat_pernyataan" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('spkh_surat_pernyataan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            KTP 2 Orang Saksi <span class="text-red-500">*</span>
+                            <span class="ml-1 text-xs text-gray-500 font-normal">(Dijadikan 1 File)</span>
+                        </label>
+                        <input type="file" name="spkh_ktp_saksi" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('spkh_ktp_saksi') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Bukti Tanda Lunas PBB-P2 Tahun Berjalan <span class="text-red-500">*</span>
+                        </label>
+                        <input type="file" name="spkh_bukti_pbb" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" required>
+                        @error('spkh_bukti_pbb') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            </div>

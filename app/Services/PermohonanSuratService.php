@@ -482,9 +482,17 @@ class PermohonanSuratService
                 $now->format('Y')
             );
         } elseif ($kodeJenis === 'SKG') {
-            // Format requested: 400.12.3.2 / 012 / I / KEC.LU / 2026
             $nomorSurat = sprintf(
                 '400.12./%03d-SMPL/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
+        } elseif ($kodeJenis === 'SPKH') {
+            // Format: 100.2/002-SMPL/I/KEL.SN/2026
+            $nomorSurat = sprintf(
+                '100.2/%03d-SMPL/%s/%s/%s',
                 $counter->counter,
                 $this->toRoman($now->month),
                 $kodeKelurahan,

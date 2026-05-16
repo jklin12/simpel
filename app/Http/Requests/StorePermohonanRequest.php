@@ -67,6 +67,9 @@ class StorePermohonanRequest extends FormRequest
             case 'SDNH': // Surat Dispensasi Nikah
                 $specificRules = $this->getSdnhRules();
                 break;
+            case 'SPKH': // Surat Pengantar Keterangan Kehilangan
+                $specificRules = $this->getSpkhRules();
+                break;
             default:
                 if ($jenisSurat->required_fields) {
                     foreach ($jenisSurat->required_fields as $field) {
@@ -164,6 +167,12 @@ class StorePermohonanRequest extends FormRequest
             'skg_ktp_kk_bersangkutan',
             'skg_ktp_saksi',
             'skg_bukti_lunas_pbb',
+            // SPKH
+            'spkh_surat_pengantar_rtrw',
+            'spkh_ktp_kk_pemohon',
+            'spkh_surat_pernyataan',
+            'spkh_ktp_saksi',
+            'spkh_bukti_pbb',
             // Legacy / other
             'foto_ktp',
             'foto_kk',
@@ -176,6 +185,44 @@ class StorePermohonanRequest extends FormRequest
             'surat_rs',
             'akta_pendirian',
             'dokumen_lainnya',
+        ];
+    }
+
+    private function getSpkhRules(): array
+    {
+        return [
+            // Data Diri Pemohon
+            'nama_lengkap'            => 'required|string|max:255',
+            'nik_bersangkutan'        => 'required|string|size:16',
+            'no_wa'                   => 'required|string|max:20',
+            'jenis_kelamin'           => 'required|in:Laki-laki,Perempuan',
+            'warga_negara'            => 'required|string|max:50',
+            'agama'                   => 'required|string|max:50',
+            'tempat_lahir'            => 'required|string|max:100',
+            'tanggal_lahir'           => 'required|date',
+            'status_perkawinan'       => 'required|string',
+            'pekerjaan'               => 'required|string|max:100',
+            'alamat_lengkap'          => 'required|string',
+
+            // Data Kehilangan
+            'hari_kehilangan'         => 'required|string|max:20',
+            'tanggal_kehilangan'      => 'required|date',
+            'jam_kehilangan'          => 'required|string|max:10',
+            'lokasi_kehilangan'       => 'required|string|max:255',
+            'barang_hilang'           => 'required|string',
+
+            // Surat Pengantar RT/RW
+            'rt'                      => 'required|string|max:10',
+            'rw'                      => 'required|string|max:10',
+            'no_surat_pengantar'      => 'required|string|max:100',
+            'tanggal_surat_pengantar' => 'required|date',
+
+            // Dokumen Lampiran
+            'spkh_surat_pengantar_rtrw' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'spkh_ktp_kk_pemohon'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'spkh_surat_pernyataan'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'spkh_ktp_saksi'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'spkh_bukti_pbb'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 

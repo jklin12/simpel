@@ -154,6 +154,14 @@ class JenisSuratSeeder extends Seeder
                 'required_fields' => json_encode(['ktp', 'kk', 'akta_pendirian']),
                 'is_active' => true,
             ],
+            [
+                'nama'            => 'Surat Pengantar Keterangan Kehilangan',
+                'kode'            => 'SPKH',
+                'deskripsi'       => 'Surat pengantar keterangan kehilangan barang yang diterbitkan oleh kelurahan.',
+                'template_path'   => null,
+                'required_fields' => null,
+                'is_active'       => true,
+            ],
         ];
 
         foreach ($jenisSurats as $surat) {
