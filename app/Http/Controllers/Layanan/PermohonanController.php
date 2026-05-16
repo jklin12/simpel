@@ -74,6 +74,12 @@ class PermohonanController extends Controller
                     $phonePemohon = $request->no_wa;
                     $alamatPemohon = $request->alamat_pelapor ?? '';
                     break;
+                case 'SKDKO':
+                    $namaPemohon = $request->nama_lengkap;
+                    $nikPemohon = $request->nik_bersangkutan;
+                    $phonePemohon = $request->no_wa;
+                    $alamatPemohon = $request->alamat_jalan ?? '-';
+                    break;
                 case 'SKTM':
                 case 'SKTMR':
                 case 'SKBM':

@@ -170,6 +170,22 @@ class JenisSuratSeeder extends Seeder
                 'required_fields' => null,
                 'is_active'       => true,
             ],
+            [
+                'nama'            => 'Surat Keterangan Domisili Kantor/Sekretariat/Organisasi Lainnya',
+                'kode'            => 'SKDKO',
+                'deskripsi'       => 'Surat keterangan yang menyatakan domisili kantor, sekretariat, atau organisasi lainnya di wilayah kelurahan.',
+                'template_path'   => null,
+                'required_fields' => null,
+                'is_active'       => true,
+            ],
+            [
+                'nama'            => 'Surat Pengantar Rekomendasi Operasional Izin Penyelenggaraan Kursus dan Pelatihan, Kegiatan Belajar Mengajar',
+                'kode'            => 'SPRIK',
+                'deskripsi'       => 'Surat pengantar rekomendasi operasional izin penyelenggaraan kursus dan pelatihan, kegiatan belajar mengajar yang diterbitkan oleh kelurahan.',
+                'template_path'   => null,
+                'required_fields' => null,
+                'is_active'       => true,
+            ],
         ];
 
         foreach ($jenisSurats as $surat) {

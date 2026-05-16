@@ -507,6 +507,24 @@ class PermohonanSuratService
                 $kodeKelurahan,
                 $now->format('Y')
             );
+        } elseif ($kodeJenis === 'SKDKO') {
+            // Format: 100.2.2/002-SMPL/I/KEL.SN/2026
+            $nomorSurat = sprintf(
+                '100.2.2/%03d-SMPL/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
+        } elseif ($kodeJenis === 'SPRIK') {
+            // Format: 400.3.4/002/I/KEL.SN/2026
+            $nomorSurat = sprintf(
+                '400.3.4/%03d/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
         } else {
             // 002/I/KEL.SN/2026
             $nomorSurat = sprintf(

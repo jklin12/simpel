@@ -73,6 +73,12 @@ class StorePermohonanRequest extends FormRequest
             case 'SKB': // Surat Keterangan Bepergian
                 $specificRules = $this->getSkbRules();
                 break;
+            case 'SKDKO': // Surat Keterangan Domisili Kantor/Sekretariat/Organisasi
+                $specificRules = $this->getSkdkoRules();
+                break;
+            case 'SPRIK': // Surat Pengantar Rekomendasi Operasional Izin Kursus
+                $specificRules = $this->getSprikRules();
+                break;
             default:
                 if ($jenisSurat->required_fields) {
                     foreach ($jenisSurat->required_fields as $field) {
@@ -180,6 +186,16 @@ class StorePermohonanRequest extends FormRequest
             'skb_surat_pengantar_rtrw',
             'skb_ktp_kk_pemohon',
             'skb_bukti_pbb',
+            // SKDKO
+            'skdko_surat_pengantar_rtrw',
+            'skdko_ktp_kk_pemohon',
+            'skdko_sk_kepengurusan',
+            'skdko_bukti_pbb',
+            // SPRIK
+            'sprik_surat_pengantar_rtrw',
+            'sprik_ktp_kk_pemohon',
+            'sprik_ktp_penyelenggara',
+            'sprik_bukti_pbb',
             // Legacy / other
             'foto_ktp',
             'foto_kk',
@@ -192,6 +208,51 @@ class StorePermohonanRequest extends FormRequest
             'surat_rs',
             'akta_pendirian',
             'dokumen_lainnya',
+        ];
+    }
+
+    private function getSprikRules(): array
+    {
+        return [
+            'nama_lengkap'               => 'required|string|max:255',
+            'nik_bersangkutan'           => 'required|string|size:16',
+            'no_wa'                      => 'required|string|max:20',
+            'tempat_lahir'               => 'required|string|max:100',
+            'tanggal_lahir'              => 'required|date',
+            'jenis_kelamin'              => 'required|in:Laki-laki,Perempuan',
+            'alamat_lengkap'             => 'required|string',
+            'nama_lembaga'               => 'required|string|max:255',
+            'materi_kursus'              => 'required|string|max:255',
+            'lama_kegiatan'              => 'required|string|max:100',
+            'alamat_tempat_kegiatan'     => 'required|string|max:500',
+            'rt'                         => 'required|string|max:10',
+            'rw'                         => 'required|string|max:10',
+            'no_surat_pengantar'         => 'required|string|max:100',
+            'tanggal_surat_pengantar'    => 'required|date',
+            'sprik_surat_pengantar_rtrw' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sprik_ktp_kk_pemohon'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sprik_ktp_penyelenggara'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'sprik_bukti_pbb'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getSkdkoRules(): array
+    {
+        return [
+            'nama_lengkap'               => 'required|string|max:255',
+            'nik_bersangkutan'           => 'required|string|size:16',
+            'no_wa'                      => 'required|string|max:20',
+            'rt'                         => 'required|string|max:10',
+            'rw'                         => 'required|string|max:10',
+            'no_surat_pengantar'         => 'required|string|max:100',
+            'tanggal_surat_pengantar'    => 'required|date',
+            'nama_kantor'                => 'required|string|max:255',
+            'alamat_jalan'               => 'required|string|max:255',
+            'keperluan'                  => 'required|string|max:500',
+            'skdko_surat_pengantar_rtrw' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdko_ktp_kk_pemohon'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdko_sk_kepengurusan'      => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdko_bukti_pbb'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 

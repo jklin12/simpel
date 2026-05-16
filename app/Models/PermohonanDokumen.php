@@ -63,6 +63,16 @@ class PermohonanDokumen extends Model
         'skb_surat_pengantar_rtrw' => 'Surat Pengantar RT/RW Setempat',
         'skb_ktp_kk_pemohon'       => 'KTP & KK Pemohon (Dijadikan 1 File)',
         'skb_bukti_pbb'            => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+        // SKDKO
+        'skdko_surat_pengantar_rtrw' => 'Surat Pengantar RT/RW Setempat',
+        'skdko_ktp_kk_pemohon'       => 'KTP & KK Pemohon (Dijadikan 1 File)',
+        'skdko_sk_kepengurusan'      => 'Struktur Organisasi/SK Kepengurusan',
+        'skdko_bukti_pbb'            => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+        // SPRIK
+        'sprik_surat_pengantar_rtrw' => 'Surat Pengantar RT/RW Setempat',
+        'sprik_ktp_kk_pemohon'       => 'KTP & KK Pemohon (Dijadikan 1 File)',
+        'sprik_ktp_penyelenggara'    => 'KTP Penyelenggara/Pelatih/Pembimbing Kursus & Pelatihan (Dijadikan 1 File)',
+        'sprik_bukti_pbb'            => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
         // Generic
         'dokumen_lainnya' => 'Dokumen Lainnya',
     ];
