@@ -162,6 +162,14 @@ class JenisSuratSeeder extends Seeder
                 'required_fields' => null,
                 'is_active'       => true,
             ],
+            [
+                'nama'            => 'Surat Keterangan Bepergian',
+                'kode'            => 'SKB',
+                'deskripsi'       => 'Surat keterangan bepergian yang diterbitkan oleh kelurahan untuk warga yang melakukan perjalanan.',
+                'template_path'   => null,
+                'required_fields' => null,
+                'is_active'       => true,
+            ],
         ];
 
         foreach ($jenisSurats as $surat) {

@@ -70,6 +70,9 @@ class StorePermohonanRequest extends FormRequest
             case 'SPKH': // Surat Pengantar Keterangan Kehilangan
                 $specificRules = $this->getSpkhRules();
                 break;
+            case 'SKB': // Surat Keterangan Bepergian
+                $specificRules = $this->getSkbRules();
+                break;
             default:
                 if ($jenisSurat->required_fields) {
                     foreach ($jenisSurat->required_fields as $field) {
@@ -173,6 +176,10 @@ class StorePermohonanRequest extends FormRequest
             'spkh_surat_pernyataan',
             'spkh_ktp_saksi',
             'spkh_bukti_pbb',
+            // SKB
+            'skb_surat_pengantar_rtrw',
+            'skb_ktp_kk_pemohon',
+            'skb_bukti_pbb',
             // Legacy / other
             'foto_ktp',
             'foto_kk',
@@ -185,6 +192,42 @@ class StorePermohonanRequest extends FormRequest
             'surat_rs',
             'akta_pendirian',
             'dokumen_lainnya',
+        ];
+    }
+
+    private function getSkbRules(): array
+    {
+        return [
+            // Data Diri Pemohon
+            'nama_lengkap'            => 'required|string|max:255',
+            'nik_bersangkutan'        => 'required|string|size:16',
+            'no_wa'                   => 'required|string|max:20',
+            'jenis_kelamin'           => 'required|in:Laki-laki,Perempuan',
+            'warga_negara'            => 'required|string|max:50',
+            'agama'                   => 'required|string|max:50',
+            'tempat_lahir'            => 'required|string|max:100',
+            'tanggal_lahir'           => 'required|date',
+            'status_perkawinan'       => 'required|string',
+            'pekerjaan'               => 'required|string|max:100',
+            'alamat_lengkap'          => 'required|string',
+
+            // Surat Pengantar RT/RW
+            'rt'                      => 'required|string|max:10',
+            'rw'                      => 'required|string|max:10',
+            'no_surat_pengantar'      => 'required|string|max:100',
+            'tanggal_surat_pengantar' => 'required|date',
+
+            // Data Perjalanan
+            'tujuan'                  => 'required|string|max:255',
+            'keperluan'               => 'required|string|max:500',
+            'hari_berangkat'          => 'required|string|max:20',
+            'tanggal_berangkat'       => 'required|date',
+            'pengikut'                => 'nullable|string',
+
+            // Dokumen Lampiran
+            'skb_surat_pengantar_rtrw' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skb_ktp_kk_pemohon'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skb_bukti_pbb'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 

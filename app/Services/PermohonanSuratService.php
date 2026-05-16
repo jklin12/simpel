@@ -498,6 +498,15 @@ class PermohonanSuratService
                 $kodeKelurahan,
                 $now->format('Y')
             );
+        } elseif ($kodeJenis === 'SKB') {
+            // Format: 400.12.5.3/002-SMPL/I/KEL.SN/2026
+            $nomorSurat = sprintf(
+                '400.12.5.3/%03d-SMPL/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
         } else {
             // 002/I/KEL.SN/2026
             $nomorSurat = sprintf(
