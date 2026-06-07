@@ -77,6 +77,8 @@ class DataKelurahanController extends Controller
             'kesehatan'  => PortalDataKelurahan::opsiJenisKesehatan(),
             'keamanan'   => PortalDataKelurahan::opsiJenisKeamanan(),
             'status'     => PortalDataKelurahan::opsiStatusFasilitas(),
+            'rtlh'       => PortalDataKelurahan::opsiJenisRTLH(),
+            'rlh'        => PortalDataKelurahan::opsiJenisRLH(),
         ];
 
         return view('admin.portal.data-kelurahan.form', compact('kategoriList', 'kelurahans', 'options'));

@@ -63,6 +63,8 @@ class PortalDataKelurahan extends Model
             'fasilitas_keamanan'  => 'Fasilitas Keamanan',
             'pos_kamling'         => 'Pos Kamling',
             'fasilitas_umum'      => 'Fasilitas Umum',
+            'rtlh'                => 'Rumah Tidak Layak Huni (RTLH)',
+            'rlh'                 => 'Rumah Layak Huni (RLH)',
         ];
     }
 
@@ -82,6 +84,8 @@ class PortalDataKelurahan extends Model
             'fasilitas_keamanan'  => '🚔',
             'pos_kamling'         => '🏚️',
             'fasilitas_umum'      => '🛝',
+            'rtlh'                => '🏚️',
+            'rlh'                 => '🏡',
         ];
     }
 
@@ -116,5 +120,15 @@ class PortalDataKelurahan extends Model
     public static function opsiStatusFasilitas(): array
     {
         return ['Negeri', 'Swasta'];
+    }
+
+    public static function opsiJenisRTLH(): array
+    {
+        return ['Atap Tidak Layak', 'Dinding Tidak Layak', 'Lantai Tidak Layak', 'Sanitasi Tidak Layak', 'Keseluruhan Tidak Layak'];
+    }
+
+    public static function opsiJenisRLH(): array
+    {
+        return ['Sudah Direnovasi', 'Bantuan BSPS', 'Bantuan Pemda', 'Swadaya Masyarakat'];
     }
 }
