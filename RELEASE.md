@@ -2,6 +2,38 @@
 
 ## [v1.0.6] - 2026-05-10
 
+### Added — Jenis Surat Baru (Tingkat Kecamatan & Kelurahan)
+
+- **SPKDK — Surat Pengantar Keterangan Domisili Kepartaian** *(Tingkat Kelurahan, TTD Lurah)*:
+  - Form publik statik 4 seksi: Data Pemohon (OCR KTP), Data Kantor/Partai, Surat Pengantar RT/RW, Upload Berkas.
+  - 4 file upload wajib: Surat Pengantar RT/RW, KTP & KK Pemohon, Struktur Organisasi/SK Kepengurusan, Bukti Lunas PBB-P2.
+  - Nomor surat format `200.1.5/{counter:03d}/{romanBulan}/KEL.{akronim}/{tahun}` — contoh: `200.1.5/001/VI/KEL.LU/2026`.
+  - Approval flow: hanya `admin_kelurahan` (tidak diteruskan ke kecamatan).
+  - Template PDF kop kelurahan, narasi berdasarkan surat pengantar RT/RW, TTD Lurah + QR code.
+
+- **SKDK — Surat Pengantar Domisili Kepartaian** *(Tingkat Kecamatan, TTD Camat)*:
+  - Form publik statik dengan OCR KTP, data organisasi/partai, data bangunan kantor, surat pengantar kelurahan.
+  - 7 file upload wajib: Surat Pengantar RT/RW, KTP Pemohon, Akta Pendirian/Kepengurusan, Akta Pendirian Partai, IMB/Perjanjian Sewa, Surat Pengantar Lurah, Bukti Lunas PBB-P2.
+  - Nomor surat format `200.1.5/{counter:03d}/{romanBulan}/kec.{akronim}/{tahun}`.
+  - Approval flow: `admin_kelurahan` → `admin_kecamatan` (2 tahap, Camat yang TTD).
+  - Template PDF kop kecamatan, TTD Camat + QR code.
+
+- **ROIPK — Rekomendasi Operasional Izin Penyelenggaraan Kursus** *(Tingkat Kecamatan, TTD Camat)*:
+  - Form publik statik dengan OCR KTP, data lembaga kursus, data bangunan, surat pengantar kelurahan.
+  - 10 file upload (9 wajib + 1 opsional): Surat Pengantar RT/RW, KTP & KK Pemohon, Surat Permohonan, Struktur Organisasi, Ijazah Kompetensi, Izin Tetangga, Daftar Fasilitas, Silabus, Surat Pengantar Lurah; Bukti Lunas PBB-P2 (opsional).
+  - Nomor surat format `{counter:03d}/ROIPK/kec.{akronim}/{romanBulan}/{tahun}`.
+  - Approval flow: `admin_kelurahan` → `admin_kecamatan` (2 tahap, Camat yang TTD).
+  - Template PDF kop kecamatan, TTD Camat + QR code.
+
+### Instruksi Deployment — Jenis Surat Baru
+
+```bash
+# Daftarkan SKDK, ROIPK, dan SPKDK ke database
+php artisan db:seed --class=JenisSuratSeeder
+```
+
+---
+
 ### Added — Alur Permintaan Revisi Surat (Revision Request Workflow)
 
 - **Model PermohonanRevisiRequest**: Model baru untuk mengelola permintaan revisi pada surat yang sudah disetujui (`approved` status).
