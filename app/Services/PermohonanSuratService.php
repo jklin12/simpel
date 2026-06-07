@@ -288,7 +288,7 @@ class PermohonanSuratService
 
             // Buat approval baru step 1 dengan catatan revisi
             // Approval lama (rejected) dibiarkan sebagai riwayat
-            if (strtoupper($permohonan->jenisSurat->kode) === 'SDNH') {
+            if (in_array(strtoupper($permohonan->jenisSurat->kode), ['SDNH', 'SKDK', 'ROIPK'])) {
                 $targetRole = 'admin_kecamatan';
                 $stepName   = 'Verifikasi Tingkat Kecamatan';
             } else {
@@ -317,8 +317,8 @@ class PermohonanSuratService
 
                 $notifiableAdmins = collect();
 
-                // Jika BUKAN SDNH, admin kelurahan ikut di-notify
-                if (strtoupper($permohonan->jenisSurat->kode) !== 'SDNH') {
+                // Jika BUKAN surat tingkat kecamatan, admin kelurahan ikut di-notify
+                if (!in_array(strtoupper($permohonan->jenisSurat->kode), ['SDNH', 'SKDK', 'ROIPK'])) {
                     $adminKelurahan = User::role(['admin_kelurahan', 'lurah'])
                         ->where('kelurahan_id', $permohonan->kelurahan_id)
                         ->get();
@@ -520,6 +520,41 @@ class PermohonanSuratService
             // Format: 400.3.4/002/I/KEL.SN/2026
             $nomorSurat = sprintf(
                 '400.3.4/%03d/%s/%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
+        } elseif ($kodeJenis === 'SKDK') {
+            // Format: 200.1.5/002/I/kec.LU/2026 — tingkat Kecamatan, akronim dari nama kecamatan
+            if (!$kelurahan->relationLoaded('kecamatan')) {
+                $kelurahan->load('kecamatan');
+            }
+            $kecNama = $kelurahan->kecamatan->nama ?? 'Landasan Ulin';
+            $kecAkronim = implode('', array_map(
+                fn($w) => strtoupper($w[0] ?? ''),
+                explode(' ', $kecNama)
+            ));
+            $nomorSurat = sprintf(
+                '200.1.5/%03d/%s/kec.%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kecAkronim,
+                $now->format('Y')
+            );
+        } elseif ($kodeJenis === 'ROIPK') {
+            // Format: 400.3.4/002/I/KEL.LU/2026 — akronim kelurahan dengan prefix KEL.
+            $nomorSurat = sprintf(
+                '400.3.4/%03d/%s/KEL.%s/%s',
+                $counter->counter,
+                $this->toRoman($now->month),
+                $kodeKelurahan,
+                $now->format('Y')
+            );
+        } elseif ($kodeJenis === 'SPKDK') {
+            // Format: 200.1.5/002/I/KEL.SN/2026 — akronim kelurahan, ditandatangani Lurah
+            $nomorSurat = sprintf(
+                '200.1.5/%03d/%s/KEL.%s/%s',
                 $counter->counter,
                 $this->toRoman($now->month),
                 $kodeKelurahan,

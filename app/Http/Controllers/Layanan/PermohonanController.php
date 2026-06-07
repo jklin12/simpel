@@ -147,8 +147,8 @@ class PermohonanController extends Controller
             $this->handleFileUploads($request, $permohonan);
 
             // Trigger Approval Flow
-            // HARDCODED BYPASS FOR SDNH: Langsung ke admin_kecamatan
-            if (strtoupper($service->kode) === 'SDNH') {
+            // Surat tingkat Kecamatan: langsung ke admin_kecamatan
+            if (in_array(strtoupper($service->kode), ['SDNH', 'SKDK', 'ROIPK'])) {
                 $targetRole = 'admin_kecamatan';
                 $stepName   = 'Verifikasi Tingkat Kecamatan';
             } else {
@@ -170,8 +170,8 @@ class PermohonanController extends Controller
 
             $notifiableAdmins = collect();
 
-            // Jika BUKAN SDNH, admin kelurahan diikutkan notifikasinya
-            if (strtoupper($service->kode) !== 'SDNH') {
+            // Jika BUKAN surat tingkat kecamatan, admin kelurahan diikutkan notifikasinya
+            if (!in_array(strtoupper($service->kode), ['SDNH', 'SKDK', 'ROIPK'])) {
                 $adminKelurahan = \App\Models\User::role(['admin_kelurahan', 'lurah'])
                     ->where('kelurahan_id', $request->kelurahan_id)
                     ->get();

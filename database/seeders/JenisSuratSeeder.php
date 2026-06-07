@@ -186,6 +186,30 @@ class JenisSuratSeeder extends Seeder
                 'required_fields' => null,
                 'is_active'       => true,
             ],
+            [
+                'nama'            => 'Surat Pengantar Domisili Kepartaian',
+                'kode'            => 'SKDK',
+                'deskripsi'       => 'Surat pengantar domisili kepartaian yang diterbitkan oleh kecamatan berdasarkan pengantar dari lurah.',
+                'template_path'   => null,
+                'required_fields' => null,
+                'is_active'       => true,
+            ],
+            [
+                'nama'            => 'Surat Pengantar Keterangan Domisili Kepartaian',
+                'kode'            => 'SPKDK',
+                'deskripsi'       => 'Surat pengantar keterangan domisili kepartaian yang diterbitkan oleh kelurahan.',
+                'template_path'   => null,
+                'required_fields' => null,
+                'is_active'       => true,
+            ],
+            [
+                'nama'            => 'Rekomendasi Operasional Izin Penyelenggaraan Kursus',
+                'kode'            => 'ROIPK',
+                'deskripsi'       => 'Surat rekomendasi operasional izin penyelenggaraan kursus dan pelatihan yang diterbitkan oleh kecamatan.',
+                'template_path'   => null,
+                'required_fields' => null,
+                'is_active'       => true,
+            ],
         ];
 
         foreach ($jenisSurats as $surat) {

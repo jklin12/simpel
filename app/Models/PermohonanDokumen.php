@@ -73,6 +73,30 @@ class PermohonanDokumen extends Model
         'sprik_ktp_kk_pemohon'       => 'KTP & KK Pemohon (Dijadikan 1 File)',
         'sprik_ktp_penyelenggara'    => 'KTP Penyelenggara/Pelatih/Pembimbing Kursus & Pelatihan (Dijadikan 1 File)',
         'sprik_bukti_pbb'            => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+        // SKDK
+        'skdk_surat_pengantar_rtrw'  => 'Surat Pengantar RT/RW Setempat',
+        'skdk_ktp_pemohon'           => 'KTP Pemohon',
+        'skdk_akta_kepengurusan'     => 'Akta Pendirian / Kepengurusan',
+        'skdk_akta_parpol'           => 'Akta Pendirian Partai Politik',
+        'skdk_imb_sewa'              => 'IMB / Perjanjian Sewa Bangunan',
+        'skdk_surat_pengantar_lurah' => 'Surat Pengantar Domisili Kepartaian dari Kelurahan',
+        'skdk_bukti_pbb'             => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+        // ROIPK
+        'roipk_surat_pengantar_rtrw'  => 'Surat Pengantar RT/RW Setempat',
+        'roipk_ktp_kk_pemohon'        => 'KTP dan KK Pemohon',
+        'roipk_surat_permohonan'      => 'Surat Permohonan Izin Penyelenggaraan Kursus',
+        'roipk_struktur_organisasi'   => 'Struktur Organisasi',
+        'roipk_ijazah_kompetensi'     => 'Ijazah Kompetensi Penyelenggara dan Tenaga Pengajar',
+        'roipk_izin_tetangga'         => 'Izin Tetangga (Diketahui Ketua RT + Fotokopi KTP)',
+        'roipk_daftar_fasilitas'      => 'Daftar Fasilitas Kelengkapan Belajar dan Warga Belajar',
+        'roipk_silabus'               => 'Daftar Silabus Pembelajaran',
+        'roipk_surat_pengantar_lurah' => 'Surat Pengantar Rekomendasi Izin Penyelenggaraan Kursus dari Kelurahan',
+        'roipk_bukti_pbb'             => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+        // SPKDK
+        'spkdk_surat_pengantar_rtrw' => 'Surat Pengantar RT/RW Setempat',
+        'spkdk_ktp_kk_pemohon'       => 'KTP dan KK Pemohon',
+        'spkdk_struktur_organisasi'  => 'Struktur Organisasi/SK Kepengurusan',
+        'spkdk_bukti_pbb'            => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
         // Generic
         'dokumen_lainnya' => 'Dokumen Lainnya',
     ];

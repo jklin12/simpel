@@ -79,6 +79,15 @@ class StorePermohonanRequest extends FormRequest
             case 'SPRIK': // Surat Pengantar Rekomendasi Operasional Izin Kursus
                 $specificRules = $this->getSprikRules();
                 break;
+            case 'SKDK': // Surat Pengantar Domisili Kepartaian
+                $specificRules = $this->getSkdkRules();
+                break;
+            case 'ROIPK': // Rekomendasi Operasional Izin Penyelenggaraan Kursus
+                $specificRules = $this->getRoipkRules();
+                break;
+            case 'SPKDK': // Surat Pengantar Keterangan Domisili Kepartaian
+                $specificRules = $this->getSpkdkRules();
+                break;
             default:
                 if ($jenisSurat->required_fields) {
                     foreach ($jenisSurat->required_fields as $field) {
@@ -196,6 +205,30 @@ class StorePermohonanRequest extends FormRequest
             'sprik_ktp_kk_pemohon',
             'sprik_ktp_penyelenggara',
             'sprik_bukti_pbb',
+            // SKDK
+            'skdk_surat_pengantar_rtrw',
+            'skdk_ktp_pemohon',
+            'skdk_akta_kepengurusan',
+            'skdk_akta_parpol',
+            'skdk_imb_sewa',
+            'skdk_surat_pengantar_lurah',
+            'skdk_bukti_pbb',
+            // ROIPK
+            'roipk_surat_pengantar_rtrw',
+            'roipk_ktp_kk_pemohon',
+            'roipk_surat_permohonan',
+            'roipk_struktur_organisasi',
+            'roipk_ijazah_kompetensi',
+            'roipk_izin_tetangga',
+            'roipk_daftar_fasilitas',
+            'roipk_silabus',
+            'roipk_surat_pengantar_lurah',
+            'roipk_bukti_pbb',
+            // SPKDK
+            'spkdk_surat_pengantar_rtrw',
+            'spkdk_ktp_kk_pemohon',
+            'spkdk_struktur_organisasi',
+            'spkdk_bukti_pbb',
             // Legacy / other
             'foto_ktp',
             'foto_kk',
@@ -208,6 +241,30 @@ class StorePermohonanRequest extends FormRequest
             'surat_rs',
             'akta_pendirian',
             'dokumen_lainnya',
+        ];
+    }
+
+    private function getSpkdkRules(): array
+    {
+        return [
+            'nama_lengkap'               => 'required|string|max:255',
+            'nik_bersangkutan'           => 'required|string|size:16',
+            'no_wa'                      => 'required|string|max:20',
+            'jenis_kelamin'              => 'required|in:Laki-laki,Perempuan',
+            'tempat_lahir'               => 'required|string|max:100',
+            'tanggal_lahir'              => 'required|date',
+            'alamat_lengkap'             => 'required|string',
+            'nama_kantor'                => 'required|string|max:255',
+            'alamat_kantor'              => 'required|string',
+            'keperluan'                  => 'required|string',
+            'rt'                         => 'required|string|max:10',
+            'rw'                         => 'required|string|max:10',
+            'no_surat_pengantar'         => 'required|string|max:100',
+            'tanggal_surat_pengantar'    => 'required|date',
+            'spkdk_surat_pengantar_rtrw' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'spkdk_ktp_kk_pemohon'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'spkdk_struktur_organisasi'  => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'spkdk_bukti_pbb'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
@@ -233,6 +290,62 @@ class StorePermohonanRequest extends FormRequest
             'sprik_ktp_kk_pemohon'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sprik_ktp_penyelenggara'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'sprik_bukti_pbb'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getRoipkRules(): array
+    {
+        return [
+            'nama_lengkap'                => 'required|string|max:255',
+            'nik_bersangkutan'            => 'required|string|size:16',
+            'no_wa'                       => 'required|string|max:20',
+            'jenis_kelamin'               => 'required|in:Laki-laki,Perempuan',
+            'tempat_lahir'                => 'required|string|max:100',
+            'tanggal_lahir'               => 'required|date',
+            'alamat_lengkap'              => 'required|string',
+            'nama_lembaga'                => 'required|string|max:255',
+            'alamat_lembaga'              => 'required|string',
+            'materi_lembaga'              => 'required|string',
+            'lama_kegiatan'               => 'required|string|max:100',
+            'no_surat_pengantar'          => 'required|string|max:100',
+            'tanggal_surat_pengantar'     => 'required|date',
+            'roipk_surat_pengantar_rtrw'  => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'roipk_ktp_kk_pemohon'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'roipk_surat_permohonan'      => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'roipk_struktur_organisasi'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'roipk_ijazah_kompetensi'     => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'roipk_izin_tetangga'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'roipk_daftar_fasilitas'      => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'roipk_silabus'               => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'roipk_surat_pengantar_lurah' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'roipk_bukti_pbb'             => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+        ];
+    }
+
+    private function getSkdkRules(): array
+    {
+        return [
+            'nama_lengkap'              => 'required|string|max:255',
+            'nik_bersangkutan'          => 'required|string|size:16',
+            'no_wa'                     => 'required|string|max:20',
+            'jenis_kelamin'             => 'required|in:Laki-laki,Perempuan',
+            'tempat_lahir'              => 'required|string|max:100',
+            'tanggal_lahir'             => 'required|date',
+            'alamat_lengkap'            => 'required|string',
+            'nama_kantor'               => 'required|string|max:255',
+            'alamat_kantor'             => 'required|string',
+            'keperluan'                 => 'required|string|max:500',
+            'rt'                        => 'required|string|max:10',
+            'rw'                        => 'required|string|max:10',
+            'no_surat_pengantar'        => 'required|string|max:100',
+            'tanggal_surat_pengantar'   => 'required|date',
+            'skdk_surat_pengantar_rtrw' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdk_ktp_pemohon'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdk_akta_kepengurusan'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdk_akta_parpol'          => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdk_imb_sewa'             => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdk_surat_pengantar_lurah'=> 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdk_bukti_pbb'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
