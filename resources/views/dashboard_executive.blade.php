@@ -180,19 +180,68 @@
         @endif
     </div>
 
-    <!-- Top Jenis Surat -->
+    <!-- Rekapitulasi Surat per Kecamatan -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-        <div class="mb-4">
-            <h3 class="font-bold text-gray-800">Jenis Surat Terbanyak</h3>
-            <p class="text-xs text-gray-500 mt-0.5">Top {{ count($top_jenis_surat['data']) ?: 8 }}</p>
+        @php $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']; @endphp
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <h3 class="font-bold text-gray-800">Rekapitulasi Surat per Kecamatan</h3>
+                <p class="text-xs text-gray-500 mt-0.5">{{ $months[$current_month - 1] }} {{ $current_year }} — semua jenis surat</p>
+            </div>
+            <a href="{{ route('dashboard.export-rekapitulasi', ['month' => $current_month, 'year' => $current_year]) }}"
+               class="flex items-center gap-1.5 px-3 py-2 bg-emerald-600 text-white text-xs font-semibold rounded-lg hover:bg-emerald-700 transition-colors flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Export Excel
+            </a>
         </div>
-        @if(empty($top_jenis_surat['data']))
-        <div class="h-72 flex items-center justify-center text-sm text-gray-400">
-            Belum ada data pengajuan.
+
+        @if(empty($rekapitulasi_per_kecamatan['rows']))
+        <div class="h-64 flex items-center justify-center text-sm text-gray-400">
+            Belum ada data pengajuan pada periode ini.
         </div>
         @else
-        <div class="h-72">
-            <canvas id="topJenisChart"></canvas>
+        <div class="overflow-x-auto" style="max-height: 18rem; overflow-y: auto;">
+            <table class="w-full text-left border-collapse text-xs">
+                <thead class="bg-blue-900 text-white sticky top-0 z-10">
+                    <tr>
+                        <th class="px-3 py-2 font-semibold text-center w-8">No</th>
+                        <th class="px-3 py-2 font-semibold">Jenis Surat</th>
+                        <th class="px-3 py-2 font-semibold text-center">Kode</th>
+                        @foreach($rekapitulasi_per_kecamatan['kecamatans'] as $kec)
+                        <th class="px-3 py-2 font-semibold text-right whitespace-nowrap">{{ $kec }}</th>
+                        @endforeach
+                        <th class="px-3 py-2 font-semibold text-right">Total</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                    @foreach($rekapitulasi_per_kecamatan['rows'] as $i => $row)
+                    <tr class="{{ $i % 2 === 1 ? 'bg-blue-50/40' : 'bg-white' }} hover:bg-blue-50 transition-colors">
+                        <td class="px-3 py-2 text-center text-gray-400">{{ $i + 1 }}</td>
+                        <td class="px-3 py-2 text-gray-800 font-medium max-w-[180px] truncate" title="{{ $row['nama'] }}">{{ $row['nama'] }}</td>
+                        <td class="px-3 py-2 text-center">
+                            <span class="px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded text-xs font-mono">{{ $row['kode'] }}</span>
+                        </td>
+                        @foreach($row['per_kecamatan'] as $count)
+                        <td class="px-3 py-2 text-right {{ $count > 0 ? 'text-gray-700 font-medium' : 'text-gray-300' }}">
+                            {{ $count > 0 ? number_format($count) : '–' }}
+                        </td>
+                        @endforeach
+                        <td class="px-3 py-2 text-right font-bold text-blue-700">{{ number_format($row['total']) }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr class="bg-blue-50 border-t-2 border-blue-200 font-bold text-xs">
+                        <td colspan="3" class="px-3 py-2 text-gray-700 uppercase tracking-wide">Total</td>
+                        @foreach($rekapitulasi_per_kecamatan['totals_per_kecamatan'] as $t)
+                        <td class="px-3 py-2 text-right text-blue-800">{{ number_format($t) }}</td>
+                        @endforeach
+                        <td class="px-3 py-2 text-right text-blue-900">{{ number_format($rekapitulasi_per_kecamatan['grand_total']) }}</td>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
         @endif
     </div>
@@ -316,7 +365,6 @@
 <script>
 (function() {
     const dailyData = @json($daily_chart);
-    const topJenis  = @json($top_jenis_surat);
     const mapData   = @json($kelurahan_map);
 
     // ── Daily submission line chart (per kelurahan) ─────────────────────
@@ -365,51 +413,6 @@
                     },
                     x: {
                         ticks: { color: '#9ca3af', maxRotation: 0, autoSkip: true, maxTicksLimit: 10 },
-                        grid: { display: false }
-                    }
-                }
-            }
-        });
-    }
-
-    // ── Top jenis surat horizontal bar ──────────────────────────────────
-    const topCanvas = document.getElementById('topJenisChart');
-    if (topCanvas && topJenis.data && topJenis.data.length) {
-        new Chart(topCanvas, {
-            type: 'bar',
-            data: {
-                labels: topJenis.labels,
-                datasets: [{
-                    label: 'Pengajuan',
-                    data: topJenis.data,
-                    backgroundColor: '#3b82f6',
-                    borderRadius: 6,
-                    barThickness: 18
-                }]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: '#111827',
-                        padding: 10,
-                        callbacks: {
-                            title: (items) => topJenis.names[items[0].dataIndex] || items[0].label,
-                            label: (ctx) => ctx.parsed.x + ' pengajuan'
-                        }
-                    }
-                },
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: { precision: 0, color: '#9ca3af' },
-                        grid: { color: '#f3f4f6' }
-                    },
-                    y: {
-                        ticks: { color: '#374151', font: { weight: '500' } },
                         grid: { display: false }
                     }
                 }

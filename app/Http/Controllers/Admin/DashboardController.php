@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\RekapitulasiSuratExport;
 use App\Http\Controllers\Controller;
 use App\Services\DashboardService;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DashboardController extends Controller
 {
@@ -33,6 +37,21 @@ class DashboardController extends Controller
     public function kelurahan()
     {
         return $this->renderForUser();
+    }
+
+    public function exportRekapitulasi(Request $request)
+    {
+        $user  = Auth::user();
+        $month = (int) $request->get('month', now()->month);
+        $year  = (int) $request->get('year', now()->year);
+
+        $start = Carbon::createFromDate($year, $month, 1)->startOfMonth();
+        $end   = Carbon::createFromDate($year, $month, 1)->endOfMonth();
+
+        $data     = $this->dashboardService->getRekapitulasiPerKecamatan($user, $start, $end);
+        $filename = 'rekapitulasi-surat-' . $year . '-' . str_pad($month, 2, '0', STR_PAD_LEFT) . '.xlsx';
+
+        return Excel::download(new RekapitulasiSuratExport($data, $month, $year), $filename);
     }
 
     /**

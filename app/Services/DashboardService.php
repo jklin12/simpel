@@ -9,6 +9,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Collection;
 
 class DashboardService
 {
@@ -76,8 +77,9 @@ class DashboardService
             $data['daily_chart']         = $this->getDailySubmissionChart($baseQuery, $startMonth, $now);
             $data['kelurahan_map']       = $this->getKelurahanMapData($user, $startMonth, $now);
             $data['top_jenis_surat']     = $this->getTopJenisSurat($baseQuery, 8, $startMonth, $now);
-            $data['sla_metrics']         = $this->getSlaMetrics($baseQuery, $startMonth, $now);
-            $data['sla_per_kelurahan']   = $this->getSlaPerKelurahan($baseQuery, $startMonth, $now);
+            $data['sla_metrics']              = $this->getSlaMetrics($baseQuery, $startMonth, $now);
+            $data['sla_per_kelurahan']        = $this->getSlaPerKelurahan($baseQuery, $startMonth, $now);
+            $data['rekapitulasi_per_kecamatan'] = $this->getRekapitulasiPerKecamatan($user, $startMonth, $now);
         } else {
             $data['is_executive'] = false;
         }
@@ -412,6 +414,82 @@ class DashboardService
         }
 
         return $result;
+    }
+
+    /**
+     * Cross-tab rekapitulasi: semua jenis surat × kecamatan dalam periode.
+     * Dapat dipanggil secara publik (untuk export controller).
+     */
+    public function getRekapitulasiPerKecamatan(User $user, Carbon $start, Carbon $end): array
+    {
+        $rows = $this->buildBaseQuery($user)
+            ->join('jenis_surats', 'permohonan_surats.jenis_surat_id', '=', 'jenis_surats.id')
+            ->join('m_kelurahans', 'permohonan_surats.kelurahan_id', '=', 'm_kelurahans.id')
+            ->join('m_kecamatans', 'm_kelurahans.kecamatan_id', '=', 'm_kecamatans.id')
+            ->whereBetween('permohonan_surats.created_at', [$start, $end])
+            ->select(
+                'jenis_surats.id as jenis_id',
+                'jenis_surats.kode',
+                'jenis_surats.nama as jenis_nama',
+                'm_kecamatans.id as kec_id',
+                'm_kecamatans.nama as kec_nama',
+                DB::raw('COUNT(*) as total')
+            )
+            ->groupBy('jenis_surats.id', 'jenis_surats.kode', 'jenis_surats.nama', 'm_kecamatans.id', 'm_kecamatans.nama')
+            ->get();
+
+        if ($rows->isEmpty()) {
+            return ['kecamatans' => [], 'rows' => [], 'totals_per_kecamatan' => [], 'grand_total' => 0];
+        }
+
+        // Collect ordered unique kecamatan names (by name)
+        $kecamatans = $rows->pluck('kec_nama', 'kec_id')->sortKeys()->values()->toArray();
+        $kecIds     = $rows->pluck('kec_id', 'kec_nama')->flip()->sortKeys()->keys()->toArray();
+
+        // Build pivot: jenis_id → kec_id → count
+        $pivot = [];
+        $jenisMeta = [];
+        foreach ($rows as $row) {
+            $jId = $row->jenis_id;
+            if (!isset($pivot[$jId])) {
+                $pivot[$jId] = [];
+                $jenisMeta[$jId] = ['kode' => $row->kode, 'nama' => $row->jenis_nama, 'total' => 0];
+            }
+            $pivot[$jId][$row->kec_id] = (int) $row->total;
+            $jenisMeta[$jId]['total'] += (int) $row->total;
+        }
+
+        // Sort jenis by total desc
+        uasort($jenisMeta, fn($a, $b) => $b['total'] <=> $a['total']);
+
+        $resultRows = [];
+        foreach ($jenisMeta as $jId => $meta) {
+            $perKec = [];
+            foreach ($kecIds as $kecId) {
+                $perKec[] = $pivot[$jId][$kecId] ?? 0;
+            }
+            $resultRows[] = [
+                'kode'          => $meta['kode'],
+                'nama'          => $meta['nama'],
+                'total'         => $meta['total'],
+                'per_kecamatan' => $perKec,
+            ];
+        }
+
+        // Column totals
+        $totals = array_fill(0, count($kecIds), 0);
+        foreach ($resultRows as $r) {
+            foreach ($r['per_kecamatan'] as $i => $v) {
+                $totals[$i] += $v;
+            }
+        }
+
+        return [
+            'kecamatans'             => $kecamatans,
+            'rows'                   => $resultRows,
+            'totals_per_kecamatan'   => $totals,
+            'grand_total'            => array_sum($totals),
+        ];
     }
 
     /**
