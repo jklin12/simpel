@@ -28,6 +28,19 @@ class Kelurahan extends Model
 
         return $baseTitle;
     }
+
+    public function getSignerJabatanAttribute(): string
+    {
+        if ($this->status_pejabat === 'Plh') {
+            return 'Plh. Lurah';
+        }
+
+        if ($this->status_pejabat === 'Plt') {
+            return 'Plt. Lurah';
+        }
+
+        return 'Lurah';
+    }
     public function kecamatan(): BelongsTo
     {
         return $this->belongsTo(Kecamatan::class);

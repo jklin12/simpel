@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -48,7 +48,7 @@
         }
 
         .footer-list li:before {
-            content: "•";
+            content: "â€¢";
             position: absolute;
             left: 0;
         }
@@ -243,7 +243,7 @@
             <tr>
                 <td class="col-label">Jabatan</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">Lurah</td>
+                <td class="col-value">{{ $kelurahan->signer_jabatan }}</td>
             </tr>
         </table>
 

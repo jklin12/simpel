@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -119,7 +119,7 @@
 
         .footer-list { list-style-type: none; padding: 0; margin: 0; }
         .footer-list li { margin-bottom: 2px; position: relative; padding-left: 12px; }
-        .footer-list li:before { content: "•"; position: absolute; left: 0; }
+        .footer-list li:before { content: "â€¢"; position: absolute; left: 0; }
     </style>
 </head>
 
@@ -176,7 +176,7 @@
             <tr>
                 <td class="col-label">Jabatan</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">Lurah</td>
+                <td class="col-value">{{ $kelurahan->signer_jabatan }}</td>
             </tr>
         </table>
 
@@ -285,7 +285,7 @@
                             {{ ($i + 1) . '. ' . $item }}<br>
                         @endforeach
                     @else
-                        1……<br>2……<br>dst
+                        1â€¦â€¦<br>2â€¦â€¦<br>dst
                     @endif
                 </td>
             </tr>
@@ -329,3 +329,4 @@
 </body>
 
 </html>
+

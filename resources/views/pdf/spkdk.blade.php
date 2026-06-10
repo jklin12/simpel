@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -136,7 +136,7 @@
 
         .footer-list { list-style-type: none; padding: 0; margin: 0; }
         .footer-list li { margin-bottom: 2px; position: relative; padding-left: 12px; }
-        .footer-list li:before { content: "•"; position: absolute; left: 0; }
+        .footer-list li:before { content: "â€¢"; position: absolute; left: 0; }
     </style>
 </head>
 
@@ -197,7 +197,7 @@
             <tr>
                 <td class="lbl">Jabatan</td>
                 <td class="sep">:</td>
-                <td class="val">Lurah</td>
+                <td class="val">{{ $kelurahan->signer_jabatan }}</td>
             </tr>
         </table>
 
@@ -278,3 +278,4 @@
 </body>
 
 </html>
+
