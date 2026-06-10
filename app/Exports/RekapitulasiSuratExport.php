@@ -12,12 +12,18 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 
 class RekapitulasiSuratExport implements FromArray, WithTitle, WithStyles, WithColumnWidths, WithEvents
 {
     private array $data;
     private int   $month;
     private int   $year;
+
+    // Row index trackers for styling
+    private int $headerRow      = 3;
+    private array $groupRows  = [];   // ['kelurahan'|'kecamatan' => row_index]
+    private int   $footerRow = 0;
 
     private static array $MONTHS = [
         1  => 'Januari',  2  => 'Februari', 3  => 'Maret',    4  => 'April',
@@ -34,44 +40,73 @@ class RekapitulasiSuratExport implements FromArray, WithTitle, WithStyles, WithC
 
     public function array(): array
     {
-        $kecamatans = $this->data['kecamatans'];
+        $kelurahans = $this->data['columns'];
         $rows       = $this->data['rows'];
-        $totals     = $this->data['totals_per_kecamatan'];
+        $totals     = $this->data['totals'];
         $grandTotal = $this->data['grand_total'];
-
         $monthLabel = self::$MONTHS[$this->month] ?? $this->month;
+
+        $sheet = [];
 
         // Row 1: title
         $sheet[] = ["REKAPITULASI SURAT — {$monthLabel} {$this->year}"];
-
         // Row 2: blank
         $sheet[] = [];
 
         // Row 3: headers
         $headers = ['No', 'Jenis Surat', 'Kode'];
-        foreach ($kecamatans as $kec) {
-            $headers[] = $kec;
+        foreach ($kelurahans as $kel) {
+            $headers[] = $kel;
         }
         $headers[] = 'Total';
         $sheet[] = $headers;
 
-        // Data rows
-        foreach ($rows as $i => $row) {
-            $line = [$i + 1, $row['nama'], $row['kode']];
-            foreach ($row['per_kecamatan'] as $count) {
-                $line[] = $count ?: 0;
+        $currentRow = 4;
+        $no = 1;
+
+        $rowsKelurahan = array_values(array_filter($rows, fn($r) => !$r['requires_kecamatan']));
+        $rowsKecamatan = array_values(array_filter($rows, fn($r) =>  $r['requires_kecamatan']));
+
+        // Group: Diproses di Kelurahan
+        if (!empty($rowsKelurahan)) {
+            $sheet[] = ['', 'DIPROSES DI KELURAHAN', '', ...array_fill(0, count($kelurahans) + 1, '')];
+            $this->groupRows['kelurahan'] = $currentRow++;
+
+            foreach ($rowsKelurahan as $row) {
+                $line = [$no++, $row['nama'], $row['kode']];
+                foreach ($row['per_column'] as $count) {
+                    $line[] = $count ?: 0;
+                }
+                $line[] = $row['total'];
+                $sheet[] = $line;
+                $currentRow++;
             }
-            $line[] = $row['total'];
-            $sheet[] = $line;
         }
 
-        // Total footer row
+        // Group: Diproses di Kecamatan
+        if (!empty($rowsKecamatan)) {
+            $sheet[] = ['', 'DIPROSES DI KECAMATAN', '', ...array_fill(0, count($kelurahans) + 1, '')];
+            $this->groupRows['kecamatan'] = $currentRow++;
+
+            foreach ($rowsKecamatan as $row) {
+                $line = [$no++, $row['nama'], $row['kode']];
+                foreach ($row['per_column'] as $count) {
+                    $line[] = $count ?: 0;
+                }
+                $line[] = $row['total'];
+                $sheet[] = $line;
+                $currentRow++;
+            }
+        }
+
+        // Footer total row
         $footer = ['', 'TOTAL', ''];
         foreach ($totals as $t) {
             $footer[] = $t;
         }
         $footer[] = $grandTotal;
         $sheet[] = $footer;
+        $this->footerRow = $currentRow;
 
         return $sheet;
     }
@@ -84,41 +119,45 @@ class RekapitulasiSuratExport implements FromArray, WithTitle, WithStyles, WithC
 
     public function styles(Worksheet $sheet): array
     {
-        $kecCount   = count($this->data['kecamatans']);
-        $lastColIdx = 3 + $kecCount + 1; // No + Nama + Kode + kecs + Total (1-indexed)
-        $lastCol    = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastColIdx);
-        $dataRows   = count($this->data['rows']);
-        $headerRow  = 3;
-        $lastRow    = $headerRow + $dataRows + 1;
-
-        return [
-            // Title row: bold, large
+        $styles = [
+            // Title
             1 => [
                 'font'      => ['bold' => true, 'size' => 13],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT],
             ],
-            // Header row: bold + background
-            $headerRow => [
+            // Header
+            $this->headerRow => [
                 'font'      => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-                'fill'      => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '1E40AF']],
+                'fill'      => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '1E3A5F']],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'wrapText' => true],
             ],
-            // Footer total row: bold + light background
-            $lastRow => [
+            // Footer
+            $this->footerRow => [
                 'font' => ['bold' => true],
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'DBEAFE']],
             ],
         ];
+
+        // Group header rows
+        foreach ($this->groupRows as $type => $rowIdx) {
+            $styles[$rowIdx] = [
+                'font' => ['bold' => true, 'italic' => true,
+                    'color' => ['rgb' => $type === 'kelurahan' ? '065F46' : '5B21B6']],
+                'fill' => ['fillType' => Fill::FILL_SOLID,
+                    'startColor' => ['rgb' => $type === 'kelurahan' ? 'D1FAE5' : 'EDE9FE']],
+            ];
+        }
+
+        return $styles;
     }
 
     public function columnWidths(): array
     {
-        $widths = ['A' => 5, 'B' => 40, 'C' => 10];
+        $widths = ['A' => 5, 'B' => 42, 'C' => 10];
 
-        $kecCount = count($this->data['kecamatans']);
-        for ($i = 1; $i <= $kecCount + 1; $i++) {
-            $col = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex(3 + $i);
-            $widths[$col] = 18;
+        $kelCount = count($this->data['columns']);
+        for ($i = 1; $i <= $kelCount + 1; $i++) {
+            $col = Coordinate::stringFromColumnIndex(3 + $i);
+            $widths[$col] = 20;
         }
 
         return $widths;
@@ -128,43 +167,51 @@ class RekapitulasiSuratExport implements FromArray, WithTitle, WithStyles, WithC
     {
         return [
             AfterSheet::class => function (AfterSheet $event) {
-                $ws         = $event->sheet->getDelegate();
-                $kecCount   = count($this->data['kecamatans']);
-                $lastColIdx = 3 + $kecCount + 1;
-                $lastCol    = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($lastColIdx);
-                $dataRows   = count($this->data['rows']);
-                $headerRow  = 3;
-                $lastRow    = $headerRow + $dataRows + 1;
+                $ws       = $event->sheet->getDelegate();
+                $kelCount = count($this->data['columns']);
+                $lastColIdx = 3 + $kelCount + 1;
+                $lastCol    = Coordinate::stringFromColumnIndex($lastColIdx);
+                $lastRow    = $this->footerRow;
 
                 // Merge title across all columns
                 $ws->mergeCells("A1:{$lastCol}1");
 
-                // Number columns: right-align all numeric cells (kecamatan + total columns)
-                for ($row = $headerRow + 1; $row <= $lastRow; $row++) {
+                // Right-align numeric columns (kelurahan columns + total)
+                for ($row = $this->headerRow; $row <= $lastRow; $row++) {
                     for ($col = 4; $col <= $lastColIdx; $col++) {
-                        $cellCoord = \PhpOffice\PhpSpreadsheet\Cell\Coordinate::stringFromColumnIndex($col) . $row;
-                        $ws->getStyle($cellCoord)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+                        $cellCoord = Coordinate::stringFromColumnIndex($col) . $row;
+                        $ws->getStyle($cellCoord)->getAlignment()
+                            ->setHorizontal(Alignment::HORIZONTAL_RIGHT);
                     }
                 }
 
-                // Border around data area
-                $ws->getStyle("A{$headerRow}:{$lastCol}{$lastRow}")
-                    ->getBorders()
-                    ->getAllBorders()
+                // Merge group header label across all columns
+                foreach ($this->groupRows as $groupRowIdx) {
+                    $ws->mergeCells("A{$groupRowIdx}:{$lastCol}{$groupRowIdx}");
+                }
+
+                // Border around full table (header to footer)
+                $ws->getStyle("A{$this->headerRow}:{$lastCol}{$lastRow}")
+                    ->getBorders()->getAllBorders()
                     ->setBorderStyle(Border::BORDER_THIN);
 
                 // Freeze header row
-                $ws->freezePane("A" . ($headerRow + 1));
+                $ws->freezePane('A' . ($this->headerRow + 1));
 
-                // Alternate row shading for readability
-                for ($row = $headerRow + 1; $row < $lastRow; $row++) {
-                    if ($row % 2 === 0) {
-                        $ws->getStyle("A{$row}:{$lastCol}{$row}")
-                            ->getFill()
-                            ->setFillType(Fill::FILL_SOLID)
-                            ->getStartColor()
-                            ->setRGB('F0F7FF');
+                // Alternate row shading for data rows (skip group headers and footer)
+                $groupRowSet = array_flip($this->groupRows);
+                $shade = false;
+                for ($row = $this->headerRow + 1; $row < $lastRow; $row++) {
+                    if (isset($groupRowSet[$row])) {
+                        $shade = false; // reset alternation at each group
+                        continue;
                     }
+                    if ($shade) {
+                        $ws->getStyle("A{$row}:{$lastCol}{$row}")
+                            ->getFill()->setFillType(Fill::FILL_SOLID)
+                            ->getStartColor()->setRGB('F0F9FF');
+                    }
+                    $shade = !$shade;
                 }
             },
         ];

@@ -417,78 +417,102 @@ class DashboardService
     }
 
     /**
-     * Cross-tab rekapitulasi: semua jenis surat × kecamatan dalam periode.
+     * Cross-tab rekapitulasi: semua jenis surat × kelurahan dalam periode.
+     * Baris dikelompokkan: surat yang approval-nya di kecamatan vs di kelurahan.
      * Dapat dipanggil secara publik (untuk export controller).
      */
     public function getRekapitulasiPerKecamatan(User $user, Carbon $start, Carbon $end): array
     {
+        // Ambil data pengajuan per jenis_surat × kelurahan
         $rows = $this->buildBaseQuery($user)
             ->join('jenis_surats', 'permohonan_surats.jenis_surat_id', '=', 'jenis_surats.id')
             ->join('m_kelurahans', 'permohonan_surats.kelurahan_id', '=', 'm_kelurahans.id')
-            ->join('m_kecamatans', 'm_kelurahans.kecamatan_id', '=', 'm_kecamatans.id')
             ->whereBetween('permohonan_surats.created_at', [$start, $end])
             ->select(
                 'jenis_surats.id as jenis_id',
                 'jenis_surats.kode',
                 'jenis_surats.nama as jenis_nama',
-                'm_kecamatans.id as kec_id',
-                'm_kecamatans.nama as kec_nama',
+                'm_kelurahans.id as kel_id',
+                'm_kelurahans.nama as kel_nama',
                 DB::raw('COUNT(*) as total')
             )
-            ->groupBy('jenis_surats.id', 'jenis_surats.kode', 'jenis_surats.nama', 'm_kecamatans.id', 'm_kecamatans.nama')
+            ->groupBy('jenis_surats.id', 'jenis_surats.kode', 'jenis_surats.nama', 'm_kelurahans.id', 'm_kelurahans.nama')
             ->get();
 
         if ($rows->isEmpty()) {
-            return ['kecamatans' => [], 'rows' => [], 'totals_per_kecamatan' => [], 'grand_total' => 0];
+            return ['columns' => [], 'rows' => [], 'totals' => [], 'grand_total' => 0];
         }
 
-        // Collect ordered unique kecamatan names (by name)
-        $kecamatans = $rows->pluck('kec_nama', 'kec_id')->sortKeys()->values()->toArray();
-        $kecIds     = $rows->pluck('kec_id', 'kec_nama')->flip()->sortKeys()->keys()->toArray();
+        // Kumpulkan kelurahan unik, urutkan by nama
+        $kelMap   = $rows->pluck('kel_nama', 'kel_id')->sortBy(fn($n) => $n)->toArray(); // kel_id → nama
+        $kelIds   = array_keys($kelMap);
+        $kelNames = array_values($kelMap);
 
-        // Build pivot: jenis_id → kec_id → count
-        $pivot = [];
+        // Tentukan require_kecamatan_approval per jenis_surat
+        $jenisIds = $rows->pluck('jenis_id')->unique()->toArray();
+        $kecamatanFlags = DB::table('approval_flows')
+            ->whereIn('jenis_surat_id', $jenisIds)
+            ->where('require_kecamatan_approval', true)
+            ->pluck('jenis_surat_id')
+            ->unique()
+            ->flip()
+            ->toArray(); // [jenis_surat_id => 0, ...]
+
+        // Build pivot: jenis_id → kel_id → count
+        $pivot     = [];
         $jenisMeta = [];
         foreach ($rows as $row) {
             $jId = $row->jenis_id;
             if (!isset($pivot[$jId])) {
                 $pivot[$jId] = [];
-                $jenisMeta[$jId] = ['kode' => $row->kode, 'nama' => $row->jenis_nama, 'total' => 0];
+                $jenisMeta[$jId] = [
+                    'kode'               => $row->kode,
+                    'nama'               => $row->jenis_nama,
+                    'total'              => 0,
+                    'requires_kecamatan' => isset($kecamatanFlags[$jId]),
+                ];
             }
-            $pivot[$jId][$row->kec_id] = (int) $row->total;
+            $pivot[$jId][$row->kel_id] = (int) $row->total;
             $jenisMeta[$jId]['total'] += (int) $row->total;
         }
 
-        // Sort jenis by total desc
         uasort($jenisMeta, fn($a, $b) => $b['total'] <=> $a['total']);
 
+        // Kolom: [0] = Kecamatan (agregat surat kecamatan-level), [1..n] = per-kelurahan
+        $colCount   = 1 + count($kelIds);
         $resultRows = [];
         foreach ($jenisMeta as $jId => $meta) {
-            $perKec = [];
-            foreach ($kecIds as $kecId) {
-                $perKec[] = $pivot[$jId][$kecId] ?? 0;
+            $perColumn = array_fill(0, $colCount, 0);
+            if ($meta['requires_kecamatan']) {
+                // Semua count masuk ke kolom Kecamatan (index 0)
+                $perColumn[0] = $meta['total'];
+            } else {
+                // Spread ke kolom kelurahan masing-masing (index 1..n)
+                foreach ($kelIds as $i => $kelId) {
+                    $perColumn[$i + 1] = $pivot[$jId][$kelId] ?? 0;
+                }
             }
             $resultRows[] = [
-                'kode'          => $meta['kode'],
-                'nama'          => $meta['nama'],
-                'total'         => $meta['total'],
-                'per_kecamatan' => $perKec,
+                'kode'               => $meta['kode'],
+                'nama'               => $meta['nama'],
+                'total'              => $meta['total'],
+                'per_column'         => $perColumn,
+                'requires_kecamatan' => $meta['requires_kecamatan'],
             ];
         }
 
-        // Column totals
-        $totals = array_fill(0, count($kecIds), 0);
+        $totals = array_fill(0, $colCount, 0);
         foreach ($resultRows as $r) {
-            foreach ($r['per_kecamatan'] as $i => $v) {
+            foreach ($r['per_column'] as $i => $v) {
                 $totals[$i] += $v;
             }
         }
 
         return [
-            'kecamatans'             => $kecamatans,
-            'rows'                   => $resultRows,
-            'totals_per_kecamatan'   => $totals,
-            'grand_total'            => array_sum($totals),
+            'columns'     => ['Kecamatan', ...$kelNames],
+            'rows'        => $resultRows,
+            'totals'      => $totals,
+            'grand_total' => array_sum($totals),
         ];
     }
 
