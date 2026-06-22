@@ -48,7 +48,7 @@
         }
 
         .footer-list li:before {
-            content: "â€¢";
+            content: "•";
             position: absolute;
             left: 0;
         }

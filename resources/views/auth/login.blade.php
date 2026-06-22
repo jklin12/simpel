@@ -23,7 +23,7 @@
         </div>
 
         <div class="text-center mb-8">
-            <p class="text-gray-500 mt-2">Sistem Pelayanan Surat Kelurahan</p>
+            <p class="text-gray-500 mt-2">SiMPEL</p>
             <p class="text-sm text-gray-400">Landasan Ulin</p>
         </div>
 

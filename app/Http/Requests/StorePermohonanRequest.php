@@ -40,7 +40,7 @@ class StorePermohonanRequest extends FormRequest
             case 'SKTM': // Surat Keterangan Tidak Mampu
                 $specificRules = $this->getSktmRules();
                 break;
-            case 'SKTMR': // Surat Keterangan Tidak Memiliki Rumah
+            case 'SKTMR': // Surat Keterangan Belum Memiliki Rumah
                 $specificRules = $this->getSktmrRules();
                 break;
             case 'SKBM': // Surat Keterangan Belum Menikah
@@ -200,6 +200,9 @@ class StorePermohonanRequest extends FormRequest
             'skdko_ktp_kk_pemohon',
             'skdko_sk_kepengurusan',
             'skdko_bukti_pbb',
+            'skdko_akta_pendirian',
+            'skdko_npwp',
+            'skdko_surat_pernyataan_warga',
             // SPRIK
             'sprik_surat_pengantar_rtrw',
             'sprik_ktp_kk_pemohon',
@@ -362,10 +365,13 @@ class StorePermohonanRequest extends FormRequest
             'nama_kantor'                => 'required|string|max:255',
             'alamat_jalan'               => 'required|string|max:255',
             'keperluan'                  => 'required|string|max:500',
-            'skdko_surat_pengantar_rtrw' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'skdko_ktp_kk_pemohon'       => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'skdko_sk_kepengurusan'      => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-            'skdko_bukti_pbb'            => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdko_surat_pengantar_rtrw'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdko_ktp_kk_pemohon'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdko_sk_kepengurusan'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdko_bukti_pbb'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdko_akta_pendirian'         => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdko_npwp'                   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skdko_surat_pernyataan_warga' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 

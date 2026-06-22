@@ -98,7 +98,7 @@
         }
 
         .ttd-spacer { height: 40px; }
-        .ttd-nama   { font-size: 10pt; font-weight: bold; }
+        .ttd-nama   { font-size: 10pt;}
         .ttd-jabatan { font-size: 10pt; }
         .ttd-nip    { font-size: 10pt; }
 
@@ -119,7 +119,7 @@
 
         .footer-list { list-style-type: none; padding: 0; margin: 0; }
         .footer-list li { margin-bottom: 2px; position: relative; padding-left: 12px; }
-        .footer-list li:before { content: "â€¢"; position: absolute; left: 0; }
+        .footer-list li:before { content: "•"; position: absolute; left: 0; }
     </style>
 </head>
 
