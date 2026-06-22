@@ -14,7 +14,16 @@
     <div class="flex justify-between items-start mb-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Dashboard Eksekutif 📊</h1>
-            <p class="text-gray-500 mt-1">Selamat datang, {{ Auth::user()->name }}. Pantau performa pelayanan surat lintas wilayah.</p>
+            <p class="text-gray-500 mt-1">
+                Selamat datang, {{ Auth::user()->name }}.
+                @if(Auth::user()->hasRole('admin_kelurahan'))
+                    Pantau performa pelayanan surat di kelurahan Anda.
+                @elseif(Auth::user()->hasRole('admin_kecamatan'))
+                    Pantau performa pelayanan surat se-kecamatan.
+                @else
+                    Pantau performa pelayanan surat lintas wilayah.
+                @endif
+            </p>
         </div>
         <!-- Filter Bulan/Tahun -->
         <form method="GET" class="flex items-center gap-2 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
@@ -44,6 +53,22 @@
                 <path fill-rule="evenodd" d="M10.496 2.132a1 1 0 00-.992 0l-7 4A1 1 0 003 8v7a1 1 0 100 2h14a1 1 0 100-2V8a1 1 0 00.496-1.868l-7-4z" clip-rule="evenodd" />
             </svg>
             Kabupaten {{ Auth::user()->kabupaten->nama }}
+        </span>
+        @endif
+        @if(Auth::user()->kecamatan)
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-sky-50 text-sky-700 border border-sky-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.496 2.132a1 1 0 00-.992 0l-7 4A1 1 0 003 8v7a1 1 0 100 2h14a1 1 0 100-2V8a1 1 0 00.496-1.868l-7-4z" clip-rule="evenodd" />
+            </svg>
+            Kecamatan {{ Auth::user()->kecamatan->nama }}
+        </span>
+        @endif
+        @if(Auth::user()->kelurahan)
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10.496 2.132a1 1 0 00-.992 0l-7 4A1 1 0 003 8v7a1 1 0 100 2h14a1 1 0 100-2V8a1 1 0 00.496-1.868l-7-4z" clip-rule="evenodd" />
+            </svg>
+            Kelurahan {{ Auth::user()->kelurahan->nama }}
         </span>
         @endif
         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600 border border-gray-200">
@@ -146,7 +171,8 @@
 </div>
 
 <!-- Map + Top Jenis Surat -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+<div class="grid grid-cols-1 {{ $show_map ? 'lg:grid-cols-2' : '' }} gap-6 mb-8">
+    @if($show_map)
     <!-- Map -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         <div class="flex justify-between items-start mb-4">
@@ -179,13 +205,14 @@
         <div id="kelurahanMap" class="h-96 rounded-xl border border-gray-100 overflow-hidden z-0"></div>
         @endif
     </div>
+    @endif
 
-    <!-- Rekapitulasi Surat per Kecamatan -->
+    <!-- Rekapitulasi Surat -->
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
         @php $months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']; @endphp
         <div class="flex justify-between items-start mb-4">
             <div>
-                <h3 class="font-bold text-gray-800">Rekapitulasi Surat per Kecamatan</h3>
+                <h3 class="font-bold text-gray-800">{{ Auth::user()->hasRole('admin_kelurahan') ? 'Rekapitulasi Surat' : 'Rekapitulasi Surat per Kecamatan' }}</h3>
                 <p class="text-xs text-gray-500 mt-0.5">{{ $months[$current_month - 1] }} {{ $current_year }} — semua jenis surat</p>
             </div>
             <a href="{{ route('dashboard.export-rekapitulasi', ['month' => $current_month, 'year' => $current_year]) }}"
@@ -278,6 +305,7 @@
     </div>
 </div>
 
+@if($show_sla_per_kelurahan)
 <!-- SLA Proses Surat per Kelurahan -->
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden mb-8">
     <div class="p-6 border-b border-gray-50">
@@ -320,6 +348,7 @@
         @endif
     </div>
 </div>
+@endif
 
 <!-- Recent Activity -->
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">

@@ -32,10 +32,10 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
         Route::get('/admin/kecamatan', [DashboardController::class, 'kecamatan'])->name('dashboard.kecamatan');
         Route::get('/admin/kelurahan', [DashboardController::class, 'kelurahan'])->name('dashboard.kelurahan');
 
-        // Export rekapitulasi surat (kabupaten & super_admin only)
+        // Export rekapitulasi surat (semua role dashboard executive)
         Route::get('/dashboard/export-rekapitulasi', [DashboardController::class, 'exportRekapitulasi'])
             ->name('dashboard.export-rekapitulasi')
-            ->middleware(['role:super_admin|admin_kabupaten']);
+            ->middleware(['role:super_admin|admin_kabupaten|admin_kecamatan|admin_kelurahan']);
 
         // Profile Routes
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

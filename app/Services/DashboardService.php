@@ -69,16 +69,20 @@ class DashboardService
             'permohonan_terbaru' => $permohonanTerbaru,
         ];
 
-        // ── Executive widgets (kabupaten / super_admin) ────────────────────
-        if ($user->hasAnyRole(['admin_kabupaten', 'super_admin'])) {
+        // ── Executive widgets (kabupaten / kecamatan / kelurahan / super_admin) ──
+        if ($user->hasAnyRole(['admin_kabupaten', 'admin_kecamatan', 'admin_kelurahan', 'super_admin'])) {
+            $isKelurahan = $user->hasRole('admin_kelurahan');
+
             $data['is_executive']        = true;
+            $data['show_map']            = !$isKelurahan;
+            $data['show_sla_per_kelurahan'] = !$isKelurahan;
             $data['current_month']       = $month;
             $data['current_year']        = $year;
             $data['daily_chart']         = $this->getDailySubmissionChart($baseQuery, $startMonth, $now);
-            $data['kelurahan_map']       = $this->getKelurahanMapData($user, $startMonth, $now);
+            $data['kelurahan_map']       = $data['show_map'] ? $this->getKelurahanMapData($user, $startMonth, $now) : ['features' => [], 'center' => null, 'max_count' => 0];
             $data['top_jenis_surat']     = $this->getTopJenisSurat($baseQuery, 8, $startMonth, $now);
             $data['sla_metrics']              = $this->getSlaMetrics($baseQuery, $startMonth, $now);
-            $data['sla_per_kelurahan']        = $this->getSlaPerKelurahan($baseQuery, $startMonth, $now);
+            $data['sla_per_kelurahan']        = $data['show_sla_per_kelurahan'] ? $this->getSlaPerKelurahan($baseQuery, $startMonth, $now) : [];
             $data['rekapitulasi_per_kecamatan'] = $this->getRekapitulasiPerKecamatan($user, $startMonth, $now);
         } else {
             $data['is_executive'] = false;
@@ -230,6 +234,8 @@ class DashboardService
 
         if ($user->hasRole('admin_kabupaten')) {
             $kelurahanQuery->whereHas('kecamatan', fn($q) => $q->where('kabupaten_id', $user->kabupaten_id));
+        } elseif ($user->hasRole('admin_kecamatan')) {
+            $kelurahanQuery->where('kecamatan_id', $user->kecamatan_id);
         }
 
         // Hanya yang punya minimal koordinat (lat/lng); agar map tidak menampilkan
