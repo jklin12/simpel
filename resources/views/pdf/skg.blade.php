@@ -243,9 +243,9 @@
         </table>
 
         {{-- MENERANGKAN --}}
-        <p class="section-margin" style="font-size:10pt;">Menerangkan dengan sebenarnya bahwa &nbsp;:</p>
+        <p class="section-margin" style="font-size:10pt;">Menerangkan bahwa &nbsp;:</p>
 
-        {{-- DATA PEMOHON --}}
+        {{-- DATA ORANG GAIB --}}
         @php
         $data = $permohonan->data_permohonan ?? [];
         $tglLahir = isset($data['tanggal_lahir'])
@@ -268,56 +268,22 @@
             <tr>
                 <td class="col-label">Nama</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['nama_lengkap'] ?? $permohonan->nama_pemohon }}</td>
-            </tr>
-            <tr>
-                <td class="col-label">NIK</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['nik_bersangkutan'] ?? $permohonan->nik_pemohon }}</td>
-            </tr>
-            <tr>
-                <td class="col-label">Jenis Kelamin</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['jenis_kelamin'] ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="col-label">Agama</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['agama'] ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="col-label">Tempat/Tanggal Lahir</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . strtoupper($tglLahir) }}</td>
-            </tr>
-            <tr>
-                <td class="col-label">Pekerjaan</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['pekerjaan'] ?? '-' }}</td>
-            </tr>
-            <tr>
-                <td class="col-label">Alamat Sesuai KTP</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">
-                    {{ $data['alamat_lengkap'] ?? $permohonan->alamat_pemohon }}
-                    RT. {{ $data['rt'] ?? '-' }} RW. {{ $data['rw'] ?? '-' }}
-                </td>
-            </tr>
-        </table>
-
-        <p class="section-margin" style="font-size:10pt;">Adalah benar <b>Suami/Istri</b> dari nama di bawah ini &nbsp;:</p>
-
-        {{-- DATA ORANG GAIB --}}
-        <table class="data-table">
-            <tr>
-                <td class="col-label">Nama</td>
-                <td class="col-sep">:</td>
                 <td class="col-value">{{ $data['gaib_nama'] ?? '-' }}</td>
             </tr>
             <tr>
                 <td class="col-label">NIK</td>
                 <td class="col-sep">:</td>
                 <td class="col-value">{{ $data['gaib_nik'] ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Tempat/Tanggal Lahir</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ ($data['gaib_tempat_lahir'] ?? '-') . ', ' . strtoupper($gaibTglLahir) }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Terakhir Alamat</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['gaib_alamat'] ?? '-' }}</td>
             </tr>
             <tr>
                 <td class="col-label">Jenis Kelamin</td>
@@ -330,19 +296,53 @@
                 <td class="col-value">{{ $data['gaib_agama'] ?? '-' }}</td>
             </tr>
             <tr>
-                <td class="col-label">Tempat/Tanggal Lahir</td>
-                <td class="col-sep">:</td>
-                <td class="col-value">{{ ($data['gaib_tempat_lahir'] ?? '-') . ', ' . strtoupper($gaibTglLahir) }}</td>
-            </tr>
-            <tr>
                 <td class="col-label">Pekerjaan</td>
                 <td class="col-sep">:</td>
                 <td class="col-value">{{ $data['gaib_pekerjaan'] ?? '-' }}</td>
             </tr>
+        </table>
+
+        <p class="section-margin" style="font-size:10pt;">Adalah <b>Suami/Isteri/Ayah/Ibu</b> dari &nbsp;:</p>
+
+        {{-- DATA PEMOHON --}}
+        <table class="data-table">
             <tr>
-                <td class="col-label">Terakhir Alamat</td>
+                <td class="col-label">Nama</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">{{ $data['gaib_alamat'] ?? '-' }}</td>
+                <td class="col-value">{{ $data['nama_lengkap'] ?? $permohonan->nama_pemohon }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">NIK</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['nik_bersangkutan'] ?? $permohonan->nik_pemohon }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Tempat/Tanggal Lahir</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ ($data['tempat_lahir'] ?? '-') . ', ' . strtoupper($tglLahir) }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Alamat Sesuai KTP</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">
+                    {{ $data['alamat_lengkap'] ?? $permohonan->alamat_pemohon }}
+                    RT. {{ $data['rt'] ?? '-' }} RW. {{ $data['rw'] ?? '-' }}
+                </td>
+            </tr>
+            <tr>
+                <td class="col-label">Jenis Kelamin</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['jenis_kelamin'] ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Agama</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['agama'] ?? '-' }}</td>
+            </tr>
+            <tr>
+                <td class="col-label">Pekerjaan</td>
+                <td class="col-sep">:</td>
+                <td class="col-value">{{ $data['pekerjaan'] ?? '-' }}</td>
             </tr>
         </table>
 
@@ -355,12 +355,16 @@
             tanggal <span>{{ $tglPengantar }}</span>,
             Kelurahan <span>{{ ucfirst(strtolower($kelurahan->nama)) }}</span>
             Kecamatan {{ ucfirst(strtolower($kelurahan->kecamatan->nama)) }}
-            Pemerintah Kota Banjarbaru dengan ini menerangkan nama tersebut di atas benar-benar telah Meninggalkan rumah (<b>Gaib</b>).
+            Pemerintah Kota Banjarbaru dengan ini menerangkan bahwa <b>Suami/Isteri/Ayah/Ibu</b> dari
+            <span class="hl">{{ strtoupper($data['nama_lengkap'] ?? $permohonan->nama_pemohon) }}</span>
+            yang bernama <span class="hl">{{ strtoupper($data['gaib_nama'] ?? '-') }}</span>
+            telah pergi meninggalkan tempat tinggal sesuai dengan alamat bersama yang tertera diatas
+            sampai sekarang tidak diketahui lagi tempat tinggalnya di wilayah Republik Indonesia (<b>Gaib</b>).
         </p>
 
         <p class="narasi">
-            Adapun surat keterangan ini dibuat untuk keperluan <span>{{ $data['keperluan'] ?? '-' }}</span>.
-            Demikian Surat Keterangan Gaib ini diberikan agar dapat dipergunakan
+            Adapun surat keterangan gaib ini dibuat untuk keperluan <span>{{ $data['keperluan'] ?? '-' }}</span>.
+            Demikian surat keterangan gaib ini diberikan untuk dapat dipergunakan
             sebagaimana mestinya.
         </p>
 
