@@ -15,7 +15,7 @@ class UpdatePortalDataKelurahanRequest extends FormRequest
     {
         return [
             'kelurahan_id'     => 'sometimes|required|exists:m_kelurahans,id',
-            'kategori'         => 'sometimes|required|in:rw,rt,lpm,tempat_ibadah,pemakaman,sarana_pendidikan,fasilitas_kesehatan,fasilitas_keamanan,pos_kamling,fasilitas_umum',
+            'kategori'         => 'sometimes|required',
             'jenis_fasilitas'  => 'nullable|string|max:255',
             'status_fasilitas' => 'nullable|string|max:255',
             'rt'               => 'nullable|string|max:10',
