@@ -97,7 +97,7 @@
             font-size: 10pt;
         }
 
-        .ttd-spacer { height: 40px; }
+        .ttd-spacer { height: 10px; }
         .ttd-nama   { font-size: 10pt; }
         .ttd-jabatan { font-size: 10pt; }
         .ttd-nip    { font-size: 10pt; }

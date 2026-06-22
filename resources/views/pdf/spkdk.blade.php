@@ -116,7 +116,7 @@
             font-size: 11pt;
         }
 
-        .ttd-spacer { height: 40px; }
+        .ttd-spacer { height: 10px; }
         .ttd-nama   { font-size: 11pt; font-weight: bold; }
         .ttd-jabatan { font-size: 11pt; }
         .ttd-nip    { font-size: 11pt; }
