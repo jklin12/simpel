@@ -1,5 +1,62 @@
 # Release Notes
 
+## [v1.0.7] - 2026-06-23
+
+### Added — Google Analytics (Firebase/GA4) Integration
+
+- **Automatic Pageview Tracking**: Implemented gtag.js script for automatic tracking of all page visits across public portal and admin dashboard.
+- **Custom Events Tracking** (Privacy-Safe, Public Portal Only):
+  - **`permohonan_submitted`** — Tracks form submission with token reference for deduplication
+  - **`tracking_status_viewed`** — Tracks status check requests with jenis_surat and status parameters
+  - **`surat_downloaded`** — Tracks letter download with jenis_surat parameter
+- **Configuration**:
+  - Added `firebase` config block to `config/services.php` reading from `.env`
+  - Added `FIREBASE_MEASUREMENT_ID` placeholder to `.env.example`
+  - All tracking conditional — only loads if Measurement ID is set (safe for local/testing environments)
+- **Implementation Details**:
+  - `resources/views/layouts/landing.blade.php` — gtag.js script injection for public portal
+  - `resources/views/layouts/app.blade.php` — gtag.js script injection for admin dashboard
+  - `resources/views/services/index.blade.php` — Success modal with `permohonan_submitted` event and analytics push
+  - `resources/views/user/permohonan/track.blade.php` — `tracking_status_viewed` and `surat_downloaded` events with jenis_surat parameter
+- **Documentation**: 
+  - `FIREBASE_SETUP.md` — Comprehensive setup guide including:
+    - Step-by-step Firebase project creation
+    - Development, staging, and production environment configuration
+    - Real-time testing and verification procedures
+    - Troubleshooting guide for common issues
+    - Firebase console navigation for metrics analysis
+    - Production deployment checklist
+
+### Security & Privacy
+
+- **No Personal Data Sent**: All events exclude NIK, phone numbers, names, addresses, and track_tokens
+- **Safe Event Parameters**: Events only send aggregate data (letter type, status, timestamps)
+- **Conditional Loading**: gtag.js and measurement ID checks prevent errors in environments without Firebase configured
+
+### Deployment Instructions
+
+```bash
+# 1. Create Firebase project and get Measurement ID (G-XXXXXXXXXX format)
+# 2. Add to .env:
+FIREBASE_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# 3. Clear config cache
+php artisan config:clear
+
+# 4. Test locally:
+php artisan serve
+# Open DevTools → Network tab → verify googletagmanager.com loads
+```
+
+### Notes
+
+- Admin panel includes automatic pageview tracking; no custom events added (can be extended in future)
+- Events are privacy-compliant per GDPR/local regulations — only aggregate metrics
+- Measurement ID can be same for dev/prod or separate (separate projects recommended for production)
+- See `FIREBASE_SETUP.md` for detailed Firebase connection instructions and multi-environment setup
+
+---
+
 ## [v1.0.6] - 2026-05-10
 
 ### Added — Jenis Surat Baru (Tingkat Kecamatan & Kelurahan)
