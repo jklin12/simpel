@@ -42,4 +42,8 @@ return [
         'test_number' => env('WHATSAPP_TEST_NUMBER', ''),
     ],
 
+    'firebase' => [
+        'measurement_id' => env('FIREBASE_MEASUREMENT_ID'),
+    ],
+
 ];

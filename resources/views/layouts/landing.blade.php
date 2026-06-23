@@ -17,6 +17,17 @@
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+    <!-- Google Analytics (Firebase) -->
+    @if(config('services.firebase.measurement_id'))
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('services.firebase.measurement_id') }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ config('services.firebase.measurement_id') }}');
+    </script>
+    @endif
+
     <script>
         tailwind.config = {
             theme: {

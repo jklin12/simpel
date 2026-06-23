@@ -3,6 +3,45 @@
 @section('title', 'Layanan Surat Menyurat')
 
 @section('content')
+
+@if(session('success_application'))
+<!-- Success Modal / Alert -->
+@push('scripts')
+<script>
+    if (typeof gtag !== 'undefined') {
+        gtag('event', 'permohonan_submitted', {
+            token: '{{ session('success_application.token') }}'
+        });
+    }
+</script>
+@endpush
+<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-data="{ show: true }" x-show="show" @click.self="show = false">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 p-8">
+        <div class="flex justify-center mb-4">
+            <div class="flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                <svg class="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            </div>
+        </div>
+        <h3 class="text-center text-lg font-medium text-gray-900 mb-2">Permohonan Berhasil Diajukan!</h3>
+        <p class="text-center text-sm text-gray-500 mb-6">{{ session('success_application.message') }}</p>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <p class="text-xs text-gray-600 mb-1">Kode Tracking Anda:</p>
+            <p class="text-lg font-bold text-blue-600 text-center">{{ session('success_application.token') }}</p>
+        </div>
+        <div class="space-y-3">
+            <a href="{{ route('layanan.surat.tracking') }}" @click="show = false" class="w-full inline-flex justify-center rounded-lg bg-primary-600 text-white px-4 py-2 font-medium hover:bg-primary-700 transition-colors">
+                Cek Status Permohonan
+            </a>
+            <button @click="show = false" class="w-full inline-flex justify-center rounded-lg border border-gray-300 bg-white text-gray-700 px-4 py-2 font-medium hover:bg-gray-50 transition-colors">
+                Tutup
+            </button>
+        </div>
+    </div>
+</div>
+@endif
+
 <!-- Hero Section -->
 {{--<section class="relative bg-white overflow-hidden lg:pt-[110px]">
     <div class="max-w-7xl mx-auto pt-24">

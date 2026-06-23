@@ -25,6 +25,18 @@
         </div>
 
         @if(isset($permohonan))
+        <!-- Analytics: Track Status Viewed -->
+        @push('scripts')
+        <script>
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'tracking_status_viewed', {
+                    jenis_surat: '{{ $permohonan->jenisSurat->kode ?? '' }}',
+                    status: '{{ $permohonan->status }}'
+                });
+            }
+        </script>
+        @endpush
+
         <!-- Result -->
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <!-- Header Result -->
@@ -84,6 +96,7 @@
                         </div>
                     </div>
                     <a href="{{ route('layanan.surat.tracking.download', $permohonan->track_token) }}"
+                        onclick="if (typeof gtag !== 'undefined') { gtag('event', 'surat_downloaded', { jenis_surat: '{{ $permohonan->jenisSurat->kode ?? '' }}' }); }"
                         class="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg transition-colors shadow-sm flex-shrink-0">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
