@@ -60,6 +60,7 @@ class SkgSeeder extends Seeder
                     'skg_ktp_kk_bersangkutan',
                     'skg_ktp_saksi',
                     'skg_bukti_lunas_pbb',
+                    'skg_buku_nikah',
                 ],
                 'is_active' => true,
             ]
