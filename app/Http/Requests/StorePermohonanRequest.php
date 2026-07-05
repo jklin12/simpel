@@ -185,6 +185,7 @@ class StorePermohonanRequest extends FormRequest
             'skg_ktp_kk_bersangkutan',
             'skg_ktp_saksi',
             'skg_bukti_lunas_pbb',
+            'skg_buku_nikah',
             // SPKH
             'spkh_surat_pengantar_rtrw',
             'spkh_ktp_kk_pemohon',
@@ -489,6 +490,7 @@ class StorePermohonanRequest extends FormRequest
             'skg_ktp_kk_bersangkutan'    => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skg_ktp_saksi'              => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
             'skg_bukti_lunas_pbb'        => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'skg_buku_nikah'             => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
         ];
     }
 
