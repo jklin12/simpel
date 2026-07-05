@@ -37,12 +37,12 @@ class KabupatenController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'kode' => 'required|string|unique:m_kabupatens,kode|max:20',
         ]);
 
-        Kabupaten::create($request->all());
+        Kabupaten::create($validated);
 
         return redirect()->route('admin.master.kabupaten.index')->with('success', 'Kabupaten created successfully');
     }
@@ -60,12 +60,12 @@ class KabupatenController extends Controller
      */
     public function update(Request $request, Kabupaten $kabupaten)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'kode' => 'required|string|max:20|unique:m_kabupatens,kode,' . $kabupaten->id,
         ]);
 
-        $kabupaten->update($request->all());
+        $kabupaten->update($validated);
 
         return redirect()->route('admin.master.kabupaten.index')->with('success', 'Kabupaten updated successfully');
     }

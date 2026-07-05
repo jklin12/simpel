@@ -22,7 +22,8 @@ class PermohonanSktmrTest extends TestCase
     {
         parent::setUp();
 
-        Storage::fake('public');
+        // Dokumen PII kini disimpan di disk privat (local), bukan public.
+        Storage::fake('local');
 
         $this->jenisSurat = JenisSurat::where('kode', 'SKTMR')->firstOrFail();
         $this->kelurahan  = Kelurahan::whereHas('kecamatan', fn ($q) => $q->where('id', 6372010))
@@ -121,7 +122,7 @@ class PermohonanSktmrTest extends TestCase
         $this->assertNotNull($permohonan);
 
         foreach ($permohonan->dokumens as $dokumen) {
-            Storage::disk('public')->assertExists($dokumen->file_path);
+            Storage::disk('local')->assertExists($dokumen->file_path);
         }
     }
 

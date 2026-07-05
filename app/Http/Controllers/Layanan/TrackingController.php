@@ -40,11 +40,11 @@ class TrackingController extends Controller
             abort(404, 'File surat tidak tersedia.');
         }
 
-        if (!Storage::disk('public')->exists($permohonan->signed_file_path)) {
+        if (!Storage::disk('local')->exists($permohonan->signed_file_path)) {
             abort(404, 'File tidak ditemukan di server.');
         }
 
         $filename = 'Surat-' . $permohonan->track_token . '.pdf';
-        return Storage::disk('public')->download($permohonan->signed_file_path, $filename);
+        return Storage::disk('local')->download($permohonan->signed_file_path, $filename);
     }
 }

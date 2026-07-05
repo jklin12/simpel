@@ -36,16 +36,17 @@ Route::name('')->group(function () {
         // Modul Surat Menyurat
         Route::prefix('surat-menyurat')->name('surat.')->group(function () {
             Route::get('/ajukan', [PermohonanController::class, 'create'])->name('ajukan');
-            Route::post('/ajukan', [PermohonanController::class, 'store'])->name('store');
-            Route::post('/ocr', [PermohonanController::class, 'ocrKtp'])->name('ocr');
+            Route::post('/ajukan', [PermohonanController::class, 'store'])->middleware('throttle:20,1')->name('store');
+            // OCR memanggil Anthropic API berbayar tanpa login → throttle ketat (cost-DoS).
+            Route::post('/ocr', [PermohonanController::class, 'ocrKtp'])->middleware('throttle:10,1')->name('ocr');
 
             Route::get('/cek-status', [TrackingController::class, 'index'])->name('tracking');
-            Route::get('/cek-status/search', [TrackingController::class, 'search'])->name('tracking.search');
+            Route::get('/cek-status/search', [TrackingController::class, 'search'])->middleware('throttle:30,1')->name('tracking.search');
             Route::get('/cek-status/download/{track_token}', [TrackingController::class, 'downloadSignedLetter'])->name('tracking.download');
 
             // Revisi permohonan yang ditolak (publik via track_token)
             Route::get('/revisi/{track_token}', [PermohonanController::class, 'edit'])->name('revisi');
-            Route::post('/revisi/{track_token}', [PermohonanController::class, 'update'])->name('revisi.update');
+            Route::post('/revisi/{track_token}', [PermohonanController::class, 'update'])->middleware('throttle:20,1')->name('revisi.update');
 
             // Download Template Surat
             Route::get('/download-template', [TemplateSuratPublikController::class, 'index'])->name('template.index');

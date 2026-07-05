@@ -4,6 +4,14 @@
 /public/hot
 /public/storage
 /storage/*.key
+
+# File operasional/PII yang tidak boleh masuk repo (security patch)
+/storage/*.pdf
+/storage/*.txt
+/storage/*.docx
+/storage/*.doc
+/storage/*.xlsx
+/storage/*.xls
 /vendor
 .env
 .env.backup

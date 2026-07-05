@@ -226,7 +226,10 @@ class PermohonanController extends Controller
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+            Log::error('Gagal menyimpan permohonan: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat menyimpan permohonan. Silakan coba lagi.')
+                ->withInput();
         }
     }
 
@@ -250,9 +253,11 @@ class PermohonanController extends Controller
         foreach ($fileFields as $field) {
             if ($request->hasFile($field)) {
                 $file = $request->file($field);
+                // Disk privat (local) — berisi PII (KTP/KK/buku nikah). Tidak boleh
+                // web-accessible; hanya disajikan lewat controller yang di-scope.
                 $path = $file->store(
                     'permohonan/' . $permohonan->id . '/dokumen',
-                    'public'
+                    'local'
                 );
 
                 PermohonanDokumen::create([
@@ -368,7 +373,9 @@ class PermohonanController extends Controller
                 ]);
         } catch (\Exception $e) {
             Log::error('Revisi permohonan gagal: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan saat mengajukan revisi. Silakan coba lagi.')
+                ->withInput();
         }
     }
 
@@ -395,11 +402,12 @@ class PermohonanController extends Controller
                 // Delete existing dokumen record for this field type (and its file) if any
                 $existing = $permohonan->dokumens()->where('jenis_dokumen', $field)->first();
                 if ($existing) {
-                    Storage::disk('public')->delete($existing->file_path);
+                    Storage::disk('local')->delete($existing->file_path);
                     $existing->delete();
                 }
 
-                $path = $file->store('permohonan/' . $permohonan->id . '/dokumen', 'public');
+                // Disk privat (local) — dokumen PII.
+                $path = $file->store('permohonan/' . $permohonan->id . '/dokumen', 'local');
 
                 PermohonanDokumen::create([
                     'permohonan_surat_id' => $permohonan->id,
@@ -558,7 +566,7 @@ EOT;
             Log::error('OCR KTP Error: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal memproses OCR: ' . $e->getMessage(),
+                'message' => 'Gagal memproses OCR. Silakan coba lagi atau isi data secara manual.',
             ], 500);
         }
     }

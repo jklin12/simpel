@@ -182,6 +182,20 @@
                 // Date fields for formatting
                 $dateFields = ['tanggal_lahir', 'tanggal_surat_pengantar', 'tanggal_surat_pernyataan',
                 'tanggal_meninggal', 'tanggal_surat'];
+
+                // NIK dimasking pada halaman tracking publik — cukup tampilkan
+                // 4 digit awal + 4 digit akhir (mis. 3374••••••••0001).
+                $maskNik = function ($nik) {
+                    $nik = preg_replace('/\s+/', '', (string) $nik);
+                    $len = strlen($nik);
+                    if ($len <= 4) {
+                        return $nik;
+                    }
+                    if ($len >= 8) {
+                        return substr($nik, 0, 4) . str_repeat('•', $len - 8) . substr($nik, -4);
+                    }
+                    return str_repeat('•', $len - 4) . substr($nik, -4);
+                };
                 @endphp
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-3">
@@ -192,7 +206,7 @@
                     </div>
                     <div>
                         <p class="text-xs text-gray-400 uppercase font-semibold tracking-wide">NIK Pemohon</p>
-                        <p class="font-medium text-gray-900 mt-0.5">{{ $permohonan->nik_pemohon }}</p>
+                        <p class="font-medium text-gray-900 mt-0.5 font-mono tracking-wider">{{ $maskNik($permohonan->nik_pemohon) }}</p>
                     </div>
                     <div>
                         <p class="text-xs text-gray-400 uppercase font-semibold tracking-wide">No. WhatsApp</p>
@@ -216,7 +230,7 @@
                     $label = $labelMap[$key] ?? ucwords(str_replace('_', ' ', $key));
                     $display = in_array($key, $dateFields)
                     ? \Carbon\Carbon::parse($value)->translatedFormat('d F Y')
-                    : $value;
+                    : (str_contains($key, 'nik') ? $maskNik($value) : $value);
                     @endphp
                     <div>
                         <p class="text-xs text-gray-400 uppercase font-semibold tracking-wide">{{ $label }}</p>

@@ -166,8 +166,8 @@ class PermohonanSuratController extends Controller
                     ->whereIn('mime_type', ['image/jpeg', 'image/jpg'])
                     ->first();
 
-                if ($pasFoto && Storage::disk('public')->exists($pasFoto->file_path)) {
-                    $pasFotoBase64 = base64_encode(Storage::disk('public')->get($pasFoto->file_path));
+                if ($pasFoto && Storage::disk('local')->exists($pasFoto->file_path)) {
+                    $pasFotoBase64 = base64_encode(Storage::disk('local')->get($pasFoto->file_path));
                 }
             }
 
@@ -216,10 +216,14 @@ class PermohonanSuratController extends Controller
 
             return $pdf->stream($filename);
         } catch (\Exception $e) {
-            dd($e); 
+            \Illuminate\Support\Facades\Log::error('Gagal generate PDF surat', [
+                'permohonan_id' => $id,
+                'error'         => $e->getMessage(),
+            ]);
+
             return redirect()
                 ->back()
-                ->with('error', 'Gagal generate PDF: ' . $e->getMessage());
+                ->with('error', 'Gagal generate PDF surat. Silakan hubungi administrator jika masalah berlanjut.');
         }
     }
 
@@ -243,8 +247,9 @@ class PermohonanSuratController extends Controller
                 return redirect()->back()->with('error', 'Permohonan tidak dalam status menunggu TTD.');
             }
 
+            // Disk privat (local) — surat final berisi nama + NIK + alamat warga.
             $path = $request->file('signed_letter')
-                ->store('surat-selesai/' . $id, 'public');
+                ->store('surat-selesai/' . $id, 'local');
 
             $permohonan->update([
                 'signed_file_path' => $path,
@@ -274,17 +279,20 @@ class PermohonanSuratController extends Controller
      */
     public function downloadDokumen($id, $dokumenId)
     {
+        // Enforce wilayah-based ownership (mencegah IDOR) sebelum menyajikan file.
+        $this->service->getPermohonanById($id);
+
         try {
             $dokumen = PermohonanDokumen::where('permohonan_surat_id', $id)
                 ->findOrFail($dokumenId);
 
-            if (!Storage::disk('public')->exists($dokumen->file_path)) {
+            if (!Storage::disk('local')->exists($dokumen->file_path)) {
                 return redirect()
                     ->back()
                     ->with('error', 'File tidak ditemukan di server');
             }
 
-            return Storage::disk('public')->download(
+            return Storage::disk('local')->download(
                 $dokumen->file_path,
                 $dokumen->original_name
             );
@@ -294,6 +302,27 @@ class PermohonanSuratController extends Controller
                 ->with('error', 'Dokumen tidak ditemukan');
         }
     }
+
+    /**
+     * Download the signed final letter from the private disk.
+     * Di-scope otorisasi wilayah lewat getPermohonanById (mencegah IDOR),
+     * karena file kini di disk privat dan tidak lagi web-accessible.
+     */
+    public function downloadSignedLetter($id)
+    {
+        // Enforce wilayah-based ownership sebelum menyajikan file.
+        $permohonan = $this->service->getPermohonanById($id);
+
+        if (!$permohonan || !$permohonan->signed_file_path
+            || !Storage::disk('local')->exists($permohonan->signed_file_path)) {
+            return redirect()->back()->with('error', 'File surat tidak ditemukan di server.');
+        }
+
+        $filename = str_replace('/', '-', $permohonan->nomor_surat ?? $permohonan->nomor_permohonan) . '.pdf';
+
+        return Storage::disk('local')->download($permohonan->signed_file_path, $filename);
+    }
+
     /**
      * Delete the specified permohonan.
      */

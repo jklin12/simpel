@@ -80,6 +80,7 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
             Route::post('permohonan-surat/{permohonanSurat}/approve', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'approve'])->name('permohonan-surat.approve');
             Route::post('permohonan-surat/{permohonanSurat}/reject', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'reject'])->name('permohonan-surat.reject');
             Route::get('permohonan-surat/{permohonanSurat}/download', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'downloadLetter'])->name('permohonan-surat.download');
+            Route::get('permohonan-surat/{permohonanSurat}/download-signed', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'downloadSignedLetter'])->name('permohonan-surat.download-signed');
             Route::get('permohonan-surat/{permohonanSurat}/dokumen/{dokumen}/download', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'downloadDokumen'])->name('permohonan-surat.download-dokumen');
             Route::post('permohonan-surat/{permohonanSurat}/upload-signed', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'uploadSignedLetter'])->name('permohonan-surat.upload-signed');
             Route::post('permohonan-surat/{permohonanSurat}/reset-status', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'resetStatus'])->name('permohonan-surat.reset-status');

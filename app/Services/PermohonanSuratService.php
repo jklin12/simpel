@@ -50,7 +50,52 @@ class PermohonanSuratService
 
     public function getPermohonanById($id)
     {
-        return $this->repository->find($id);
+        $permohonan = $this->repository->find($id);
+        $this->authorizeAccess($permohonan);
+
+        return $permohonan;
+    }
+
+    /**
+     * Enforce wilayah-based ownership on a permohonan.
+     *
+     * Mirrors the scoping logic in PermohonanSuratRepository::getByUserRole():
+     *   - admin_kelurahan  → hanya permohonan di kelurahan-nya
+     *   - admin_kecamatan  → hanya permohonan di kecamatan-nya
+     *   - admin_kabupaten  → hanya permohonan di kabupaten-nya
+     *   - super_admin (dan role lain) → akses penuh
+     *
+     * Dipanggil di setiap jalur yang mengambil permohonan by-id agar tidak
+     * ada IDOR (ganti angka ID di URL untuk membaca/ubah/hapus data warga
+     * di wilayah lain).
+     */
+    public function authorizeAccess($permohonan): void
+    {
+        // Not-found dibiarkan agar downstream menghasilkan pesan "tidak ditemukan".
+        if (!$permohonan) {
+            return;
+        }
+
+        $user = Auth::user();
+        if (!$user) {
+            abort(403);
+        }
+
+        if ($user->hasRole('admin_kelurahan')) {
+            if ((string) $permohonan->kelurahan_id !== (string) $user->kelurahan_id) {
+                abort(403, 'Anda tidak memiliki akses ke permohonan ini.');
+            }
+        } elseif ($user->hasRole('admin_kecamatan')) {
+            if ((string) optional($permohonan->kelurahan)->kecamatan_id !== (string) $user->kecamatan_id) {
+                abort(403, 'Anda tidak memiliki akses ke permohonan ini.');
+            }
+        } elseif ($user->hasRole('admin_kabupaten')) {
+            $kabupatenId = optional(optional($permohonan->kelurahan)->kecamatan)->kabupaten_id;
+            if ((string) $kabupatenId !== (string) $user->kabupaten_id) {
+                abort(403, 'Anda tidak memiliki akses ke permohonan ini.');
+            }
+        }
+        // super_admin & role lain: akses penuh (konsisten dengan getByUserRole).
     }
 
     /**
@@ -61,6 +106,7 @@ class PermohonanSuratService
         DB::beginTransaction();
         try {
             $permohonan = $this->repository->find($id);
+            $this->authorizeAccess($permohonan);
 
             // Whitelist allowed statuses for editing
             if (!in_array($permohonan->status, ['draft', 'pending', 'in_review', 'revision_open'])) {
@@ -98,6 +144,7 @@ class PermohonanSuratService
 
         try {
             $permohonan = $this->repository->find($id);
+            $this->authorizeAccess($permohonan);
             $user = Auth::user();
 
             // Get current pending approval
@@ -198,6 +245,7 @@ class PermohonanSuratService
 
         try {
             $permohonan = $this->repository->find($id);
+            $this->authorizeAccess($permohonan);
             $user = Auth::user();
 
             // Get current pending approval
@@ -585,6 +633,8 @@ class PermohonanSuratService
             throw new \Exception('Permohonan tidak ditemukan.');
         }
 
+        $this->authorizeAccess($permohonan);
+
         if ($permohonan->status !== 'pending') {
             throw new \Exception('Hanya permohonan dengan status PENDING yang dapat dihapus.');
         }
@@ -664,6 +714,7 @@ class PermohonanSuratService
         DB::beginTransaction();
         try {
             $permohonan = $this->repository->find($id);
+            $this->authorizeAccess($permohonan);
 
             if (!in_array($permohonan->status, ['approved', 'completed'])) {
                 throw new \Exception('Request perubahan hanya dapat diajukan pada surat yang sudah disetujui.');
@@ -714,6 +765,7 @@ class PermohonanSuratService
         DB::beginTransaction();
         try {
             $permohonan = $this->repository->find($permohonanId);
+            $this->authorizeAccess($permohonan);
 
             if ($permohonan->status !== 'revision_requested') {
                 throw new \Exception('Permohonan tidak dalam status menunggu review perubahan.');
@@ -766,6 +818,7 @@ class PermohonanSuratService
         DB::beginTransaction();
         try {
             $permohonan = $this->repository->find($permohonanId);
+            $this->authorizeAccess($permohonan);
 
             if ($permohonan->status !== 'revision_requested') {
                 throw new \Exception('Permohonan tidak dalam status menunggu review perubahan.');
@@ -816,6 +869,7 @@ class PermohonanSuratService
         DB::beginTransaction();
         try {
             $permohonan = $this->repository->find($permohonanId);
+            $this->authorizeAccess($permohonan);
 
             if ($permohonan->status !== 'revision_open') {
                 throw new \Exception('Permohonan tidak dalam status revisi terbuka.');
