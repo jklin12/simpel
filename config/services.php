@@ -40,6 +40,10 @@ return [
         'username' => env('WHATSAPP_USERNAME', ''),
         'password' => env('WHATSAPP_PASSWORD', ''),
         'test_number' => env('WHATSAPP_TEST_NUMBER', ''),
+        // Jeda minimum antar pengiriman pesan (detik) untuk hindari blokir WA.
+        // Set 0 pada keduanya untuk menonaktifkan throttle.
+        'throttle_min' => (int) env('WHATSAPP_THROTTLE_MIN', 20),
+        'throttle_max' => (int) env('WHATSAPP_THROTTLE_MAX', 30),
     ],
 
     'firebase' => [

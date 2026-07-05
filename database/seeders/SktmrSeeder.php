@@ -19,7 +19,7 @@ class SktmrSeeder extends Seeder
         $sktmr = JenisSurat::updateOrCreate(
             ['kode' => 'SKTMR'],
             [
-                'nama'      => 'Surat Keterangan Tidak Memiliki Rumah',
+                'nama'      => 'Surat Keterangan Belum Memiliki Rumah',
                 'deskripsi' => 'Surat keterangan yang menyatakan bahwa pemohon tidak memiliki rumah sendiri, untuk keperluan administrasi perumahan, beasiswa, atau bantuan hunian.',
                 'template_path' => null,
                 'required_fields' => json_encode([

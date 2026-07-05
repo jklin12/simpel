@@ -4,7 +4,9 @@ namespace App\Channels;
 
 use App\Models\PermohonanSurat;
 use App\Models\WhatsappNotificationLog;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -70,6 +72,9 @@ class WhatsAppChannel
 
         $client = Http::withBasicAuth($username, $password);
 
+        // Beri jeda antar pengiriman agar tidak dianggap spam / diblokir WA.
+        $this->applySendThrottle();
+
         try {
             if ($fileContent) {
                 // Write temp file to attach
@@ -119,6 +124,57 @@ class WhatsAppChannel
 
             Log::error("WhatsApp send exception: " . $e->getMessage());
             throw $e;
+        }
+    }
+
+    /**
+     * Pastikan ada jeda minimum (20-30 detik, dapat dikonfigurasi) antar
+     * pengiriman pesan WhatsApp untuk meminimalisir risiko diblokir.
+     *
+     * Menggunakan cache lock supaya jeda tetap terjaga walau ada beberapa
+     * queue worker paralel. Slot kirim dipesan di dalam lock (cepat), lalu
+     * penungguannya dilakukan di luar lock agar worker lain tidak ikut ngeblok.
+     */
+    protected function applySendThrottle(): void
+    {
+        // Lewati saat lokal/testing supaya pengembangan & test tidak ikut lambat.
+        if (in_array(config('app.env'), ['local', 'testing'], true)) {
+            return;
+        }
+
+        $min = (int) config('services.whatsapp.throttle_min', 20);
+        $max = (int) config('services.whatsapp.throttle_max', 30);
+
+        if ($min <= 0 && $max <= 0) {
+            return;
+        }
+
+        if ($max < $min) {
+            $max = $min;
+        }
+
+        $delay = random_int($min, $max);
+        $lock = Cache::lock('whatsapp:send-throttle', 15);
+        $sendAt = microtime(true) + $delay;
+
+        try {
+            $lock->block(20);
+
+            $now = microtime(true);
+            $lastSlot = (float) Cache::get('whatsapp:next_slot_at', 0);
+            $sendAt = max($now, $lastSlot + $delay);
+
+            Cache::put('whatsapp:next_slot_at', $sendAt, now()->addHour());
+        } catch (LockTimeoutException $e) {
+            // Tidak dapat lock tepat waktu — fallback: tetap beri jeda penuh.
+            $sendAt = microtime(true) + $delay;
+        } finally {
+            optional($lock)->release();
+        }
+
+        $sleepSeconds = $sendAt - microtime(true);
+        if ($sleepSeconds > 0) {
+            usleep((int) ($sleepSeconds * 1_000_000));
         }
     }
 }

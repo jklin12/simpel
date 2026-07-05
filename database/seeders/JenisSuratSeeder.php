@@ -69,7 +69,7 @@ class JenisSuratSeeder extends Seeder
                 'is_active' => true,
             ],
             [
-                'nama'      => 'Surat Keterangan Tidak Memiliki Rumah',
+                'nama'      => 'Surat Keterangan Belum Memiliki Rumah',
                 'kode'      => 'SKTMR',
                 'deskripsi' => 'Surat keterangan yang menyatakan bahwa pemohon tidak memiliki rumah sendiri, untuk keperluan administrasi perumahan atau bantuan hunian.',
                 'template_path' => null,
