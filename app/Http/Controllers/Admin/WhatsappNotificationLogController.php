@@ -63,25 +63,95 @@ class WhatsappNotificationLogController extends Controller
                 return redirect()->back()->with('error', 'Permohonan tidak ditemukan untuk log ini.');
             }
 
-            $permohonan = $log->permohonan;
+            $notification = $this->buildNotification($log);
 
-            $notification = match($log->notification_type) {
-                'created' => new \App\Notifications\PermohonanCreatedWhatsapp($permohonan),
-                'approved' => new \App\Notifications\PermohonanApprovedWhatsapp($permohonan),
-                'rejected' => new \App\Notifications\PermohonanRejectedWhatsapp($permohonan, $permohonan->rejected_reason ?? 'Tidak sesuai kriteria'),
-                'revisi' => new \App\Notifications\PermohonanRevisiWhatsapp($permohonan),
-                'sign_request' => new \App\Notifications\PermohonanSignRequestWhatsapp(
-                    $permohonan,
-                    $permohonan->currentApprovalStep?->approval_pejabat_name ?? 'Bapak/Ibu'
-                ),
-                default => throw new \Exception('Tipe notifikasi tidak dikenal: ' . $log->notification_type)
-            };
-
-            $permohonan->notify($notification);
+            $log->permohonan->notify($notification);
 
             return redirect()->back()->with('success', 'Notifikasi WhatsApp sedang dikirim ulang ke antrian.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Gagal retry notifikasi: ' . $e->getMessage());
         }
+    }
+
+    /**
+     * Redirect ke WhatsApp Web/aplikasi dengan nomor tujuan dan pesan lengkap
+     * sudah terisi, sehingga admin tinggal klik "Kirim" secara manual.
+     */
+    public function waWeb($logId)
+    {
+        $log = WhatsappNotificationLog::findOrFail($logId);
+
+        // Default pakai preview yang tersimpan; ganti dengan pesan lengkap bila bisa.
+        $message = $log->message_preview ?? '';
+
+        if ($log->permohonan) {
+            try {
+                $data = $this->buildNotification($log)->toWhatsApp($log->permohonan);
+                $message = is_array($data) ? ($data['message'] ?? $message) : $data;
+            } catch (\Throwable $e) {
+                // Abaikan — tetap gunakan message_preview sebagai fallback.
+            }
+        }
+
+        $phone = $this->normalizePhone($log->phone_to);
+
+        if ($phone === '') {
+            return redirect()->back()->with('error', 'Nomor tujuan tidak valid untuk dikirim manual.');
+        }
+
+        $url = 'https://wa.me/' . $phone . '?text=' . rawurlencode($message);
+
+        return redirect()->away($url);
+    }
+
+    /**
+     * Bangun instance notifikasi WhatsApp sesuai tipe log.
+     */
+    private function buildNotification(WhatsappNotificationLog $log)
+    {
+        $permohonan = $log->permohonan;
+
+        if (!$permohonan) {
+            throw new \Exception('Permohonan tidak ditemukan untuk log ini.');
+        }
+
+        return match($log->notification_type) {
+            'created' => new \App\Notifications\PermohonanCreatedWhatsapp($permohonan),
+            'approved' => new \App\Notifications\PermohonanApprovedWhatsapp($permohonan),
+            'rejected' => new \App\Notifications\PermohonanRejectedWhatsapp($permohonan, $permohonan->rejected_reason ?? 'Tidak sesuai kriteria'),
+            'revisi' => new \App\Notifications\PermohonanRevisiWhatsapp($permohonan),
+            'sign_request' => new \App\Notifications\PermohonanSignRequestWhatsapp(
+                $permohonan,
+                $permohonan->currentApprovalStep?->approval_pejabat_name ?? 'Bapak/Ibu'
+            ),
+            default => throw new \Exception('Tipe notifikasi tidak dikenal: ' . $log->notification_type)
+        };
+    }
+
+    /**
+     * Normalisasi nomor telepon Indonesia ke format internasional (62...)
+     * tanpa tanda plus, sesuai kebutuhan tautan wa.me.
+     */
+    private function normalizePhone(?string $phone): string
+    {
+        $digits = preg_replace('/\D+/', '', (string) $phone);
+
+        if ($digits === '') {
+            return '';
+        }
+
+        if (str_starts_with($digits, '0')) {
+            return '62' . substr($digits, 1);
+        }
+
+        if (str_starts_with($digits, '62')) {
+            return $digits;
+        }
+
+        if (str_starts_with($digits, '8')) {
+            return '62' . $digits;
+        }
+
+        return $digits;
     }
 }
