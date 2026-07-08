@@ -107,6 +107,10 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
                 Route::resource('struktur-organisasi', App\Http\Controllers\Admin\Portal\StrukturOrganisasiController::class);
                 Route::resource('slider', App\Http\Controllers\Admin\Portal\SliderController::class);
                 Route::resource('faq', App\Http\Controllers\Admin\Portal\FaqController::class);
+
+                // Popup Chat WhatsApp (halaman /layanan)
+                Route::get('layanan-popup', [App\Http\Controllers\Admin\Portal\LayananPopupController::class, 'edit'])->name('layanan-popup.edit');
+                Route::put('layanan-popup', [App\Http\Controllers\Admin\Portal\LayananPopupController::class, 'update'])->name('layanan-popup.update');
             });
 
         // Data Kelurahan — Admin Kelurahan juga bisa manage data milik kelurahan sendiri

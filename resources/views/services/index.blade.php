@@ -274,4 +274,35 @@
 </div>
 
 @include('components.success-modal')
+
+@if($popup->is_active && $popup->gambar)
+<div class="fixed inset-0 z-[110] overflow-y-auto" aria-labelledby="layanan-popup-title" role="dialog" aria-modal="true" x-data="{ popupOpen: true }" x-show="popupOpen">
+    <div class="flex items-center justify-center min-h-screen p-4 text-center">
+        <!-- Background overlay -->
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" x-show="popupOpen" @click="popupOpen = false" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+
+        <!-- Modal panel -->
+        <div class="relative inline-block align-middle bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all w-[90vw] sm:max-w-md sm:w-full max-h-[90vh] flex flex-col" x-show="popupOpen" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+            <button type="button" @click="popupOpen = false" class="absolute top-2 right-2 z-10 flex items-center justify-center w-9 h-9 rounded-full bg-white/80 hover:bg-white text-gray-600 hover:text-gray-900 shadow-sm" aria-label="Tutup">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <div class="overflow-y-auto">
+                <img src="{{ asset('storage/' . $popup->gambar) }}" alt="Informasi Layanan" class="w-full h-auto object-contain">
+            </div>
+
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 flex flex-col sm:flex-row-reverse gap-3">
+                <a href="https://wa.me/{{ $popup->normalized_wa_number }}?text={{ rawurlencode($popup->wa_message ?? '') }}" target="_blank" rel="noopener" class="w-full inline-flex justify-center items-center gap-2 rounded-md border border-transparent shadow-sm px-4 py-2.5 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:w-auto sm:text-sm">
+                    {{ $popup->button_text ?: 'Mulai Chat' }}
+                </a>
+                <button type="button" @click="popupOpen = false" class="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2.5 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:w-auto sm:text-sm">
+                    Tutup
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+@endif
 @endsection

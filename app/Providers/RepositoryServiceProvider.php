@@ -40,6 +40,9 @@ class RepositoryServiceProvider extends ServiceProvider
 
         \App\Repositories\Contracts\PortalFaqRepositoryInterface::class =>
         \App\Repositories\PortalFaqRepository::class,
+
+        \App\Repositories\Contracts\LayananPopupRepositoryInterface::class =>
+        \App\Repositories\LayananPopupRepository::class,
     ];
 
     /**
