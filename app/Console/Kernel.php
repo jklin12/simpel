@@ -12,7 +12,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        // Backup database — simpan hanya file terbaru per jenis (lihat config/backup.php).
+        $schedule->command('db:backup --type=daily')
+            ->dailyAt('02:00')
+            ->withoutOverlapping()
+            ->onOneServer();
+
+        $schedule->command('db:backup --type=weekly')
+            ->weeklyOn(0, '02:30') // Minggu 02:30
+            ->withoutOverlapping()
+            ->onOneServer();
     }
 
     /**

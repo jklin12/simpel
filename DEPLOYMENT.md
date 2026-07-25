@@ -275,7 +275,58 @@ sudo supervisorctl status
 
 ---
 
-## Step 13 — Verifikasi Akhir
+## Step 13 — Cron Scheduler (WAJIB untuk Backup Otomatis)
+
+Backup database berjalan lewat Laravel Scheduler. Tanpa entri cron ini, backup
+harian/mingguan **tidak akan pernah jalan**.
+
+```bash
+sudo crontab -e -u www-data
+```
+
+Tambahkan baris berikut:
+
+```cron
+* * * * * cd /var/www/simpel && php artisan schedule:run >> /dev/null 2>&1
+```
+
+Verifikasi jadwal terdaftar:
+
+```bash
+cd /var/www/simpel
+php artisan schedule:list
+```
+
+Harus muncul `db:backup --type=daily` (02:00) dan `db:backup --type=weekly` (Minggu 02:30).
+
+---
+
+## Step 14 — Verifikasi Backup Database
+
+Pastikan `mysqldump` tersedia di PATH (otomatis setelah install mysql-server).
+Uji backup manual:
+
+```bash
+cd /var/www/simpel
+php artisan db:backup --type=daily
+ls -lh storage/app/backups/db/daily
+```
+
+**Lokasi file backup:** `storage/app/backups/db/{daily,weekly}/` — di luar document
+root (tidak bisa diakses via web). Secara default hanya **1 file terbaru per jenis**
+yang disimpan (atur lewat `BACKUP_KEEP` di `.env`).
+
+### Restore dari backup
+
+```bash
+# Ganti nama file & kredensial sesuai .env
+gunzip < storage/app/backups/db/daily/db_simpel_2026-07-25_020000.sql.gz \
+  | mysql -u simpel -p db_simpel
+```
+
+---
+
+## Step 15 — Verifikasi Akhir
 
 ```bash
 sudo systemctl status php8.2-fpm    # PHP-FPM
@@ -283,6 +334,7 @@ sudo systemctl status nginx          # Nginx
 sudo systemctl status mysql          # MySQL
 redis-cli ping                       # Redis → PONG
 sudo supervisorctl status            # Queue worker
+php artisan schedule:list            # Jadwal backup terdaftar
 php artisan migrate:status           # Semua migrasi Ran
 ls -la /var/www/simpel/public/storage  # Storage symlink
 ```
@@ -300,7 +352,8 @@ Buka browser → `https://simpel.id` dan `https://admin.simpel.id` ✅
 - [ ] Queue worker berjalan (`supervisorctl status`)
 - [ ] Upload file berhasil tersimpan
 - [ ] Notifikasi WhatsApp terkirim
-- [ ] Backup database dilakukan sebelum deploy
+- [ ] Cron scheduler aktif (`schedule:run` di crontab, cek `php artisan schedule:list`)
+- [ ] Backup database berjalan (`php artisan db:backup` menghasilkan file di `storage/app/backups`)
 
 ---
 
