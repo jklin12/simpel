@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Layanan;
 use App\Http\Controllers\Controller;
 
 use App\Models\JenisSurat;
+use App\Services\LayananPopupService;
 use Illuminate\Http\Request;
 
 use App\Models\Kecamatan;
@@ -12,6 +13,13 @@ use App\Models\Kelurahan;
 
 class ServiceController extends Controller
 {
+    protected $layananPopupService;
+
+    public function __construct(LayananPopupService $layananPopupService)
+    {
+        $this->layananPopupService = $layananPopupService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -25,7 +33,9 @@ class ServiceController extends Controller
             ->where('is_active', true)
             ->get();
 
-        return view('services.index', compact('services', 'kelurahans'));
+        $popup = $this->layananPopupService->getSingleton();
+
+        return view('services.index', compact('services', 'kelurahans', 'popup'));
     }
 
     public function getKelurahans($kecamatanId)
