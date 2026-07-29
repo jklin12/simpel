@@ -25,8 +25,9 @@ class PermohonanSurat extends Model
 
     protected $casts = [
         'data_permohonan' => 'array',
-        'tanggal_surat' => 'date',
-        'completed_at' => 'datetime',
+        'ai_insight'      => 'array',
+        'tanggal_surat'   => 'date',
+        'completed_at'    => 'datetime',
     ];
 
     public function createdBy(): BelongsTo

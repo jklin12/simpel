@@ -27,6 +27,19 @@ class MockProvider implements AiProviderInterface
 
     public function vision(string $base64Image, string $mimeType, string $prompt, array $options = []): string
     {
+        // Detect if this is a KTP extraction prompt or a document verification prompt
+        if (str_contains($prompt, '"status": "passed"') || str_contains($prompt, '"field_checks"')) {
+            // Document verification prompt
+            return json_encode([
+                'status' => 'passed',
+                'detail' => 'Mock: Semua data konsisten dengan dokumen.',
+                'field_checks' => [
+                    ['field' => 'Nama', 'dokumen' => 'MOCK USER', 'input' => 'MOCK USER', 'cocok' => true],
+                    ['field' => 'NIK', 'dokumen' => '6372010000000001', 'input' => '6372010000000001', 'cocok' => true],
+                ],
+            ]);
+        }
+
         // Return mock KTP data as JSON string
         return json_encode([
             'nik' => '637201' . rand(1000000000, 9999999999),

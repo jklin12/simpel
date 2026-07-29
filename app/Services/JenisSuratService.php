@@ -63,6 +63,20 @@ class JenisSuratService
             // Handle is_active checkbox
             $data['is_active'] = $data['is_active'] ?? false;
 
+            // Transform ocr_rules
+            if (isset($data['ocr_rules']) && is_string($data['ocr_rules'])) {
+                $decoded = json_decode($data['ocr_rules'], true);
+                $data['ocr_rules'] = (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : null;
+            }
+            if (isset($data['ocr_rules']) && is_array($data['ocr_rules'])) {
+                if (isset($data['ocr_rules']['dokumen']) && is_array($data['ocr_rules']['dokumen'])) {
+                    $data['ocr_rules']['dokumen'] = collect($data['ocr_rules']['dokumen'])
+                        ->filter(fn($d) => !empty($d['jenis_dokumen']))
+                        ->values()
+                        ->toArray();
+                }
+            }
+
             // Transform required_fields
             if (isset($data['required_fields']) && is_array($data['required_fields'])) {
                 $data['required_fields'] = collect($data['required_fields'])
@@ -130,6 +144,20 @@ class JenisSuratService
 
             // Handle is_active checkbox
             $data['is_active'] = $data['is_active'] ?? false;
+
+            // Transform ocr_rules
+            if (isset($data['ocr_rules']) && is_string($data['ocr_rules'])) {
+                $decoded = json_decode($data['ocr_rules'], true);
+                $data['ocr_rules'] = (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : null;
+            }
+            if (isset($data['ocr_rules']) && is_array($data['ocr_rules'])) {
+                if (isset($data['ocr_rules']['dokumen']) && is_array($data['ocr_rules']['dokumen'])) {
+                    $data['ocr_rules']['dokumen'] = collect($data['ocr_rules']['dokumen'])
+                        ->filter(fn($d) => !empty($d['jenis_dokumen']))
+                        ->values()
+                        ->toArray();
+                }
+            }
 
             // Transform required_fields
             if (isset($data['required_fields']) && is_array($data['required_fields'])) {

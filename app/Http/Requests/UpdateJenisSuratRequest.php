@@ -60,6 +60,7 @@ class UpdateJenisSuratRequest extends FormRequest
             'attachment_guides'                     => 'nullable|array',
             'attachment_guides.*.keterangan'        => 'nullable|string|max:500',
             'attachment_guides.*.contoh'            => 'nullable|string|max:500',
+            'ocr_rules' => 'nullable|string',
             'template_path' => 'nullable|string|max:255',
             'is_active' => 'boolean',
         ];

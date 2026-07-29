@@ -14,6 +14,7 @@ use App\Models\ApprovalFlow;
 use App\Services\PermohonanSuratService;
 use App\Services\Ocr\KtpOcrService;
 use App\Services\Ai\Exceptions\AiProviderException;
+use App\Jobs\VerifyPermohonanDocuments;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -228,6 +229,11 @@ class PermohonanController extends Controller
                 Log::error('WA Admin Notification failed: ' . $e->getMessage());
             }
             DB::commit();
+
+            // Dispatch OCR verification job (queue) — tidak blocking user
+            if ($service->ocr_rules && !empty($service->ocr_rules['dokumen'])) {
+                VerifyPermohonanDocuments::dispatch($permohonan->id);
+            }
 
             return redirect()->route('layanan.index')->with('success_application', [
                 'token' => $trackToken,

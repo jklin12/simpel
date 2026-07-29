@@ -53,6 +53,10 @@ EOT;
         // Bersihkan markdown block jika ada (penting untuk Claude)
         $responseText = preg_replace('/```json\s*|\s*```/', '', trim($responseText));
 
+        if (empty($responseText)) {
+            throw new AiProviderException('Provider mengembalikan response kosong. Kemungkinan gambar diblokir safety filter.');
+        }
+
         $ktpData = json_decode($responseText, true);
 
         if (json_last_error() !== JSON_ERROR_NONE || ! is_array($ktpData)) {

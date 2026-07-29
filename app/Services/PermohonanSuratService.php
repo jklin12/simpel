@@ -623,6 +623,89 @@ class PermohonanSuratService
     }
 
     /**
+     * Auto-approve permohonan — menyetujui SEMUA step approval berurutan
+     * sampai final (generate nomor surat, kirim notifikasi).
+     * Dipanggil oleh job OCR verifikasi ketika semua dokumen lolos.
+     */
+    public function autoApprovePermohonan(int $id, array $aiInsight): \App\Models\PermohonanSurat
+    {
+        DB::beginTransaction();
+        try {
+            $permohonan = $this->repository->find($id);
+            $systemUser = \App\Models\User::role('super_admin')->first();
+
+            $ringkasan = $aiInsight['ringkasan'] ?? 'Semua dokumen terverifikasi.';
+            $catatanSistem = "Disetujui oleh AI — {$ringkasan}";
+
+            // Approve semua step approval
+            $approvals = $permohonan->approvals()->orderBy('step_order')->get();
+            foreach ($approvals as $approval) {
+                if ($approval->status !== 'pending') {
+                    continue;
+                }
+                $approval->update([
+                    'status'      => 'approved',
+                    'user_id'     => $systemUser?->id,
+                    'catatan'     => $catatanSistem,
+                    'approved_at' => now(),
+                ]);
+            }
+
+            // Generate nomor surat
+            $nomorSurat = $this->generateNomorSurat($permohonan);
+
+            $this->repository->updateStatus($id, 'approved', [
+                'current_step'  => null,
+                'nomor_surat'   => $nomorSurat,
+                'tanggal_surat' => now(),
+            ]);
+
+            DB::commit();
+
+            $permohonanFresh = $permohonan->fresh();
+
+            // Kirim WA notifikasi ke pemohon
+            try {
+                $permohonanFresh->notify(new \App\Notifications\PermohonanApprovedWhatsapp($permohonanFresh));
+            } catch (\Exception $e) {
+                Log::error('WA Auto-approve notification failed: ' . $e->getMessage());
+            }
+
+            // Kirim WA notifikasi ke penandatangan (Lurah/Camat)
+            try {
+                $jenisSurat = strtoupper($permohonanFresh->jenisSurat->kode ?? '');
+
+                if ($jenisSurat === 'SDNH') {
+                    $noHp = $permohonanFresh->kelurahan->kecamatan->camat_no_hp;
+                    $namaPejabat = 'Bapak/Ibu Camat';
+                } else {
+                    $noHp = $permohonanFresh->kelurahan->lurah_no_hp;
+                    $namaPejabat = 'Bapak/Ibu Lurah';
+                }
+
+                if (!empty($noHp)) {
+                    \Illuminate\Support\Facades\Notification::route('whatsapp', $noHp)
+                        ->notify(new \App\Notifications\PermohonanSignRequestWhatsapp($permohonanFresh, $namaPejabat));
+                }
+            } catch (\Exception $e) {
+                Log::error('WA Signer notification (auto-approve) failed: ' . $e->getMessage());
+            }
+
+            Log::info('Permohonan auto-approved via OCR', [
+                'permohonan_id' => $id,
+                'nomor_surat'   => $nomorSurat,
+                'ai_ringkasan'  => $ringkasan,
+            ]);
+
+            return $permohonanFresh;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Gagal auto-approve permohonan: ' . $e->getMessage());
+            throw new \Exception('Gagal auto-approve permohonan: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Delete permohonan if status is pending.
      */
     public function deletePermohonan($id)

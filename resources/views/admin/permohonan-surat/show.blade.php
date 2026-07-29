@@ -612,6 +612,99 @@
             </div>
         </div>
 
+        <!-- AI Document Verification -->
+        @if($permohonanSurat->ocr_status !== 'not_configured')
+        <div class="bg-white rounded-[24px] shadow-sm p-8 border border-[#f3f4f6] @if($permohonanSurat->ocr_status === 'verified') ring-2 ring-green-200 @elseif($permohonanSurat->ocr_status === 'needs_review') ring-2 ring-amber-200 @endif">
+            <h3 class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-6 block text-center">AI Document Verification</h3>
+
+            @php $insight = $permohonanSurat->ai_insight; @endphp
+
+            @if($permohonanSurat->ocr_status === 'pending')
+            <div class="text-center py-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-100 text-blue-600 mb-4">
+                    <svg class="w-7 h-7 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                </div>
+                <p class="text-sm font-bold text-blue-700">Verifikasi AI Sedang Diproses</p>
+                <p class="text-xs text-[#757682] mt-1">Dokumen sedang diperiksa oleh AI. Halaman ini akan otomatis terisi.</p>
+            </div>
+            @elseif($permohonanSurat->ocr_status === 'verified' && $insight)
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-green-100 text-green-600 mb-4">
+                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <p class="text-sm font-extrabold text-green-700">Lolos Verifikasi AI</p>
+                <p class="text-xs text-[#757682] mt-1">Semua dokumen sesuai dengan data inputan.</p>
+            </div>
+            <div class="space-y-2">
+                @if(isset($insight['total_dokumen_diperiksa']))
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-[10px] font-bold text-[#757682] uppercase">Dokumen Diperiksa</span>
+                    <span class="text-[11px] font-bold text-[#191c1e]">{{ $insight['total_dokumen_diperiksa'] }}</span>
+                </div>
+                @endif
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-[10px] font-bold text-[#757682] uppercase">Hasil</span>
+                    <span class="text-[11px] font-bold text-green-700">{{ $insight['total_passed'] ?? 0 }} Cocok</span>
+                </div>
+            </div>
+            @if(isset($insight['ringkasan']))
+            <div class="mt-4 bg-green-50 border border-green-100 rounded-2xl p-4">
+                <p class="text-[11px] text-green-800 leading-relaxed">{{ $insight['ringkasan'] }}</p>
+            </div>
+            @endif
+
+            @elseif($permohonanSurat->ocr_status === 'needs_review' && $insight)
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 mb-4">
+                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                </div>
+                <p class="text-sm font-extrabold text-amber-700">Perlu Review Manual</p>
+                <p class="text-xs text-[#757682] mt-1">AI menemukan ketidaksesuaian pada dokumen.</p>
+            </div>
+            <div class="space-y-2 mb-4">
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-[10px] font-bold text-[#757682] uppercase">Dokumen Diperiksa</span>
+                    <span class="text-[11px] font-bold text-[#191c1e]">{{ $insight['total_dokumen_diperiksa'] ?? '-' }}</span>
+                </div>
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-[10px] font-bold text-[#757682] uppercase">Cocok</span>
+                    <span class="text-[11px] font-bold text-green-700">{{ $insight['total_passed'] ?? 0 }}</span>
+                </div>
+                <div class="flex items-center justify-between px-1">
+                    <span class="text-[10px] font-bold text-[#757682] uppercase">Tidak Cocok</span>
+                    <span class="text-[11px] font-bold text-red-600">{{ $insight['total_failed'] ?? 0 }}</span>
+                </div>
+            </div>
+
+            @if(isset($insight['detail_ketidakcocokan']) && count($insight['detail_ketidakcocokan']) > 0)
+            <div class="space-y-2">
+                <label class="text-[9px] font-extrabold uppercase text-red-600 mb-1 block">Detail Ketidaksesuaian</label>
+                @foreach($insight['detail_ketidakcocokan'] as $detail)
+                <div class="bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+                    <p class="text-[11px] text-red-800 leading-relaxed">{{ $detail }}</p>
+                </div>
+                @endforeach
+            </div>
+            @endif
+
+            @if(isset($insight['ringkasan']))
+            <div class="mt-4 bg-amber-50 border border-amber-100 rounded-2xl p-4">
+                <p class="text-[11px] text-amber-800 leading-relaxed">{{ $insight['ringkasan'] }}</p>
+            </div>
+            @endif
+
+            @elseif($permohonanSurat->ocr_status === 'needs_review' && !$insight)
+            <div class="text-center py-6">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-100 text-amber-600 mb-4">
+                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+                </div>
+                <p class="text-sm font-bold text-amber-700">Terjadi Error Verifikasi</p>
+                <p class="text-xs text-[#757682] mt-1">Proses verifikasi AI gagal. Silakan periksa manual.</p>
+            </div>
+            @endif
+        </div>
+        @endif
+
         <!-- Approval Timeline -->
         <div class="bg-white rounded-[24px] shadow-sm p-8 border border-[#f3f4f6]">
             <h3 class="text-lg font-bold text-[#191c1e] mb-8 tracking-tight flex items-center gap-2">

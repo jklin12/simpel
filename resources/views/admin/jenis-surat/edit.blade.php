@@ -141,6 +141,38 @@
                 <p class="text-xs text-gray-400 mt-2">Nama field harus sesuai dengan field attachment yang sudah didefinisikan, contoh: <code>surat_pengantar_rtrw</code></p>
             </div>
 
+            {{-- OCR Rules Configuration --}}
+            <div class="pt-4 border-t border-gray-100">
+                <div class="mb-3">
+                    <h3 class="text-sm font-semibold text-gray-800">Aturan Verifikasi OCR</h3>
+                    <p class="text-xs text-gray-500 mt-0.5">Konfigurasi AI untuk verifikasi otomatis dokumen pendukung. Format JSON. <a href="#" onclick="event.preventDefault(); document.getElementById('ocr-example').classList.toggle('hidden')" class="text-blue-600 underline">Lihat contoh</a></p>
+                </div>
+                <pre id="ocr-example" class="hidden text-xs bg-gray-50 border border-gray-200 rounded-lg p-3 mb-3 overflow-x-auto"><code>{
+    "instruksi_global": "Cross-check semua data pribadi di seluruh dokumen.",
+    "dokumen": [
+        {
+            "jenis_dokumen": "ktp_kk_bersangkutan",
+            "label": "KTP & KK yang Bersangkutan",
+            "wajib": true,
+            "instruksi": "Bandingkan data pemohon dengan data di KTP dan KK."
+        },
+        {
+            "jenis_dokumen": "surat_pengantar_rtrw",
+            "label": "Surat Pengantar RT/RW",
+            "wajib": true,
+            "instruksi": "Periksa apakah nama dan alamat pemohon di surat pengantar sesuai."
+        }
+    ]
+}</code></pre>
+                <textarea name="ocr_rules" id="ocr_rules" rows="8" class="w-full rounded-lg border-gray-300 font-mono text-sm focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder='Isi dengan JSON konfigurasi OCR atau kosongkan jika tidak menggunakan verifikasi AI.'>{{ old('ocr_rules', $jenisSurat->ocr_rules ? json_encode($jenisSurat->ocr_rules, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : '') }}</textarea>
+                @error('ocr_rules')
+                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                @enderror
+                <p class="text-xs text-gray-400 mt-2">
+                    <code>jenis_dokumen</code> harus sesuai dengan nama field jenis dokumen di <code>PermohonanDokumen::JENIS_DOKUMEN</code>.
+                </p>
+            </div>
+
             <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
                 <a href="{{ route('admin.jenis-surat.index') }}" class="px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition">Batal</a>
                 <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition shadow-sm">Simpan Perubahan</button>

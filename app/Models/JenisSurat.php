@@ -15,6 +15,7 @@ class JenisSurat extends Model
     protected $casts = [
         'required_fields'    => 'array',
         'attachment_guides'  => 'array',
+        'ocr_rules'          => 'array',
         'is_active'          => 'boolean',
     ];
 

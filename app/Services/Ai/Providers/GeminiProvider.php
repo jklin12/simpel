@@ -93,6 +93,12 @@ class GeminiProvider implements AiProviderInterface
                     ],
                 ],
             ],
+            'safetySettings' => [
+                ['category' => 'HARM_CATEGORY_HARASSMENT', 'threshold' => 'BLOCK_ONLY_HIGH'],
+                ['category' => 'HARM_CATEGORY_HATE_SPEECH', 'threshold' => 'BLOCK_ONLY_HIGH'],
+                ['category' => 'HARM_CATEGORY_SEXUALLY_EXPLICIT', 'threshold' => 'BLOCK_ONLY_HIGH'],
+                ['category' => 'HARM_CATEGORY_DANGEROUS_CONTENT', 'threshold' => 'BLOCK_ONLY_HIGH'],
+            ],
             'generationConfig' => [
                 'maxOutputTokens'  => $maxTokens,
                 'responseMimeType' => 'application/json',
@@ -113,7 +119,15 @@ class GeminiProvider implements AiProviderInterface
                 throw new AiProviderException($errorMsg);
             }
 
-            return $response->json('candidates.0.content.parts.0.text') ?? '';
+            $text = $response->json('candidates.0.content.parts.0.text') ?? '';
+            if ($text === '') {
+                $finishReason = $response->json('candidates.0.finishReason') ?? 'unknown';
+                \Illuminate\Support\Facades\Log::warning('Gemini vision response empty', [
+                    'finishReason' => $finishReason,
+                    'prompt'       => substr($prompt, 0, 100),
+                ]);
+            }
+            return $text;
         } catch (\Exception $e) {
             if ($e instanceof AiProviderException) {
                 throw $e;
