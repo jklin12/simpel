@@ -31,10 +31,6 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    'claude' => [
-        'api_key' => env('CLAUDE_API_KEY'),
-    ],
-
     'whatsapp' => [
         'base_url' => env('WHATSAPP_BASE_URL', 'http://127.0.0.1:5003'),
         'username' => env('WHATSAPP_USERNAME', ''),
