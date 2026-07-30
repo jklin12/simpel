@@ -25,6 +25,16 @@ class DocumentOcrService
      */
     public function verify(PermohonanSurat $permohonan): array
     {
+        // Check if OCR is globally enabled
+        if (!config('ai.ocr_enabled')) {
+            return [
+                'status' => 'not_configured',
+                'passed' => true,
+                'ai_insight' => null,
+                'details' => [],
+            ];
+        }
+
         $jenisSurat = $permohonan->jenisSurat;
         $ocrRules = $jenisSurat->ocr_rules ?? null;
 
