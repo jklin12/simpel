@@ -85,6 +85,7 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
             Route::post('permohonan-surat/{permohonanSurat}/upload-signed', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'uploadSignedLetter'])->name('permohonan-surat.upload-signed');
             Route::post('permohonan-surat/{permohonanSurat}/reset-status', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'resetStatus'])->name('permohonan-surat.reset-status');
             Route::post('permohonan-surat/{permohonanSurat}/retry-whatsapp', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'retryWhatsapp'])->name('permohonan-surat.retry-whatsapp');
+            Route::post('permohonan-surat/{permohonanSurat}/retry-ocr', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'retryOcrVerification'])->name('permohonan-surat.retry-ocr');
 
             // Kirim manual WhatsApp (buka wa.me dengan nomor & pesan terisi) — dapat diakses semua admin yang bisa melihat detail
             Route::get('whatsapp-logs/{log}/wa-web', [App\Http\Controllers\Admin\WhatsappNotificationLogController::class, 'waWeb'])->name('whatsapp-logs.wa-web');

@@ -702,6 +702,44 @@
                 <p class="text-xs text-[#757682] mt-1">Proses verifikasi AI gagal. Silakan periksa manual.</p>
             </div>
             @endif
+
+            @if(auth()->user()->hasRole('super_admin'))
+            <div class="mt-6 flex justify-center pt-6 border-t border-[#edeef0]">
+                <form id="retryOcrForm-{{ $permohonanSurat->id }}" action="{{ route('admin.permohonan-surat.retry-ocr', $permohonanSurat) }}" method="POST" class="inline">
+                    @csrf
+                    <button type="button" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-semibold flex items-center gap-2"
+                            onclick="confirmRetryOcr(event, {{ $permohonanSurat->id }})">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Jalankan Ulang Verifikasi OCR
+                    </button>
+                </form>
+            </div>
+            @endif
+
+            <script>
+            function confirmRetryOcr(event, permohonanId) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'Jalankan Ulang Verifikasi OCR?',
+                    html: 'Semua dokumen akan diperiksa ulang dari awal oleh AI.<br><strong>Status akan direset ke "Diproses" dan hasil verifikasi sebelumnya akan dihapus.</strong><br><br><em>Proses ini mungkin memakan waktu beberapa menit.</em>',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#2563eb',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Ya, Jalankan Ulang',
+                    cancelButtonText: 'Batal',
+                    didOpen: (modal) => {
+                        modal.classList.add('!rounded-2xl');
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('retryOcrForm-' + permohonanId).submit();
+                    }
+                });
+            }
+            </script>
         </div>
         @endif
 

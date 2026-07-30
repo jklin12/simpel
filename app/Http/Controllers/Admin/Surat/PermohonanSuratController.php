@@ -492,4 +492,37 @@ class PermohonanSuratController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    /**
+     * Re-run full OCR verification process from scratch.
+     * Only available to Super Admin, and only for permohonan with OCR rules configured.
+     */
+    public function retryOcrVerification($id)
+    {
+        if (!Auth::user()->hasRole('super_admin')) {
+            return redirect()->back()->with('error', 'Hanya Super Admin yang dapat menjalankan ulang verifikasi OCR.');
+        }
+
+        try {
+            $permohonan = $this->service->getPermohonanById($id);
+
+            // Check if jenis_surat has OCR rules configured
+            if (!$permohonan->jenisSurat->ocr_rules || count($permohonan->jenisSurat->ocr_rules) === 0) {
+                return redirect()->back()->with('error', 'Jenis surat ini tidak memiliki aturan verifikasi OCR yang dikonfigurasi.');
+            }
+
+            $permohonan->update([
+                'ocr_status' => 'pending',
+                'ai_insight' => null,
+            ]);
+
+            \App\Jobs\VerifyPermohonanDocuments::dispatch($permohonan->id);
+
+            return redirect()
+                ->route('admin.permohonan-surat.show', $id)
+                ->with('success', 'Proses verifikasi OCR dimulai ulang. Harap tunggu beberapa menit...');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal menjalankan ulang verifikasi OCR: ' . $e->getMessage());
+        }
+    }
 }

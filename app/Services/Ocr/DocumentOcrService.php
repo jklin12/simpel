@@ -104,45 +104,81 @@ class DocumentOcrService
             $formContext = $this->formatFormData($formData);
 
             $prompt = <<<EOT
-Kamu adalah sistem verifikasi dokumen administrasi kependudukan Indonesia.
+TASK: Verifikasi dokumen administrasi Indonesia
 
-DOKUMEN YANG DIPERIKSA: {$label}
+DOKUMEN: {$label}
 {$instruksi}
 
-DATA PEMOHON (dari form input):
-{$formContext}
+DATA FORM: {$formContext}
 
-Analisis dokumen ini dan bandingkan dengan data pemohon di atas. Kembalikan HANYA JSON valid (tanpa markdown, tanpa komentar):
+RESPONS HARUS BERUPA JSON VALID YANG SEMPURNA. JANGAN TAMBAH KOMENTAR, MARKDOWN, ATAU TEKS LAIN.
 
-{
-    "status": "passed" atau "failed",
-    "detail": "Penjelasan singkat hasil verifikasi dokumen ini. Jika failed, sebutkan field apa yang tidak cocok.",
-    "field_checks": [
-        {"field": "Nama", "dokumen": "BUDI SANTOSO", "input": "BUDI SANTOSO", "cocok": true},
-        ...
-    ]
-}
+Struktur JSON (COPY PERSIS, GANTI NILAI):
+{"status":"passed","detail":"Keterangan verifikasi max 150 karakter.","field_checks":[]}
 
-Aturan:
-- status = "passed" jika SEMUA data konsisten
-- status = "failed" jika ada ketidaksesuaian
-- Jika dokumen adalah KTP saksi, cukup pastikan ada informasi 2 orang berbeda
-- field_checks: array per-field yang diperiksa
+PEDOMAN:
+1. status = "passed" jika semua data cocok, atau "failed" jika ada perbedaan
+2. detail = penjelasan singkat perbedaan (jika ada)
+3. field_checks = kosong array [] saja
+
+MULAI RESPONS DENGAN { DAN AKHIRI DENGAN }
 EOT;
 
             $driver = $this->aiManager->visionDriver();
             $responseText = $driver->vision($imageData['base64'], $imageData['mime'], $prompt);
 
-            $responseText = preg_replace('/```json\s*|\s*```/', '', trim($responseText));
+            // Clean response: remove markdown, trim, extract JSON
+            $responseText = trim($responseText);
+            $responseText = preg_replace('/```json\s*|\s*```|```\s*/', '', $responseText);
+            $responseText = trim($responseText);
+
+            // Try to extract JSON if response contains extra text
+            if (strpos($responseText, '{') !== false) {
+                $jsonStart = strpos($responseText, '{');
+                $jsonEnd = strrpos($responseText, '}');
+                if ($jsonEnd !== false && $jsonEnd > $jsonStart) {
+                    $responseText = substr($responseText, $jsonStart, $jsonEnd - $jsonStart + 1);
+                }
+            }
+
+            // Remove control characters and fix encoding issues
+            $responseText = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', ' ', $responseText);
+            $responseText = preg_replace('/\s+/', ' ', $responseText); // collapse multiple spaces
+
             $parsed = json_decode($responseText, true);
 
             if (json_last_error() !== JSON_ERROR_NONE || !is_array($parsed)) {
-                Log::warning('OCR verify: gagal parse response AI', ['dokumen' => $label, 'raw' => $responseText]);
-                return [
-                    'dokumen' => $label,
-                    'status' => 'failed',
-                    'detail' => 'Gagal memproses hasil analisis AI.',
-                ];
+                // Try more aggressive cleaning
+                $responseText = preg_replace('/\x00|[\x00-\x1F\x7F-\xFF]/', '', $responseText);
+                $parsed = json_decode($responseText, true);
+
+                if (json_last_error() !== JSON_ERROR_NONE || !is_array($parsed)) {
+                    // Fallback: extract status from incomplete JSON if possible
+                    if (preg_match('/"status"\s*:\s*"(passed|failed)"/', $responseText, $matches)) {
+                        Log::info('OCR verify: partial JSON fallback', [
+                            'dokumen' => $label,
+                            'status' => $matches[1],
+                        ]);
+                        return [
+                            'dokumen' => $label,
+                            'status' => $matches[1],
+                            'detail' => 'Respons AI incomplete - gunakan status dari fallback.',
+                            'field_checks' => [],
+                        ];
+                    }
+
+                    Log::warning('OCR verify: gagal parse response AI', [
+                        'dokumen' => $label,
+                        'raw_text' => substr($responseText, 0, 300),
+                        'json_error' => json_last_error_msg(),
+                        'length' => strlen($responseText),
+                    ]);
+                    return [
+                        'dokumen' => $label,
+                        'status' => 'failed',
+                        'detail' => 'Gagal memproses hasil analisis AI.',
+                    ];
+                }
             }
 
             $verdict = $parsed['status'] ?? 'failed';
@@ -176,33 +212,61 @@ EOT;
             $formContext = $this->formatFormData($formData);
 
             $prompt = <<<EOT
-Kamu adalah sistem verifikasi silang dokumen kependudukan.
+TASK: Cross-check konsistensi dokumen kependudukan
 
-DATA PEMOHON:
-{$formContext}
+DATA FORM: {$formContext}
 
-INSTRUKSI:
-{$globalInstruction}
+INSTRUKSI: {$globalInstruction}
 
-Analisis dan berikan penilaian konsistensi antar dokumen. Kembalikan HANYA JSON:
+RESPONS HANYA JSON VALID. JANGAN TAMBAH TEKS LAIN.
 
-{
-    "status": "passed" atau "failed",
-    "detail": "Penjelasan apakah semua data konsisten di seluruh dokumen atau ada yang bertentangan.",
-    "field_checks": [
-        {"field": "Nama", "dokumen": "semua", "input": "BUDI SANTOSO", "cocok": true}
-    ]
-}
+JSON (COPY PERSIS, GANTI NILAI):
+{"status":"passed","detail":"Deskripsi konsistensi max 150 karakter.","field_checks":[]}
+
+PEDOMAN:
+1. status = "passed" jika semua konsisten, "failed" jika kontradiksi
+2. detail = ringkasan singkat
+3. field_checks = array kosong []
+
+MULAI DENGAN { AKHIRI DENGAN }
 EOT;
 
             $driver = $this->aiManager->driver();
             $responseText = $driver->chat($prompt);
 
-            $responseText = preg_replace('/```json\s*|\s*```/', '', trim($responseText));
+            // Clean response: remove markdown, trim, extract JSON
+            $responseText = trim($responseText);
+            $responseText = preg_replace('/```json\s*|\s*```|```\s*/', '', $responseText);
+            $responseText = trim($responseText);
+
+            // Try to extract JSON if response contains extra text
+            if (strpos($responseText, '{') !== false) {
+                $jsonStart = strpos($responseText, '{');
+                $jsonEnd = strrpos($responseText, '}');
+                if ($jsonEnd !== false && $jsonEnd > $jsonStart) {
+                    $responseText = substr($responseText, $jsonStart, $jsonEnd - $jsonStart + 1);
+                }
+            }
+
+            // Remove control characters and fix encoding issues
+            $responseText = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', ' ', $responseText);
+            $responseText = preg_replace('/\s+/', ' ', $responseText); // collapse multiple spaces
+
             $parsed = json_decode($responseText, true);
 
             if (json_last_error() !== JSON_ERROR_NONE || !is_array($parsed)) {
-                return null;
+                // Try more aggressive cleaning
+                $responseText = preg_replace('/\x00|[\x00-\x1F\x7F-\xFF]/', '', $responseText);
+                $parsed = json_decode($responseText, true);
+
+                if (json_last_error() !== JSON_ERROR_NONE || !is_array($parsed)) {
+                    Log::warning('Cross-check: gagal parse response AI', [
+                        'raw_text' => substr($responseText, 0, 300),
+                        'json_error' => json_last_error_msg(),
+                        'length' => strlen($responseText),
+                    ]);
+                    return null;
+                }
             }
 
             return [
@@ -234,13 +298,14 @@ EOT;
             ];
         }
 
-        // PDF — konversi halaman pertama ke PNG via Imagick
+        // PDF — skip jika Imagick/GhostScript not available
         if ($mime === 'application/pdf') {
+            if (!extension_loaded('imagick')) {
+                Log::warning('PDF skip: Imagick not loaded: ' . $dokumen->original_name);
+                return null;
+            }
+
             try {
-                if (!class_exists('\Imagick')) {
-                    Log::warning('Imagick tidak tersedia, skip PDF: ' . $dokumen->original_name);
-                    return null;
-                }
                 $imagick = new \Imagick($fullPath . '[0]');
                 $imagick->setImageFormat('png');
                 $blob = $imagick->getImageBlob();
