@@ -265,12 +265,9 @@ class SetupOcrRulesSeeder extends Seeder
             $jenisSurat = JenisSurat::where('kode', $kode)->first();
 
             if ($jenisSurat) {
-                if (!$jenisSurat->ocr_rules || empty($jenisSurat->ocr_rules)) {
-                    $jenisSurat->update(['ocr_rules' => $rules]);
-                    echo "✅ OCR Rules added to {$kode}\n";
-                } else {
-                    echo "⏭️  {$kode} already has OCR Rules, skipping...\n";
-                }
+                // Always update to apply latest bug fixes and improvements
+                $jenisSurat->update(['ocr_rules' => $rules]);
+                echo "✅ OCR Rules updated for {$kode}\n";
             } else {
                 echo "❌ {$kode} not found in database\n";
             }
