@@ -63,9 +63,13 @@ class VerifyPermohonanDocuments implements ShouldQueue, ShouldBeUnique
                     'ai_insight' => $result['ai_insight'],
                 ]);
 
-                $permohonanService->autoApprovePermohonan($this->permohonanId, $result['ai_insight']);
-
-                Log::info("VerifyPermohonanDocuments: Permohonan {$this->permohonanId} lolos OCR → auto-approved.");
+                // Auto-approve hanya jika enabled di config
+                if (config('ai.ocr_auto_approve')) {
+                    $permohonanService->autoApprovePermohonan($this->permohonanId, $result['ai_insight']);
+                    Log::info("VerifyPermohonanDocuments: Permohonan {$this->permohonanId} lolos OCR → auto-approved.");
+                } else {
+                    Log::info("VerifyPermohonanDocuments: Permohonan {$this->permohonanId} lolos OCR → verified (auto-approve disabled).");
+                }
             } else {
                 $permohonan->update([
                     'ocr_status' => 'needs_review',

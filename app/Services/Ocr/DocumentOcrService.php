@@ -382,8 +382,8 @@ EOT;
         }
 
         $ringkasan = $allPassed
-            ? "✅ Verifikasi AI: Semua {$passedCount} dokumen terverifikasi. Data konsisten."
-            : "⚠️ Verifikasi AI: {$passedCount} dokumen OK, {$failedCount} dokumen bermasalah.";
+            ? "Dokumen lengkap dan data cocok — siap untuk diproses. Semua {$passedCount} file sudah kami periksa.\n\nVerifikasi SISTEM"
+            : "Ada masalah pada {$failedCount} dokumen ({$passedCount} OK). Mohon periksa ulang dokumen yang bermasalah.\n\nVerifikasi SISTEM";
 
         return [
             'verdict' => $allPassed ? 'passed' : 'failed',

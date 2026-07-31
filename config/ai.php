@@ -15,6 +15,7 @@ return [
     'ocr_provider' => env('OCR_PROVIDER'),   // Kosong = ikut 'provider'
     'timeout'      => (int) env('AI_TIMEOUT', 30),
     'ocr_enabled'  => env('OCR_ENABLED', true) === 'true' || env('OCR_ENABLED') === true,
+    'ocr_auto_approve' => env('OCR_AUTO_APPROVE', false) === 'true' || env('OCR_AUTO_APPROVE') === true,
 
     'providers' => [
         'claude' => [
