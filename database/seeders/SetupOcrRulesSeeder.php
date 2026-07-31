@@ -205,8 +205,45 @@ class SetupOcrRulesSeeder extends Seeder
                 'instruksi_global' => 'Verifikasi status belum menikah dari pernikahan sebelumnya.',
             ],
             'SKG' => [
-                'dokumen' => [],
-                'instruksi_global' => 'Tidak ada dokumen upload untuk SKG.',
+                'dokumen' => [
+                    [
+                        'jenis_dokumen' => 'skg_surat_pengantar_rtrw',
+                        'label' => 'Surat Pengantar RT/RW Setempat',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar RT/RW. Cari nama dan NIK pelapor, bandingkan dengan inputan: nama_lengkap, nik_bersangkutan. Periksa juga nomor surat dan RT/RW jika terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skg_blangko_pernyataan',
+                        'label' => 'Surat Pernyataan Bermeterai 10.000 (Diketahui RT/RW)',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pernyataan bermeterai. Verifikasi pernyataan pelapor mengenai keberadaan/status orang yang dinyatakan gaib, cocokkan nama pelapor dengan nama_lengkap.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skg_ktp_kk_bersangkutan',
+                        'label' => 'KTP & KK Pelapor',
+                        'wajib' => true,
+                        'instruksi' => 'Ekstrak data dari KTP dan KK PELAPOR (bukan orang yang gaib). Bandingkan HANYA dengan inputan: nama_lengkap, nik_bersangkutan, tempat_lahir, tanggal_lahir, jenis_kelamin, agama, alamat_lengkap, pekerjaan. Tanggal lahir harus valid (tidak di masa depan dari hari ini).',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skg_ktp_saksi',
+                        'label' => 'KTP 2 Orang Saksi',
+                        'wajib' => true,
+                        'instruksi' => 'Periksa apakah ada 2 KTP saksi yang BERBEDA SATU SAMA LAIN (nama dan NIK berbeda). JANGAN bandingkan dengan data pemohon. Fokus: verifikasi 2 identitas saksi BERBEDA dari satu sama lain.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skg_bukti_lunas_pbb',
+                        'label' => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca dokumen bukti lunas PBB tahun berjalan, pastikan dokumen ada dan terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skg_buku_nikah',
+                        'label' => 'Buku Nikah / Surat Keterangan Nikah (Nikah Siri)',
+                        'wajib' => true,
+                        'instruksi' => 'Baca buku nikah atau surat keterangan nikah siri. Cocokkan nama pelapor (nama_lengkap) dan, jika tertera, nama pasangan/orang gaib (gaib_nama).',
+                    ],
+                ],
+                'instruksi_global' => 'Cross-check data pelapor (nama_lengkap, nik_bersangkutan) konsisten di surat pengantar, blangko pernyataan, KTP/KK, dan buku nikah. Jika tersedia, cocokkan juga data orang gaib (gaib_nama, gaib_nik, gaib_tempat_lahir, gaib_tanggal_lahir) dengan buku nikah.',
             ],
             'SPN' => [
                 'dokumen' => [
@@ -232,32 +269,279 @@ class SetupOcrRulesSeeder extends Seeder
                 'instruksi_global' => 'Cross-check data calon pengantin di semua dokumen.',
             ],
             'SPKH' => [
-                'dokumen' => [],
-                'instruksi_global' => 'Dokumen disesuaikan dengan kasus kehilangan.',
+                'dokumen' => [
+                    [
+                        'jenis_dokumen' => 'spkh_surat_pengantar_rtrw',
+                        'label' => 'Surat Pengantar RT/RW Setempat',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar RT/RW. Cari nama dan NIK pemohon, bandingkan dengan inputan: nama_lengkap, nik_bersangkutan. Periksa juga nomor surat dan tanggal, cocokkan dengan no_surat_pengantar dan tanggal_surat_pengantar jika terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'spkh_ktp_kk_pemohon',
+                        'label' => 'KTP dan KK Pemohon',
+                        'wajib' => true,
+                        'instruksi' => 'Ekstrak data dari KTP dan KK. Bandingkan HANYA dengan inputan: nama_lengkap, nik_bersangkutan, tempat_lahir, tanggal_lahir, jenis_kelamin, agama, alamat_lengkap, status_perkawinan, pekerjaan. Tanggal lahir harus valid (tidak di masa depan dari hari ini).',
+                    ],
+                    [
+                        'jenis_dokumen' => 'spkh_surat_pernyataan',
+                        'label' => 'Surat Pernyataan Pemohon',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pernyataan pemohon terkait kehilangan. Cocokkan dengan inputan: barang_hilang, tanggal_kehilangan, lokasi_kehilangan jika tertera di surat.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'spkh_ktp_saksi',
+                        'label' => 'KTP 2 Orang Saksi',
+                        'wajib' => true,
+                        'instruksi' => 'Periksa apakah ada 2 KTP saksi yang BERBEDA SATU SAMA LAIN (nama dan NIK berbeda). JANGAN bandingkan dengan data pemohon. Fokus: verifikasi 2 identitas saksi BERBEDA dari satu sama lain.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'spkh_bukti_pbb',
+                        'label' => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca dokumen bukti lunas PBB tahun berjalan, pastikan dokumen ada dan terbaca.',
+                    ],
+                ],
+                'instruksi_global' => 'Cross-check konsistensi data pribadi pemohon (nama, NIK, alamat) di semua dokumen. Pastikan detail kehilangan (waktu, lokasi, barang hilang) konsisten antara surat pernyataan dan inputan form.',
             ],
             'SKB' => [
-                'dokumen' => [],
-                'instruksi_global' => 'Verifikasi alasan bepergian.',
+                'dokumen' => [
+                    [
+                        'jenis_dokumen' => 'skb_surat_pengantar_rtrw',
+                        'label' => 'Surat Pengantar RT/RW Setempat',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar RT/RW. Cari nama dan NIK pemohon, bandingkan dengan inputan: nama_lengkap, nik_bersangkutan. Periksa juga nomor surat dan tanggal, cocokkan dengan no_surat_pengantar dan tanggal_surat_pengantar jika terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skb_ktp_kk_pemohon',
+                        'label' => 'KTP dan KK Pemohon',
+                        'wajib' => true,
+                        'instruksi' => 'Ekstrak data dari KTP dan KK. Bandingkan HANYA dengan inputan: nama_lengkap, nik_bersangkutan, tempat_lahir, tanggal_lahir, jenis_kelamin, agama, alamat_lengkap, status_perkawinan, pekerjaan. Tanggal lahir harus valid (tidak di masa depan dari hari ini).',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skb_bukti_pbb',
+                        'label' => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca dokumen bukti lunas PBB tahun berjalan, pastikan dokumen ada dan terbaca.',
+                    ],
+                ],
+                'instruksi_global' => 'Cross-check konsistensi data pribadi pemohon (nama, NIK, alamat) di semua dokumen. Pastikan tujuan/keperluan dan tanggal berangkat pada inputan masuk akal (tidak di masa lalu).',
             ],
             'SKDKO' => [
-                'dokumen' => [],
-                'instruksi_global' => 'Verifikasi data domisili kantor/organisasi.',
+                'dokumen' => [
+                    [
+                        'jenis_dokumen' => 'skdko_surat_pengantar_rtrw',
+                        'label' => 'Surat Pengantar RT/RW Setempat',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar RT/RW. Cari nama dan NIK pemohon, bandingkan dengan inputan: nama_lengkap, nik_bersangkutan. Periksa juga nomor surat dan tanggal, cocokkan dengan no_surat_pengantar dan tanggal_surat_pengantar jika terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdko_ktp_kk_pemohon',
+                        'label' => 'KTP dan KK Pemohon',
+                        'wajib' => true,
+                        'instruksi' => 'Ekstrak data dari KTP dan KK. Bandingkan HANYA dengan inputan: nama_lengkap, nik_bersangkutan, tempat_lahir, tanggal_lahir. Tanggal lahir harus valid (tidak di masa depan dari hari ini).',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdko_sk_kepengurusan',
+                        'label' => 'Struktur Organisasi / SK Kepengurusan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca struktur organisasi/SK kepengurusan. Cocokkan nama kantor/organisasi dengan inputan nama_kantor.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdko_bukti_pbb',
+                        'label' => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca dokumen bukti lunas PBB tahun berjalan, pastikan dokumen ada dan terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdko_akta_pendirian',
+                        'label' => 'File Akta Pendirian',
+                        'wajib' => true,
+                        'instruksi' => 'Baca akta pendirian organisasi/kantor. Cocokkan nama organisasi/kantor dan alamat dengan inputan nama_kantor dan alamat_jalan.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdko_npwp',
+                        'label' => 'File NPWP',
+                        'wajib' => true,
+                        'instruksi' => 'Baca NPWP. Cocokkan nama yang terdaftar dengan inputan nama_kantor.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdko_surat_pernyataan_warga',
+                        'label' => 'Surat Pernyataan dari Lingkungan Sekitar (Minimal 20 Orang)',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pernyataan warga sekitar. Verifikasi bahwa surat menyatakan keberadaan kantor/organisasi di alamat yang cocok dengan inputan alamat_jalan.',
+                    ],
+                ],
+                'instruksi_global' => 'Cross-check nama_kantor dan alamat_jalan konsisten di semua dokumen legalitas (SK kepengurusan, akta pendirian, NPWP, surat pernyataan warga).',
             ],
             'SPRIK' => [
-                'dokumen' => [],
-                'instruksi_global' => 'Verifikasi data rekomendasi operasional untuk izin kursus.',
+                'dokumen' => [
+                    [
+                        'jenis_dokumen' => 'sprik_surat_pengantar_rtrw',
+                        'label' => 'Surat Pengantar RT/RW Setempat',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar RT/RW. Cari nama dan NIK pemohon, bandingkan dengan inputan: nama_lengkap, nik_bersangkutan. Periksa juga nomor surat dan tanggal, cocokkan dengan no_surat_pengantar dan tanggal_surat_pengantar jika terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'sprik_ktp_kk_pemohon',
+                        'label' => 'KTP dan KK Pemohon',
+                        'wajib' => true,
+                        'instruksi' => 'Ekstrak data dari KTP dan KK. Bandingkan HANYA dengan inputan: nama_lengkap, nik_bersangkutan, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat_lengkap. Tanggal lahir harus valid (tidak di masa depan dari hari ini).',
+                    ],
+                    [
+                        'jenis_dokumen' => 'sprik_ktp_penyelenggara',
+                        'label' => 'KTP Penyelenggara Kursus & Pelatihan/Pelatih/Pembimbing',
+                        'wajib' => true,
+                        'instruksi' => 'Ekstrak nama dan NIK penyelenggara/pelatih/pembimbing kursus. Boleh berbeda dari data pemohon — JANGAN bandingkan dengan nama_lengkap/nik_bersangkutan, cukup pastikan KTP terbaca dan identitasnya valid.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'sprik_bukti_pbb',
+                        'label' => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca dokumen bukti lunas PBB tahun berjalan, pastikan dokumen ada dan terbaca.',
+                    ],
+                ],
+                'instruksi_global' => 'Cross-check nama_lembaga dan alamat_tempat_kegiatan konsisten di semua dokumen. Pastikan data pemohon (nama, NIK) konsisten antara surat pengantar dan KTP/KK.',
             ],
             'SKDK' => [
-                'dokumen' => [],
-                'instruksi_global' => 'Verifikasi data domisili kepartaian.',
+                'dokumen' => [
+                    [
+                        'jenis_dokumen' => 'skdk_surat_pengantar_rtrw',
+                        'label' => 'Surat Pengantar RT/RW Setempat',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar RT/RW. Cari nama dan NIK pemohon, bandingkan dengan inputan: nama_lengkap, nik_bersangkutan. Periksa juga nomor surat dan tanggal, cocokkan dengan no_surat_pengantar dan tanggal_surat_pengantar jika terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdk_ktp_pemohon',
+                        'label' => 'KTP Pemohon',
+                        'wajib' => true,
+                        'instruksi' => 'Ekstrak data dari KTP. Bandingkan HANYA dengan inputan: nama_lengkap, nik_bersangkutan, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat_lengkap. Tanggal lahir harus valid (tidak di masa depan dari hari ini).',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdk_akta_kepengurusan',
+                        'label' => 'Akta Pendirian / Kepengurusan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca akta pendirian/kepengurusan. Cocokkan nama organisasi/partai dengan inputan nama_kantor.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdk_akta_parpol',
+                        'label' => 'Akta Pendirian Partai Politik',
+                        'wajib' => true,
+                        'instruksi' => 'Baca akta pendirian partai politik. Cocokkan nama partai dengan inputan nama_kantor.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdk_imb_sewa',
+                        'label' => 'IMB / Perjanjian Sewa Bangunan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca IMB atau perjanjian sewa bangunan. Cocokkan alamat bangunan dengan inputan alamat_kantor.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdk_surat_pengantar_lurah',
+                        'label' => 'Surat Pengantar Domisili Kepartaian dari Kelurahan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar domisili kepartaian dari kelurahan. Cocokkan nama_kantor dan alamat_kantor dengan yang tertera.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'skdk_bukti_pbb',
+                        'label' => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca dokumen bukti lunas PBB tahun berjalan, pastikan dokumen ada dan terbaca.',
+                    ],
+                ],
+                'instruksi_global' => 'Cross-check nama_kantor dan alamat_kantor konsisten di semua dokumen legalitas (akta kepengurusan, akta parpol, IMB/sewa, surat pengantar lurah).',
             ],
             'ROIPK' => [
-                'dokumen' => [],
-                'instruksi_global' => 'Verifikasi rekomendasi operasional izin penyelenggaraan kursus.',
+                'dokumen' => [
+                    [
+                        'jenis_dokumen' => 'roipk_surat_pengantar_rtrw',
+                        'label' => 'Surat Pengantar RT/RW Setempat',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar RT/RW. Cari nama dan NIK pemohon, bandingkan dengan inputan: nama_lengkap, nik_bersangkutan. Periksa juga nomor surat dan tanggal, cocokkan dengan no_surat_pengantar dan tanggal_surat_pengantar jika terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'roipk_ktp_kk_pemohon',
+                        'label' => 'KTP dan KK Pemohon',
+                        'wajib' => true,
+                        'instruksi' => 'Ekstrak data dari KTP dan KK. Bandingkan HANYA dengan inputan: nama_lengkap, nik_bersangkutan, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat_lengkap. Tanggal lahir harus valid (tidak di masa depan dari hari ini).',
+                    ],
+                    [
+                        'jenis_dokumen' => 'roipk_surat_permohonan',
+                        'label' => 'Surat Permohonan Izin Penyelenggaraan Kursus',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat permohonan izin penyelenggaraan kursus. Cocokkan nama lembaga dengan inputan nama_lembaga.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'roipk_struktur_organisasi',
+                        'label' => 'Struktur Organisasi',
+                        'wajib' => true,
+                        'instruksi' => 'Baca struktur organisasi lembaga kursus. Cocokkan nama lembaga dengan inputan nama_lembaga.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'roipk_ijazah_kompetensi',
+                        'label' => 'Ijazah Kompetensi Penyelenggara dan Tenaga Pengajar',
+                        'wajib' => true,
+                        'instruksi' => 'Baca ijazah kompetensi penyelenggara dan tenaga pengajar. Pastikan dokumen ada dan terbaca, tidak perlu dibandingkan dengan data pemohon.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'roipk_izin_tetangga',
+                        'label' => 'Izin Tetangga (Diketahui Ketua RT + Fotokopi KTP), khusus perumahan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat izin tetangga yang diketahui Ketua RT, jika berlaku (khusus lokasi perumahan). Pastikan ada persetujuan tetangga dan diketahui RT.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'roipk_daftar_fasilitas',
+                        'label' => 'Daftar Fasilitas Kelengkapan Belajar dan Warga Belajar',
+                        'wajib' => true,
+                        'instruksi' => 'Baca daftar fasilitas kelengkapan belajar dan daftar warga belajar. Pastikan dokumen ada dan terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'roipk_silabus',
+                        'label' => 'Daftar Silabus Pembelajaran',
+                        'wajib' => true,
+                        'instruksi' => 'Baca daftar silabus pembelajaran. Cocokkan materi yang diajarkan dengan inputan materi_lembaga.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'roipk_surat_pengantar_lurah',
+                        'label' => 'Surat Pengantar Rekomendasi Izin Penyelenggaraan Kursus dari Kelurahan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar rekomendasi dari kelurahan. Cocokkan nama_lembaga dan alamat_lembaga dengan yang tertera.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'roipk_bukti_pbb',
+                        'label' => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca dokumen bukti lunas PBB tahun berjalan, pastikan dokumen ada dan terbaca.',
+                    ],
+                ],
+                'instruksi_global' => 'Cross-check nama_lembaga dan alamat_lembaga konsisten di semua dokumen kelembagaan (surat permohonan, struktur organisasi, silabus, daftar fasilitas, surat pengantar lurah).',
             ],
             'SPKDK' => [
-                'dokumen' => [],
-                'instruksi_global' => 'Verifikasi surat pengantar dan keterangan domisili kepartaian.',
+                'dokumen' => [
+                    [
+                        'jenis_dokumen' => 'spkdk_surat_pengantar_rtrw',
+                        'label' => 'Surat Pengantar RT/RW Setempat',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar RT/RW. Cari nama dan NIK pemohon, bandingkan dengan inputan: nama_lengkap, nik_bersangkutan. Periksa juga nomor surat dan tanggal, cocokkan dengan no_surat_pengantar dan tanggal_surat_pengantar jika terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'spkdk_ktp_kk_pemohon',
+                        'label' => 'KTP dan KK Pemohon',
+                        'wajib' => true,
+                        'instruksi' => 'Ekstrak data dari KTP dan KK. Bandingkan HANYA dengan inputan: nama_lengkap, nik_bersangkutan, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat_lengkap. Tanggal lahir harus valid (tidak di masa depan dari hari ini).',
+                    ],
+                    [
+                        'jenis_dokumen' => 'spkdk_struktur_organisasi',
+                        'label' => 'Struktur Organisasi/SK Kepengurusan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca struktur organisasi/SK kepengurusan. Cocokkan nama kantor/organisasi dengan inputan nama_kantor.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'spkdk_bukti_pbb',
+                        'label' => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca dokumen bukti lunas PBB tahun berjalan, pastikan dokumen ada dan terbaca.',
+                    ],
+                ],
+                'instruksi_global' => 'Cross-check nama_kantor dan alamat_kantor konsisten di semua dokumen (struktur organisasi, surat pengantar).',
             ],
         ];
 
