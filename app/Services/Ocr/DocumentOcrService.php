@@ -112,9 +112,12 @@ class DocumentOcrService
             }
 
             $formContext = $this->formatFormData($formData);
+            $today = now()->format('Y-m-d');
 
             $prompt = <<<EOT
 TASK: Verifikasi dokumen administrasi Indonesia
+
+HARI INI: {$today}
 
 DOKUMEN: {$label}
 {$instruksi}
@@ -220,9 +223,12 @@ EOT;
 
         try {
             $formContext = $this->formatFormData($formData);
+            $today = now()->format('Y-m-d');
 
             $prompt = <<<EOT
 TASK: Cross-check konsistensi dokumen kependudukan
+
+HARI INI: {$today}
 
 DATA FORM: {$formContext}
 
