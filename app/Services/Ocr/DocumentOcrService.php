@@ -314,21 +314,30 @@ EOT;
             ];
         }
 
-        // PDF — skip jika Imagick/GhostScript not available
+        // PDF — gunakan gs langsung (bypass ImageMagick delegate policy issues)
         if ($mime === 'application/pdf') {
-            if (!extension_loaded('imagick')) {
-                Log::warning('PDF skip: Imagick not loaded: ' . $dokumen->original_name);
-                return null;
-            }
-
             try {
-                $imagick = new \Imagick($fullPath . '[0]');
-                $imagick->setImageFormat('png');
-                $blob = $imagick->getImageBlob();
-                $imagick->clear();
+                $pngPath = sys_get_temp_dir() . '/' . uniqid('ocr_pdf_') . '.png';
+                $escapedPath = escapeshellarg($fullPath);
+                $escapedOutput = escapeshellarg($pngPath);
+
+                $cmd = "gs -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=png16m -r150 -o {$escapedOutput} {$escapedPath}";
+                exec($cmd, $output, $returnCode);
+
+                if ($returnCode !== 0 || !file_exists($pngPath)) {
+                    Log::warning('GhostScript PDF conversion failed', [
+                        'file' => $dokumen->original_name,
+                        'return_code' => $returnCode,
+                        'gs_output' => implode(' ', $output),
+                    ]);
+                    return null;
+                }
+
+                $base64 = base64_encode(file_get_contents($pngPath));
+                @unlink($pngPath);
 
                 return [
-                    'base64' => base64_encode($blob),
+                    'base64' => $base64,
                     'mime' => 'image/png',
                 ];
             } catch (\Exception $e) {
