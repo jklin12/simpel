@@ -13,6 +13,47 @@ class SetupOcrRulesSeeder extends Seeder
     public function run(): void
     {
         $ocrRulesData = [
+            'SKTM' => [
+                'dokumen' => [
+                    [
+                        'jenis_dokumen' => 'surat_pengantar_rtrw',
+                        'label' => 'Surat Pengantar RT/RW',
+                        'wajib' => true,
+                        'instruksi' => 'Baca surat pengantar RT/RW. Cari nama pemohon dan NIK, bandingkan dengan inputan: nama_lengkap, nik_bersangkutan. Periksa juga nomor surat (no_surat_pengantar) dan RT/RW jika terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'blangko_pernyataan',
+                        'label' => 'Blangko Pernyataan Bermeterai 10.000',
+                        'wajib' => true,
+                        'instruksi' => 'Baca Blangko Pernyataan Bermeterai. Verifikasi data pemohon (nama, NIK, alamat) sesuai dengan inputan. Periksa tanggal surat pernyataan jika terbaca.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'ktp_kk_bersangkutan',
+                        'label' => 'KTP & KK yang Bersangkutan',
+                        'wajib' => true,
+                        'instruksi' => 'Ekstrak data dari foto KTP dan KK. Bandingkan dengan data inputan: nama_lengkap, nik_bersangkutan, tempat_lahir, tanggal_lahir, jenis_kelamin, agama, alamat_lengkap, pekerjaan. Tanggal lahir harus valid (tidak di masa depan dari hari ini). Laporkan jika ada perbedaan.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'ktp_saksi',
+                        'label' => 'KTP 2 Orang Saksi (RT yang sama)',
+                        'wajib' => true,
+                        'instruksi' => 'Periksa apakah ada 2 KTP saksi yang BERBEDA SATU SAMA LAIN (nama dan NIK berbeda). JANGAN bandingkan dengan data pemohon. Fokus: verifikasi 2 identitas saksi BERBEDA dari satu sama lain.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'surat_rekomendasi_sekolah',
+                        'label' => 'Surat Pengantar/Rekomendasi Sekolah/Kampus',
+                        'wajib' => true,
+                        'instruksi' => 'Periksa surat rekomendasi sekolah/kampus. Cari nama pemohon dan bandingkan dengan nama_lengkap. Jika keperluan_sktm terkait pendidikan, pastikan surat ini sesuai; jika bukan, catat saja relevansinya.',
+                    ],
+                    [
+                        'jenis_dokumen' => 'bukti_lunas_pbb',
+                        'label' => 'Bukti Tanda Lunas PBB-P2 Tahun Berjalan',
+                        'wajib' => true,
+                        'instruksi' => 'Baca dokumen bukti lunas PBB tahun berjalan, pastikan dokumen ada dan terbaca.',
+                    ],
+                ],
+                'instruksi_global' => 'Cross-check konsistensi data pribadi (nama, NIK, alamat) di semua dokumen yang bisa dibaca. Pastikan tidak ada kontradiksi antar dokumen.',
+            ],
             'SKTMR' => [
                 'dokumen' => [
                     [
