@@ -15,7 +15,8 @@ class StorePermohonanRequest extends FormRequest
         return true;
     }
 
-    /**
+    public function rules(): array
+    {
         $commonRules = [
             'jenis_surat_id' => 'required|exists:jenis_surats,id',
             'kelurahan_id' => 'required|exists:m_kelurahans,id',
@@ -61,8 +62,7 @@ class StorePermohonanRequest extends FormRequest
             case 'SKG': // Surat Keterangan Gaib
                 $specificRules = $this->getSkgRules();
                 break;
-            case 'SKU': // Surat Keterangan Usaha (Example)
-                // $specificRules = $this->getSkuRules();
+            case 'SKU': // Surat Keterangan Usaha
                 break;
             case 'SDNH': // Surat Dispensasi Nikah
                 $specificRules = $this->getSdnhRules();
@@ -89,16 +89,6 @@ class StorePermohonanRequest extends FormRequest
                 $specificRules = $this->getSpkdkRules();
                 break;
             default:
-                if ($jenisSurat->required_fields) {
-                    foreach ($jenisSurat->required_fields as $field) {
-                        $specificRules[$field['name']] = match ($field['type']) {
-                            'file'   => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120',
-                            'date'   => ($field['is_required'] ? 'required' : 'nullable') . '|date',
-                            'number' => ($field['is_required'] ? 'required' : 'nullable') . '|numeric',
-                            default  => ($field['is_required'] ? 'required' : 'nullable') . '|string|max:1000',
-                        };
-                    }
-                }
                 break;
         }
 
@@ -841,7 +831,8 @@ class StorePermohonanRequest extends FormRequest
             // Pelaksanaan
             'hari_pernikahan'    => 'required|string',
             'tanggal_pernikahan' => 'required|date',
-            'pukul_pernikahan'   => 'required|string',
+            'waktu_pernikahan'   => 'required|string',
+            'tempat_pernikahan'  => 'required|string|max:255',
             'alamat_pernikahan'  => 'required|string',
             'alasan_dispensasi'  => 'required|string',
 

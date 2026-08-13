@@ -7,22 +7,22 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Surat Pengantar</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Surat Pengantar <span class="text-red-500">*</span></label>
                         <input type="text" name="nomor_pengantar" value="{{ old('nomor_pengantar') }}" placeholder="Contoh: 044/RW.009/I/2026" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('nomor_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Surat Pengantar</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Surat Pengantar <span class="text-red-500">*</span></label>
                         <input type="date" name="tanggal_pengantar" value="{{ old('tanggal_pengantar') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('tanggal_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">RT</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">RT <span class="text-red-500">*</span></label>
                         <input type="text" name="rt" value="{{ old('rt') }}" placeholder="Contoh: 044" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('rt') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">RW</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">RW <span class="text-red-500">*</span></label>
                         <input type="text" name="rw" value="{{ old('rw') }}" placeholder="Contoh: 009" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('rw') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
@@ -51,18 +51,18 @@
 
                 <div class="grid grid-cols-1 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap (Almarhum/Almarhumah)</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap (Almarhum/Almarhumah) <span class="text-red-500">*</span></label>
                         <input type="text" x-model="nama" name="nama_jenazah" value="{{ old('nama_jenazah') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('nama_jenazah') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">NIK</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">NIK <span class="text-red-500">*</span></label>
                             <input type="text" x-model="nik" name="nik_jenazah" value="{{ old('nik_jenazah') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" maxlength="16" required>
                             @error('nik_jenazah') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin <span class="text-red-500">*</span></label>
                             <select x-ref="jenisKelaminSelect" name="jk_jenazah" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="">Pilih Jenis Kelamin</option>
                                 <option value="L" {{ old('jk_jenazah') == 'L' ? 'selected' : '' }}>Laki-laki</option>
@@ -73,24 +73,24 @@
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir <span class="text-red-500">*</span></label>
                             <input type="text" x-model="tempat_lahir" name="tempat_lahir_jenazah" value="{{ old('tempat_lahir_jenazah') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                             @error('tempat_lahir_jenazah') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir <span class="text-red-500">*</span></label>
                             <input type="date" x-model="tanggal_lahir" name="tanggal_lahir_jenazah" value="{{ old('tanggal_lahir_jenazah') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                             @error('tanggal_lahir_jenazah') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Terakhir</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Terakhir <span class="text-red-500">*</span></label>
                         <textarea x-model="alamat" name="alamat_jenazah" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('alamat_jenazah') }}</textarea>
                         @error('alamat_jenazah') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Agama</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Agama <span class="text-red-500">*</span></label>
                             <select x-ref="agamaSelect" name="agama_jenazah" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                                 <option value="Islam" {{ old('agama_jenazah') == 'Islam' ? 'selected' : '' }}>Islam</option>
                                 <option value="Kristen" {{ old('agama_jenazah') == 'Kristen' ? 'selected' : '' }}>Kristen</option>
@@ -102,7 +102,7 @@
                             @error('agama_jenazah') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan Terakhir</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan Terakhir <span class="text-red-500">*</span></label>
                             <select name="pekerjaan_jenazah" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4 select2-pekerjaan" required>
                                 <option value="">Pilih Pekerjaan</option>
                                 @foreach($pekerjaanList ?? [] as $pekerjaan)
@@ -123,7 +123,7 @@
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Hari Meninggal</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hari Meninggal <span class="text-red-500">*</span></label>
                         <select name="hari_meninggal" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                             <option value="Senin" {{ old('hari_meninggal') == 'Senin' ? 'selected' : '' }}>Senin</option>
                             <option value="Selasa" {{ old('hari_meninggal') == 'Selasa' ? 'selected' : '' }}>Selasa</option>
@@ -136,22 +136,22 @@
                         @error('hari_meninggal') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Meninggal</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Meninggal <span class="text-red-500">*</span></label>
                         <input type="date" name="tanggal_meninggal" value="{{ old('tanggal_meninggal') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('tanggal_meninggal') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Pukul</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Pukul <span class="text-red-500">*</span></label>
                         <input type="time" name="pukul_meninggal" value="{{ old('pukul_meninggal') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('pukul_meninggal') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Meninggal</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Meninggal <span class="text-red-500">*</span></label>
                         <input type="text" name="tempat_meninggal" value="{{ old('tempat_meninggal') }}" placeholder="Rumah Sakit / Rumah / Lainnya" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('tempat_meninggal') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Penyebab Kematian</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Penyebab Kematian <span class="text-red-500">*</span></label>
                         <select name="sebab_kematian" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                             <option value="">Pilih Penyebab Kematian</option>
                             <option value="Sakit" {{ old('sebab_kematian') == 'Sakit' ? 'selected' : '' }}>Sakit</option>
@@ -165,7 +165,7 @@
                         @error('sebab_kematian') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Pemakaman</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Pemakaman <span class="text-red-500">*</span></label>
                         <input type="text" name="tempat_pemakaman" value="{{ old('tempat_pemakaman') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
                         @error('tempat_pemakaman') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
@@ -282,16 +282,11 @@
             <script>
                 function ocrJenazahHandler() {
                     return {
-                        nama: '{{ old('
-                        nama_jenazah ') }}',
-                        nik: '{{ old('
-                        nik_jenazah ') }}',
-                        tempat_lahir: '{{ old('
-                        tempat_lahir_jenazah ') }}',
-                        tanggal_lahir: '{{ old('
-                        tanggal_lahir_jenazah ') }}',
-                        alamat: '{{ old('
-                        alamat_jenazah ') }}',
+                        nama: '{{ old('nama_jenazah') }}',
+                        nik: '{{ old('nik_jenazah') }}',
+                        tempat_lahir: '{{ old('tempat_lahir_jenazah') }}',
+                        tanggal_lahir: '{{ old('tanggal_lahir_jenazah') }}',
+                        alamat: '{{ old('alamat_jenazah') }}',
 
                         triggerOCR() {
                             this.$refs.ocrInput.click();

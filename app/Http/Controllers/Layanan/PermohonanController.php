@@ -115,15 +115,10 @@ class PermohonanController extends Controller
             }
 
             // Filter out non-data fields AND file fields for JSON storage
-            $dynamicFileNames = collect($service->required_fields ?? [])
-                ->filter(fn($f) => ($f['type'] ?? '') === 'file')
-                ->pluck('name')
-                ->toArray();
-            $excludeFields = array_unique(array_merge(
+            $excludeFields = array_merge(
                 ['_token', 'jenis_surat_id', 'kelurahan_id'],
-                StorePermohonanRequest::fileFields(),
-                $dynamicFileNames
-            ));
+                StorePermohonanRequest::fileFields()
+            );
             $rawData = $request->except($excludeFields);
 
             // Sanitize numeric fields (remove thousands separator dots)
@@ -255,14 +250,6 @@ class PermohonanController extends Controller
     {
         $fileFields = StorePermohonanRequest::fileFields();
 
-        // Merge dynamic file fields from required_fields
-        $jenisSurat = $permohonan->jenisSurat;
-        $dynamicFileFields = collect($jenisSurat->required_fields ?? [])
-            ->filter(fn($f) => ($f['type'] ?? '') === 'file')
-            ->pluck('name')
-            ->toArray();
-        $fileFields = array_unique(array_merge($fileFields, $dynamicFileFields));
-
         $labels = PermohonanDokumen::JENIS_DOKUMEN;
 
         foreach ($fileFields as $field) {
@@ -330,15 +317,10 @@ class PermohonanController extends Controller
             $jenisSurat = $permohonan->jenisSurat;
 
             // Build data_permohonan from request (same logic as store, excluding file/system fields)
-            $dynamicFileNames = collect($jenisSurat->required_fields ?? [])
-                ->filter(fn($f) => ($f['type'] ?? '') === 'file')
-                ->pluck('name')
-                ->toArray();
-            $excludeFields = array_unique(array_merge(
+            $excludeFields = array_merge(
                 ['_token', '_method', 'jenis_surat_id', 'kelurahan_id'],
-                StorePermohonanRequest::fileFields(),
-                $dynamicFileNames
-            ));
+                StorePermohonanRequest::fileFields()
+            );
             $rawData = $request->except($excludeFields);
 
             // Sanitize numeric fields (remove thousands separator dots)
@@ -400,13 +382,7 @@ class PermohonanController extends Controller
      */
     private function handleRevisiFileUploads(Request $request, PermohonanSurat $permohonan): void
     {
-        $jenisSurat = $permohonan->jenisSurat;
         $fileFields = StorePermohonanRequest::fileFields();
-        $dynamicFileFields = collect($jenisSurat->required_fields ?? [])
-            ->filter(fn($f) => ($f['type'] ?? '') === 'file')
-            ->pluck('name')
-            ->toArray();
-        $fileFields = array_unique(array_merge($fileFields, $dynamicFileFields));
 
         $labels = PermohonanDokumen::JENIS_DOKUMEN;
 

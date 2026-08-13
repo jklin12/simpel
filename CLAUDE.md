@@ -31,7 +31,7 @@ app/
 │   └── TrackingController.php             # Cek status by track_token
 ├── Services/
 │   ├── PermohonanSuratService.php         # generateNomorSurat ada di sini
-│   ├── JenisSuratService.php              # transform required_fields
+│   ├── JenisSuratService.php              # CRUD jenis surat (attachment_guides, ocr_rules)
 │   ├── ApprovalFlowService.php
 │   ├── SuratCounterService.php
 │   └── UserService.php
@@ -48,10 +48,8 @@ app/
 
 ### `JenisSurat` (tabel: `jenis_surats`)
 - `kode` — uppercase, unik (SKTM, SKTMR, SKM, dll.)
-- `required_fields` — JSON array of `{name, label, type, is_required, options}`, di-cast ke `array`
+- `required_fields` — JSON, legacy/tidak dipakai lagi (sisa sistem dynamic form yang sudah dihapus), di-cast ke `array`
 - `is_active` — boolean
-
-**Tipe field yang didukung di `required_fields`:** `text`, `textarea`, `date`, `number`, `select`, `file`
 
 ### `Kelurahan` (tabel: `m_kelurahans`)
 - `kode` — kode Kemendagri
@@ -84,29 +82,27 @@ $kodeKelurahan = strtoupper($kelurahan->akronim ?? $kelurahan->kode ?? $keluraha
 
 ---
 
-## Form Permohonan: Static vs Dynamic
+## Form Permohonan: Selalu Static
 
-### Jenis surat yang pakai template STATIS (jangan diubah ke dynamic):
+Semua jenis surat aktif memakai template Blade statis (`types/{kode}.blade.php`), tidak ada sistem "dynamic form" lagi (sudah dihapus). Contoh:
 | Kode | Form template | PDF template | Validation |
 |------|--------------|--------------|------------|
 | SKTM | `types/sktm.blade.php` | `pdf/sktm.blade.php` | `getSktmRules()` |
 | SKTMR | `types/sktmr.blade.php` | `pdf/sktmr.blade.php` | `getSktmrRules()` |
-| SKM | `types/skm.blade.php` | *(belum ada PDF)* | `getSkmRules()` |
+| SKM | `types/skm.blade.php` | `pdf/skm.blade.php` | `getSkmRules()` |
 
 Form publik di `create_public.blade.php` memakai logika:
 ```blade
 @if(View::exists('user.permohonan.types.' . strtolower($service->kode)))
     {{-- template statis --}}
-@elseif($service->required_fields && count($service->required_fields) > 0)
-    @include('user.permohonan.types.dynamic', ...)   {{-- dynamic fallback --}}
 @endif
 ```
 
-### Jenis surat BARU → pakai sistem dynamic:
-- Admin definisi field via UI di admin/jenis-surat/create atau edit
-- Form publik render otomatis dari `required_fields`
-- Validasi di `StorePermohonanRequest` switch `default:` generate rules dari `required_fields`
-- File upload di `PublicPermohonanController::handleFileUploads()` merge dynamic file fields
+### Jenis surat BARU → selalu dibuat manual oleh developer:
+- Buat `types/{kode}.blade.php` (form publik) dan `pdf/{kode}.blade.php` (template cetak)
+- Tambah case `{KODE}` + method `get{Kode}Rules()` di `StorePermohonanRequest::rules()`
+- Daftarkan file field-nya di `StorePermohonanRequest::fileFields()`
+- Tidak ada lagi form builder self-service di admin — kolom `required_fields` pada `jenis_surats` sudah tidak dipakai untuk generate form/validasi (kolom masih ada di schema untuk data lama, tapi tidak dibaca lagi oleh kode aktif)
 
 ---
 

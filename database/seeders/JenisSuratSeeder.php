@@ -20,7 +20,7 @@ class JenisSuratSeeder extends Seeder
                 'deskripsi' => 'Surat pengantar untuk keperluan penerbitan Surat Keterangan Catatan Kepolisian di Polsek/Polres.',
                 'template_path' => 'templates/skck.docx',
                 'required_fields' => json_encode(['ktp', 'kk', 'akse_kelahiran']),
-                'is_active' => true,
+                'is_active' => false,
             ],
             [
                 'nama' => 'Surat Keterangan Domisili',
@@ -28,7 +28,7 @@ class JenisSuratSeeder extends Seeder
                 'deskripsi' => 'Surat keterangan yang menyatakan status tempat tinggal seseorang di wilayah kelurahan.',
                 'template_path' => 'templates/domisili.docx',
                 'required_fields' => json_encode(['ktp', 'kk', 'surat_pengantar_rt']),
-                'is_active' => true,
+                'is_active' => false,
             ],
             [
                 'nama' => 'Surat Keterangan Usaha',
@@ -36,7 +36,7 @@ class JenisSuratSeeder extends Seeder
                 'deskripsi' => 'Surat keterangan untuk menerangkan bahwa orang tersebut memiliki usaha di wilayah kelurahan.',
                 'template_path' => 'templates/sku.docx',
                 'required_fields' => json_encode(['ktp', 'kk', 'foto_usaha']),
-                'is_active' => true,
+                'is_active' => false,
             ],
             [
                 'nama'      => 'Surat Keterangan Tidak Mampu',
@@ -136,7 +136,7 @@ class JenisSuratSeeder extends Seeder
                 'deskripsi' => 'Surat keterangan peristiwa kelahiran baru untuk proses akta kelahiran.',
                 'template_path' => 'templates/skl.docx',
                 'required_fields' => json_encode(['ktp_ortu', 'kk', 'surat_bidan']),
-                'is_active' => true,
+                'is_active' => false,
             ],
             [
                 'nama' => 'Surat Keterangan Kematian',
@@ -152,7 +152,7 @@ class JenisSuratSeeder extends Seeder
                 'deskripsi' => 'Surat keterangan tempat kedudukan usaha untuk kelengkapan izin usaha.',
                 'template_path' => 'templates/skdu.docx',
                 'required_fields' => json_encode(['ktp', 'kk', 'akta_pendirian']),
-                'is_active' => true,
+                'is_active' => false,
             ],
             [
                 'nama'            => 'Surat Pengantar Keterangan Kehilangan',

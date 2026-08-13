@@ -119,11 +119,9 @@ $kelurahan = $permohonan->kelurahan;
             </div>
             @endif
 
-            {{-- Dynamic Fields Based on Letter Type (same partials as create) --}}
+            {{-- Fields Based on Letter Type (same partials as create) --}}
             @if(View::exists('user.permohonan.types.' . strtolower($service->kode)))
             @include('user.permohonan.types.' . strtolower($service->kode))
-            @elseif($service->required_fields && count($service->required_fields) > 0)
-            @include('user.permohonan.types.dynamic', ['fields' => $service->required_fields])
             @endif
 
             {{-- Existing Documents Preview --}}
