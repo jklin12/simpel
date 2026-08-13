@@ -42,10 +42,10 @@
             @endphp
 
             @if($canApprove)
-                <a href="{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}" target="_blank" class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
+                <button type="button" onclick="showPreviewModal('{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}', 'application/pdf', 'Preview Surat')" class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     Preview PDF
-                </a>
+                </button>
                 <a href="{{ route('admin.permohonan-surat.edit', $permohonanSurat->id) }}" class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
                     Edit Data
@@ -70,10 +70,10 @@
                 </button>
             @else
                 {{-- Jika pending/in_review tapi user tidak punya approval item, bisa lihat preview --}}
-                <a href="{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}" target="_blank" class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
+                <button type="button" onclick="showPreviewModal('{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}', 'application/pdf', 'Preview Surat')" class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     Preview PDF
-                </a>
+                </button>
             @endif
 
             @elseif($permohonanSurat->status == 'approved')
@@ -98,10 +98,10 @@
             @endif
 
             @elseif($permohonanSurat->status == 'revision_requested')
-            <a href="{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}" target="_blank"
+            <button type="button" onclick="showPreviewModal('{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}', 'application/pdf', 'Preview Surat')"
                 class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
                 Preview PDF
-            </a>
+            </button>
             @if(auth()->user()->hasRole(['admin_kecamatan', 'super_admin']))
                 @php $latestRevisiRequest = $revisiRequests->where('status','pending')->first(); @endphp
                 @if($latestRevisiRequest)
@@ -117,11 +117,11 @@
             @endif
 
             @elseif($permohonanSurat->status == 'revision_open')
-            <a href="{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}" target="_blank"
+            <button type="button" onclick="showPreviewModal('{{ route('admin.permohonan-surat.download', $permohonanSurat->id) }}', 'application/pdf', 'Preview Surat')"
                 class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                 Preview PDF
-            </a>
+            </button>
             <a href="{{ route('admin.permohonan-surat.edit', $permohonanSurat->id) }}"
                 class="px-5 py-2.5 bg-white text-[#00236f] border border-[#dce1ff] rounded-xl hover:bg-[#f8f9fb] font-bold transition-all flex items-center gap-2 shadow-sm">
                 Edit Data
@@ -533,10 +533,11 @@
                         <p class="text-sm font-bold text-[#191c1e] truncate group-hover:text-[#00236f] transition-colors">{{ $dokumen->nama_dokumen }}</p>
                         <p class="text-[11px] font-medium text-[#757682] mt-0.5 truncate uppercase opacity-60">{{ $dokumen->original_name }}</p>
                     </div>
-                    <a href="{{ route('admin.permohonan-surat.download-dokumen', [$permohonanSurat->id, $dokumen->id]) }}"
-                        class="w-10 h-10 flex items-center justify-center bg-[#f8f9fb] text-[#757682] hover:bg-[#00236f] hover:text-white rounded-xl transition-all" title="Download">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
-                    </a>
+                    <button type="button"
+                        onclick="showPreviewModal('{{ route('admin.permohonan-surat.preview-dokumen', [$permohonanSurat->id, $dokumen->id]) }}', '{{ $dokumen->mime_type }}', '{{ $dokumen->nama_dokumen }}', '{{ route('admin.permohonan-surat.download-dokumen', [$permohonanSurat->id, $dokumen->id]) }}')"
+                        class="w-10 h-10 flex items-center justify-center bg-[#f8f9fb] text-[#757682] hover:bg-[#00236f] hover:text-white rounded-xl transition-all" title="Preview">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                    </button>
                 </div>
                 @endforeach
             </div>
@@ -970,6 +971,26 @@
     </div>
 </div>
 
+<!-- Preview Modal -->
+<div id="previewModal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-4xl h-[85vh] flex flex-col overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-[#f3f4f6]">
+            <h3 id="previewModalTitle" class="font-bold text-[#191c1e]">Preview</h3>
+            <button type="button" onclick="closePreviewModal()" class="text-[#757682] hover:text-[#191c1e] text-2xl leading-none">&times;</button>
+        </div>
+        <div class="flex-1 bg-[#f8f9fb] overflow-auto flex items-center justify-center">
+            <iframe id="previewFrame" class="hidden w-full h-full"></iframe>
+            <img id="previewImage" class="hidden max-w-full max-h-full object-contain" />
+        </div>
+        <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-[#f3f4f6]">
+            <a id="previewDownloadLink" href="#" class="px-5 py-2.5 bg-[#00236f] text-white rounded-xl hover:bg-[#001a52] font-bold transition-all flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                Download
+            </a>
+        </div>
+    </div>
+</div>
+
 <!-- Approve Modal -->
 <div id="approveModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
@@ -1156,6 +1177,35 @@
                 this.classList.add('hidden');
             }
         });
+    });
+
+    function showPreviewModal(url, mime, title, downloadUrl) {
+        document.getElementById('previewModalTitle').textContent = title || 'Preview';
+        document.getElementById('previewDownloadLink').href = downloadUrl || url;
+        const iframe = document.getElementById('previewFrame');
+        const img = document.getElementById('previewImage');
+        if ((mime || '').startsWith('image/')) {
+            img.src = url;
+            img.classList.remove('hidden');
+            iframe.classList.add('hidden');
+            iframe.src = '';
+        } else {
+            iframe.src = url;
+            iframe.classList.remove('hidden');
+            img.classList.add('hidden');
+            img.src = '';
+        }
+        document.getElementById('previewModal').classList.remove('hidden');
+    }
+
+    function closePreviewModal() {
+        document.getElementById('previewModal').classList.add('hidden');
+        document.getElementById('previewFrame').src = '';
+        document.getElementById('previewImage').src = '';
+    }
+
+    document.getElementById('previewModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closePreviewModal();
     });
 </script>
 @endpush

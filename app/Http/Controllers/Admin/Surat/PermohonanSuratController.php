@@ -304,6 +304,31 @@ class PermohonanSuratController extends Controller
     }
 
     /**
+     * Preview a specific document attachment inline (for the modal viewer), not force-download.
+     */
+    public function previewDokumen($id, $dokumenId)
+    {
+        // Enforce wilayah-based ownership (mencegah IDOR) sebelum menyajikan file.
+        $this->service->getPermohonanById($id);
+
+        try {
+            $dokumen = PermohonanDokumen::where('permohonan_surat_id', $id)
+                ->findOrFail($dokumenId);
+
+            if (!Storage::disk('local')->exists($dokumen->file_path)) {
+                abort(404, 'File tidak ditemukan di server');
+            }
+
+            return Storage::disk('local')->response(
+                $dokumen->file_path,
+                $dokumen->original_name
+            );
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404, 'Dokumen tidak ditemukan');
+        }
+    }
+
+    /**
      * Download the signed final letter from the private disk.
      * Di-scope otorisasi wilayah lewat getPermohonanById (mencegah IDOR),
      * karena file kini di disk privat dan tidak lagi web-accessible.
