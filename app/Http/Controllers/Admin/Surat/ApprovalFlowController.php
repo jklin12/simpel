@@ -36,7 +36,7 @@ class ApprovalFlowController extends Controller
     public function create()
     {
         $jenisSurats = JenisSurat::where('is_active', true)->orderBy('nama')->get();
-        $kelurahans = Kelurahan::where('kecamatan_id', '6372010')->with('kecamatan')->orderBy('nama')->get();
+        $kelurahans = Kelurahan::whereHas('kecamatan', fn($q) => $q->where('kabupaten_id', 6372))->with('kecamatan')->orderBy('nama')->get();
 
         return view('admin.approval-flow.create', compact('jenisSurats', 'kelurahans'));
     }
@@ -68,7 +68,7 @@ class ApprovalFlowController extends Controller
         try {
             $approvalFlow = $this->service->getApprovalFlowById($id);
             $jenisSurats = JenisSurat::where('is_active', true)->orderBy('nama')->get();
-            $kelurahans = Kelurahan::where('kecamatan_id', '6372010')->orderBy('nama')->get();
+            $kelurahans = Kelurahan::whereHas('kecamatan', fn($q) => $q->where('kabupaten_id', 6372))->with('kecamatan')->orderBy('nama')->get();
 
             return view('admin.approval-flow.edit', compact('approvalFlow', 'jenisSurats', 'kelurahans'));
         } catch (\Exception $e) {

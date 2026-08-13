@@ -16,7 +16,7 @@
             <span class="text-white font-medium">Peta Wilayah</span>
         </nav>
         <h1 class="text-3xl font-extrabold">Peta Wilayah Kecamatan</h1>
-        <p class="text-primary-100 mt-2">Sebaran fasilitas dan lokasi penting di Kecamatan Landasan Ulin</p>
+        <p class="text-primary-100 mt-2">Sebaran fasilitas dan lokasi penting di {{ $kabupatenNama }}</p>
     </div>
 </div>
 

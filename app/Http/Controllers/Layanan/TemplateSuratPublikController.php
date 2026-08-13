@@ -29,7 +29,9 @@ class TemplateSuratPublikController extends Controller
             ->orderBy('nama')
             ->get();
 
-        return view('portal.template-surat.index', compact('jenisSurats'));
+        $kabupatenNama = \App\Models\Kabupaten::find(6372)?->nama ?? 'SiMPEL';
+
+        return view('portal.template-surat.index', compact('jenisSurats', 'kabupatenNama'));
     }
 
     /**

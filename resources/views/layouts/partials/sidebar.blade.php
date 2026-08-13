@@ -6,7 +6,7 @@
                 <img src="{{ asset('images/logo_simpel.png') }}" alt="SiMPEL" class="h-10 w-auto object-contain">
                 <div class="flex flex-col">
                     <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">SiMPEL</span>
-                    <span class="text-[10px] text-gray-500 font-medium tracking-wider uppercase">Landasan Ulin</span>
+                    <span class="text-[10px] text-gray-500 font-medium tracking-wider uppercase">{{ auth()->user()?->kecamatan?->nama ?? auth()->user()?->kelurahan?->kecamatan?->nama ?? auth()->user()?->kabupaten?->nama ?? 'SiMPEL' }}</span>
                 </div>
             </div>
         </div>

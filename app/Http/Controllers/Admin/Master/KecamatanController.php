@@ -55,9 +55,11 @@ class KecamatanController extends Controller
             'camat_golongan' => 'nullable|string|max:255',
             'camat_no_hp' => 'nullable|string|max:20',
             'kop_surat_path' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'is_active' => 'boolean',
         ]);
 
         $data = $request->except('kop_surat_path');
+        $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('kop_surat_path')) {
             $path = $request->file('kop_surat_path')->store('kop_surat_kecamatan', 'public');
@@ -93,9 +95,11 @@ class KecamatanController extends Controller
             'camat_golongan' => 'nullable|string|max:255',
             'camat_no_hp' => 'nullable|string|max:20',
             'kop_surat_path' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'is_active' => 'boolean',
         ]);
 
         $data = $request->except('kop_surat_path');
+        $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('kop_surat_path')) {
             // Delete old file if exists
@@ -123,5 +127,14 @@ class KecamatanController extends Controller
         $kecamatan->delete();
 
         return redirect()->route('admin.master.kecamatan.index')->with('success', 'Kecamatan deleted successfully');
+    }
+
+    /**
+     * Toggle the active status of the specified Kecamatan.
+     */
+    public function toggleStatus(Kecamatan $kecamatan)
+    {
+        $kecamatan->update(['is_active' => !$kecamatan->is_active]);
+        return back()->with('success', 'Status Kecamatan ' . $kecamatan->nama . ' berhasil diperbarui');
     }
 }

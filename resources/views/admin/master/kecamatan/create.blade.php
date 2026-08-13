@@ -48,6 +48,11 @@
                 <p class="mt-1 text-xs text-gray-500">Kode unik untuk identifikasi wilayah (Kemendagri).</p>
             </div>
 
+            <div class="flex items-center gap-2">
+                <input type="checkbox" name="is_active" id="is_active" value="1" class="rounded border-gray-300 text-blue-600 focus:ring-blue-500" {{ old('is_active', true) ? 'checked' : '' }}>
+                <label for="is_active" class="text-sm font-medium text-gray-700">Kecamatan Aktif</label>
+            </div>
+
             <hr class="border-gray-200 my-4">
 
             <h3 class="text-lg font-medium text-gray-900">Data Profil Camat & Kop Surat</h3>

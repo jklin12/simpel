@@ -27,10 +27,11 @@ class ServiceController extends Controller
     {
         // Fetch all active letter types
         $services = JenisSurat::where('is_active', true)->get();
-        // Fetch kelurahans for static Kecamatan (Landasan Ulin - 6372010)
-        // Only show active ones
-        $kelurahans = Kelurahan::where('kecamatan_id', '6372010')
-            ->where('is_active', true)
+        // Fetch kelurahans across all active kecamatan in the kabupaten.
+        // Kelurahan under a deactivated kecamatan (or deactivated themselves) are hidden.
+        $kelurahans = Kelurahan::where('is_active', true)
+            ->whereHas('kecamatan', fn($q) => $q->where('kabupaten_id', 6372)->where('is_active', true))
+            ->with('kecamatan')
             ->get();
 
         $popup = $this->layananPopupService->getSingleton();

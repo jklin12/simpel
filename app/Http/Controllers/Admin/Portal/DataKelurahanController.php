@@ -55,7 +55,7 @@ class DataKelurahanController extends Controller
         // Admin kecamatan/super_admin bisa lihat semua kelurahan untuk filter
         $kelurahans = $this->isAdminKelurahan()
             ? collect()
-            : Kelurahan::where('kecamatan_id', '6372010')->orderBy('nama')->get();
+            : Kelurahan::whereHas('kecamatan', fn($q) => $q->where('kabupaten_id', 6372))->orderBy('nama')->get();
 
         return view('admin.portal.data-kelurahan.index', compact('data', 'filters', 'kategoriList', 'kelurahans'));
     }
@@ -67,7 +67,7 @@ class DataKelurahanController extends Controller
         // Admin kelurahan tidak perlu memilih kelurahan — sudah auto-set
         $kelurahans = $this->isAdminKelurahan()
             ? collect()
-            : Kelurahan::where('kecamatan_id', '6372010')->orderBy('nama')->get();
+            : Kelurahan::whereHas('kecamatan', fn($q) => $q->where('kabupaten_id', 6372))->orderBy('nama')->get();
 
         // Ambil opsi statis dari Model
         $options = [
@@ -121,7 +121,7 @@ class DataKelurahanController extends Controller
 
             $kelurahans = $this->isAdminKelurahan()
                 ? collect()
-                : Kelurahan::where('kecamatan_id', '6372010')->orderBy('nama')->get();
+                : Kelurahan::whereHas('kecamatan', fn($q) => $q->where('kabupaten_id', 6372))->orderBy('nama')->get();
 
             // Ambil opsi statis dari Model
             $options = [

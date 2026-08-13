@@ -46,12 +46,11 @@ class PermohonanController extends Controller
         }
 
         $service = JenisSurat::findOrFail($serviceId);
-        $kelurahan = Kelurahan::findOrFail($kelurahanId);
+        $kelurahan = Kelurahan::with('kecamatan')->findOrFail($kelurahanId);
 
-        // Piloting restriction
-        /*if ($kelurahanId != '6372010006') {
-            return redirect()->route('layanan.index')->with('error', 'Layanan saat ini hanya tersedia untuk wilayah piloting (Syamsudin Noor).');
-        }*/
+        if (!$kelurahan->is_active || !$kelurahan->kecamatan?->is_active) {
+            return redirect()->route('services.index')->with('error', 'Layanan untuk wilayah ini sedang tidak tersedia.');
+        }
 
         $pekerjaanList = \App\Models\Pekerjaan::orderBy('nama')->pluck('nama')->toArray();
 
@@ -170,7 +169,8 @@ class PermohonanController extends Controller
             ]);
 
             // Notify Admins
-            $adminKecamatan = \App\Models\User::role('admin_kecamatan')->get();
+            $kecamatanId    = Kelurahan::find($request->kelurahan_id)?->kecamatan_id;
+            $adminKecamatan = \App\Models\User::role('admin_kecamatan')->where('kecamatan_id', $kecamatanId)->get();
             $superAdmins    = \App\Models\User::role('super_admin')->get();
 
             $notifiableAdmins = collect();

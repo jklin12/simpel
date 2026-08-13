@@ -1,6 +1,6 @@
 @extends('layouts.landing')
 
-@section('title', 'Portal Kecamatan Landasan Ulin')
+@section('title', 'Portal ' . $kabupatenNama)
 
 @section('content')
 
@@ -43,7 +43,7 @@
                                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 8 8">
                                     <circle cx="4" cy="4" r="3" />
                                 </svg>
-                                Portal Resmi Kecamatan Landasan Ulin
+                                Portal Resmi {{ $kabupatenNama }}
                             </div>
                             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-5">
                                 {{ $slider->judul }}
@@ -74,7 +74,7 @@
             <div class="min-w-full">
                 <div class="relative bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 text-white min-h-[90vh] flex items-center">
                     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
-                        <h1 class="text-5xl font-extrabold leading-tight mb-6">Informasi &amp; Layanan<br>Kecamatan Landasan Ulin</h1>
+                        <h1 class="text-5xl font-extrabold leading-tight mb-6">Informasi &amp; Layanan<br>{{ $kabupatenNama }}</h1>
                         <div class="flex flex-wrap gap-4">
                             <a href="{{ route('berita.index') }}" class="px-7 py-3.5 bg-white text-primary-700 font-bold rounded-xl hover:bg-primary-50 transition-all text-sm">Baca Berita →</a>
                             <a href="{{ route('home') }}" class="px-7 py-3.5 bg-yellow-400 text-gray-900 font-bold rounded-xl hover:bg-yellow-300 transition-all text-sm">Ajukan Surat</a>

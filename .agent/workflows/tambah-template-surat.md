@@ -153,7 +153,8 @@ class SkpindahSeeder extends Seeder
             ]
         );
 
-        $kelurahans = Kelurahan::where('kecamatan_id', '6372010')->get();
+        // Sistem sekarang multi-kecamatan dalam 1 kabupaten (6372) — jangan hardcode kecamatan_id
+        $kelurahans = Kelurahan::whereHas('kecamatan', fn($q) => $q->where('kabupaten_id', 6372))->get();
 
         foreach ($kelurahans as $kelurahan) {
             $flow = ApprovalFlow::updateOrCreate(

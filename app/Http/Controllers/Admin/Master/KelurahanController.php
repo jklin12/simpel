@@ -20,7 +20,7 @@ class KelurahanController extends Controller
                         $q->where('nama', 'like', "%{$search}%");
                     });
             })
-            ->whereIn('kecamatan_id', [6372010])
+            ->whereHas('kecamatan', fn($q) => $q->where('kabupaten_id', 6372))
             ->orderBy('kode', 'asc')
             ->paginate(10)
             ->withQueryString();

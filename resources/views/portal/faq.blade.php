@@ -14,7 +14,7 @@
             Pusat Bantuan
         </div>
         <h1 class="text-4xl lg:text-5xl font-extrabold mb-4">Pertanyaan yang Sering Diajukan</h1>
-        <p class="text-primary-200 text-lg max-w-2xl mx-auto">Temukan jawaban atas pertanyaan umum seputar layanan Kecamatan Landasan Ulin.</p>
+        <p class="text-primary-200 text-lg max-w-2xl mx-auto">Temukan jawaban atas pertanyaan umum seputar layanan {{ $kabupatenNama }}.</p>
 
         {{-- Category tabs --}}
         @if($faqGrouped->isNotEmpty())

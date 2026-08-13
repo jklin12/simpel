@@ -199,7 +199,7 @@
                                     <select x-model="selectedKelurahan" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md">
                                         <option value="">Pilih Kelurahan</option>
                                         <template x-for="kelurahan in kelurahans" :key="kelurahan.id">
-                                            <option :value="kelurahan.id" x-text="kelurahan.nama"></option>
+                                            <option :value="kelurahan.id" x-text="kelurahan.nama + (kelurahan.kecamatan ? ' (Kec. ' + kelurahan.kecamatan.nama + ')' : '')"></option>
                                         </template>
                                     </select>
                                     <p class="mt-1 text-xs text-gray-500">Layanan ini khusus untuk wilayah Kecamatan Landasan Ulin.</p>

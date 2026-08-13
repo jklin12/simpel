@@ -54,9 +54,20 @@ class LoginController extends Controller
 
         RateLimiter::clear($throttleKey);
 
+        $user = Auth::user();
+
+        if ($this->isInWilayahNonaktif($user)) {
+            Auth::logout();
+            RateLimiter::hit($throttleKey, 60);
+
+            throw ValidationException::withMessages([
+                'email' => 'Akun ini berada di wilayah yang sedang dinonaktifkan. Hubungi administrator.',
+            ]);
+        }
+
         $request->session()->regenerate();
 
-        return $this->authenticated($request, Auth::user())
+        return $this->authenticated($request, $user)
             ?: redirect()->intended(route('dashboard'));
     }
 
@@ -72,6 +83,23 @@ class LoginController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/login');
+    }
+
+    /**
+     * Cek apakah user terikat pada kecamatan/kelurahan yang sedang dinonaktifkan.
+     * super_admin dan admin_kabupaten selalu lolos karena tidak terikat 1 kecamatan.
+     */
+    protected function isInWilayahNonaktif($user): bool
+    {
+        if ($user->hasRole('admin_kecamatan')) {
+            return $user->kecamatan && !$user->kecamatan->is_active;
+        }
+
+        if ($user->hasRole('admin_kelurahan')) {
+            return $user->kelurahan && (!$user->kelurahan->is_active || !$user->kelurahan->kecamatan?->is_active);
+        }
+
+        return false;
     }
 
     /**

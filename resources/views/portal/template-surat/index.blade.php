@@ -14,7 +14,7 @@
         </div>
         <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Template Surat Pernyataan</h1>
         <p class="text-blue-100 text-lg max-w-2xl mx-auto">
-            Unduh template surat resmi dari Kelurahan Landasan Ulin. Tersedia dalam format PDF/DOCX untuk memudahkan persiapan dokumen Anda.
+            Unduh template surat resmi dari {{ $kabupatenNama }}. Tersedia dalam format PDF/DOCX untuk memudahkan persiapan dokumen Anda.
         </p>
     </div>
 </section>

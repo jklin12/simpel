@@ -13,7 +13,7 @@
             <span class="text-white font-medium">Berita</span>
         </nav>
         <h1 class="text-3xl font-extrabold">Berita & Pengumuman</h1>
-        <p class="text-primary-100 mt-2">Informasi terbaru dari Kecamatan Landasan Ulin</p>
+        <p class="text-primary-100 mt-2">Informasi terbaru dari {{ $kabupatenNama }}</p>
     </div>
 </div>
 

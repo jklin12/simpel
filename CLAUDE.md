@@ -51,12 +51,19 @@ app/
 - `required_fields` — JSON, legacy/tidak dipakai lagi (sisa sistem dynamic form yang sudah dihapus), di-cast ke `array`
 - `is_active` — boolean
 
+### `Kecamatan` (tabel: `m_kecamatans`)
+- Sistem beroperasi pada **1 kabupaten (kode `6372`, kabupaten_id di-hardcode di beberapa tempat), banyak kecamatan** — bukan lagi 1 kecamatan tunggal
+- `kode`, `nama`, `kabupaten_id`
+- `is_active` — boolean, toggle via `KecamatanController::toggleStatus()`. Kecamatan non-aktif: disembunyikan dari katalog layanan publik (`ServiceController::index`), admin_kecamatan/admin_kelurahan di kecamatan itu tidak bisa login (`LoginController::isInWilayahNonaktif()`), tapi permohonan lama tetap bisa diproses
+- `camat_nama`, `camat_nip`, `camat_pangkat`, `camat_golongan`, `camat_no_hp`, `kop_surat_path`
+
 ### `Kelurahan` (tabel: `m_kelurahans`)
 - `kode` — kode Kemendagri
 - `akronim` — digunakan untuk **penomoran surat** (contoh: LU → `001/SKTM/LU/II/2026`)
 - `lurah_nama`, `lurah_nip`, `lurah_pangkat`, `lurah_golongan`
 - `kop_surat_path` — path di public storage, dipakai sebagai header PDF
-- `kecamatan_id` — Kecamatan Landasan Ulin = `6372010`
+- `kecamatan_id` — kelurahan bisa berada di kecamatan manapun dalam kabupaten 6372 (tidak lagi hardcode ke satu kecamatan). Contoh kecamatan: Landasan Ulin = `6372010`
+- `is_active` — boolean, toggle via `KelurahanController::toggleStatus()`
 
 ### `PermohonanSurat` (tabel: `permohonan_surats`)
 - `track_token` — 10 karakter uppercase random, untuk cek status publik

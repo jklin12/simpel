@@ -360,7 +360,7 @@ class PermohonanSuratService
 
             // 1. Notifikasi push (database)
             try {
-                $adminKecamatan = User::role('admin_kecamatan')->get();
+                $adminKecamatan = User::role('admin_kecamatan')->where('kecamatan_id', $permohonan->kelurahan->kecamatan_id)->get();
                 $superAdmins    = User::role('super_admin')->get();
 
                 $notifiableAdmins = collect();
@@ -504,11 +504,20 @@ class PermohonanSuratService
                 $now->format('Y')
             );
         } elseif ($kodeJenis === 'SDNH') {
-            // Format requested: 400.12.3.2 / 012 / I / KEC.LU / 2026
+            // Format requested: 400.12.3.2 / 012 / I / KEC.LU / 2026 — akronim dihitung dari nama kecamatan
+            if (!$kelurahan->relationLoaded('kecamatan')) {
+                $kelurahan->load('kecamatan');
+            }
+            $kecNama = $kelurahan->kecamatan->nama ?? '';
+            $kecAkronim = implode('', array_map(
+                fn($w) => strtoupper($w[0] ?? ''),
+                explode(' ', $kecNama)
+            ));
             $nomorSurat = sprintf(
-                '400.12.3.2/%03d-SMPL/%s/KEC.LU/%s',
+                '400.12.3.2/%03d-SMPL/%s/KEC.%s/%s',
                 $counter->counter,
                 $this->toRoman($now->month),
+                $kecAkronim,
                 $now->format('Y')
             );
         } elseif ($kodeJenis === 'SKJD') {
@@ -816,8 +825,12 @@ class PermohonanSuratService
             DB::commit();
 
             try {
-                $permohonanFresh = $permohonan->fresh()->load('jenisSurat');
-                $recipients = User::role(['admin_kecamatan', 'super_admin'])->get();
+                $permohonanFresh = $permohonan->fresh()->load('jenisSurat', 'kelurahan');
+                $recipients = User::role('admin_kecamatan')
+                    ->where('kecamatan_id', $permohonanFresh->kelurahan->kecamatan_id)
+                    ->get()
+                    ->merge(User::role('super_admin')->get())
+                    ->unique('id');
                 Log::info('RevisiRequested - Found ' . $recipients->count() . ' recipients');
                 foreach ($recipients as $recipient) {
                     Log::info('Sending RevisiRequested notification to: ' . $recipient->email, [

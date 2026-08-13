@@ -7,6 +7,7 @@ use App\Services\PortalBeritaService;
 use App\Services\PortalDataKelurahanService;
 use App\Services\PortalFaqService;
 use App\Services\PortalSliderService;
+use App\Models\Kabupaten;
 
 class PortalPublikController extends Controller
 {
@@ -31,13 +32,23 @@ class PortalPublikController extends Controller
     }
 
     /**
-     * Halaman utama portal kecamatan.
+     * Nama kabupaten (kabupaten_id = 6372) untuk branding portal publik,
+     * yang sekarang mencakup banyak kecamatan.
+     */
+    protected function kabupatenNama(): string
+    {
+        return Kabupaten::find(6372)?->nama ?? 'SiMPEL';
+    }
+
+    /**
+     * Halaman utama portal kabupaten.
      */
     public function index()
     {
         $beritaTerbaru = $this->beritaService->getLatestPublished(3);
         $sliders       = $this->sliderService->getAktifSliders();
-        return view('portal.index', compact('beritaTerbaru', 'sliders'));
+        $kabupatenNama = $this->kabupatenNama();
+        return view('portal.index', compact('beritaTerbaru', 'sliders', 'kabupatenNama'));
     }
 
     /** PREVIEW SEMENTARA - hapus setelah pilih desain **/
@@ -72,8 +83,9 @@ class PortalPublikController extends Controller
     public function berita()
     {
         $beritas = $this->beritaService->getPublished(9);
+        $kabupatenNama = $this->kabupatenNama();
 
-        return view('portal.berita.index', compact('beritas'));
+        return view('portal.berita.index', compact('beritas', 'kabupatenNama'));
     }
 
     /**
@@ -96,7 +108,8 @@ class PortalPublikController extends Controller
      */
     public function peta()
     {
-        return view('portal.peta');
+        $kabupatenNama = $this->kabupatenNama();
+        return view('portal.peta', compact('kabupatenNama'));
     }
 
     /**
@@ -118,7 +131,8 @@ class PortalPublikController extends Controller
     public function strukturOrganisasi()
     {
         $strukturTree = $this->strukturService->getTreeData();
-        return view('portal.struktur-organisasi', compact('strukturTree'));
+        $kabupatenNama = $this->kabupatenNama();
+        return view('portal.struktur-organisasi', compact('strukturTree', 'kabupatenNama'));
     }
 
     /**
@@ -128,6 +142,7 @@ class PortalPublikController extends Controller
     {
         $faqGrouped    = $this->faqService->getGroupedAktif();
         $kategoriLabels = \App\Models\PortalFaq::kategoriOptions();
-        return view('portal.faq', compact('faqGrouped', 'kategoriLabels'));
+        $kabupatenNama = $this->kabupatenNama();
+        return view('portal.faq', compact('faqGrouped', 'kategoriLabels', 'kabupatenNama'));
     }
 }

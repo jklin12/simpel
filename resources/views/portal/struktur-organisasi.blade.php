@@ -13,7 +13,7 @@
 
         </nav>
         <h1 class="text-3xl font-extrabold">Struktur Organisasi</h1>
-        <p class="text-teal-100 mt-2 text-lg">Bagan kepengurusan pemerintahan di Kecamatan Landasan Ulin.</p>
+        <p class="text-teal-100 mt-2 text-lg">Bagan kepengurusan pemerintahan di {{ $kabupatenNama }}.</p>
     </div>
 </div>
 

@@ -35,6 +35,7 @@
                 <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Kode</th>
                 <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Nama Kecamatan</th>
                 <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider">Kabupaten</th>
+                <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-center">Status</th>
                 <th class="px-6 py-4 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Aksi</th>
             </tr>
         </thead>
@@ -44,6 +45,19 @@
                 <td class="px-6 py-4 text-sm text-gray-600 font-mono">{{ $kecamatan->kode }}</td>
                 <td class="px-6 py-4 text-sm font-medium text-gray-800">{{ $kecamatan->nama }}</td>
                 <td class="px-6 py-4 text-sm text-gray-600">{{ $kecamatan->kabupaten->nama }}</td>
+                <td class="px-6 py-4 text-center">
+                    <form action="{{ route('admin.master.kecamatan.toggle-status', $kecamatan->id) }}" method="POST">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="transition-transform hover:scale-105 active:scale-95">
+                            @if($kecamatan->is_active)
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800 border border-green-200">Aktif</span>
+                            @else
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800 border border-red-200">Non-Aktif</span>
+                            @endif
+                        </button>
+                    </form>
+                </td>
                 <td class="px-6 py-4 text-right">
                     <div class="flex justify-end gap-2">
                         <a href="{{ route('admin.master.kecamatan.edit', $kecamatan->id) }}" class="text-blue-600 hover:text-blue-800 p-1">
@@ -66,7 +80,7 @@
             </tr>
             @empty
             <tr>
-                <td colspan="4" class="px-6 py-12 text-center text-gray-500">
+                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
                     Belum ada data kecamatan.
                 </td>
             </tr>

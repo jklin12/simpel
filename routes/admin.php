@@ -59,6 +59,7 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
             Route::prefix('master')->name('master.')->group(function () {
                 Route::resource('kabupaten', App\Http\Controllers\Admin\Master\KabupatenController::class);
                 Route::resource('kecamatan', App\Http\Controllers\Admin\Master\KecamatanController::class);
+                Route::patch('kecamatan/{kecamatan}/toggle-status', [App\Http\Controllers\Admin\Master\KecamatanController::class, 'toggleStatus'])->name('kecamatan.toggle-status');
                 Route::resource('kelurahan', App\Http\Controllers\Admin\Master\KelurahanController::class);
                 Route::patch('kelurahan/{kelurahan}/toggle-status', [App\Http\Controllers\Admin\Master\KelurahanController::class, 'toggleStatus'])->name('kelurahan.toggle-status');
             });
