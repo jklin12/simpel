@@ -219,15 +219,15 @@
                 </div>
                 <div>
                     <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">NIK</label>
-                    <p class="text-lg font-bold text-[#191c1e] leading-tight tracking-wider">{{ $permohonanSurat->nik_pemohon }}</p>
+                    <p class="text-lg font-bold text-[#191c1e] leading-tight tracking-wider"><x-pii source="permohonan" :subject-id="$permohonanSurat->id" field="nik_pemohon" type="nik" :value="$permohonanSurat->nik_pemohon" /></p>
                 </div>
                 <div class="md:col-span-2">
                     <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Alamat Tinggal</label>
-                    <p class="text-lg text-[#191c1e] leading-relaxed">{{ $permohonanSurat->alamat_pemohon }}</p>
+                    <p class="text-lg text-[#191c1e] leading-relaxed"><x-pii source="permohonan" :subject-id="$permohonanSurat->id" field="alamat_pemohon" type="address" :value="$permohonanSurat->alamat_pemohon" /></p>
                 </div>
                 <div>
                     <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Nomor Telepon</label>
-                    <p class="text-lg text-[#191c1e] font-semibold">{{ $permohonanSurat->phone_pemohon ?? '-' }}</p>
+                    <p class="text-lg text-[#191c1e] font-semibold"><x-pii source="permohonan" :subject-id="$permohonanSurat->id" field="phone_pemohon" type="phone" :value="$permohonanSurat->phone_pemohon" /></p>
                 </div>
                 <div>
                     <label class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Kelurahan / Kecamatan</label>
@@ -456,13 +456,13 @@
                     // Static type: render in defined order, skip keys not in data
                     $orderedFields = collect($fieldMaps[$kode])
                         ->filter(fn($label, $key) => array_key_exists($key, $data) && $data[$key] !== null && $data[$key] !== '')
-                        ->map(fn($label, $key) => ['label' => $label, 'value' => $data[$key]]);
+                        ->map(fn($label, $key) => ['label' => $label, 'value' => $data[$key], 'key' => $key]);
 
                     // Append any extra keys not in map (fallback)
                     $mappedKeys = array_keys($fieldMaps[$kode]);
                     $extraFields = collect($data)
                         ->filter(fn($v, $k) => !in_array($k, $mappedKeys) && $v !== null && $v !== '')
-                        ->map(fn($v, $k) => ['label' => ucwords(str_replace('_', ' ', $k)), 'value' => $v]);
+                        ->map(fn($v, $k) => ['label' => ucwords(str_replace('_', ' ', $k)), 'value' => $v, 'key' => $k]);
 
                     $orderedFields = $orderedFields->merge($extraFields);
                 } else {
@@ -470,7 +470,7 @@
                     $requiredFields = $permohonanSurat->jenisSurat->required_fields ?? [];
                     $orderedFields = collect($requiredFields)
                         ->filter(fn($f) => is_array($f) && ($f['type'] ?? '') !== 'file' && isset($f['name']) && array_key_exists($f['name'], $data))
-                        ->map(fn($f) => ['label' => $f['label'] ?? ucwords(str_replace('_', ' ', $f['name'])), 'value' => $data[$f['name']]]);
+                        ->map(fn($f) => ['label' => $f['label'] ?? ucwords(str_replace('_', ' ', $f['name'])), 'value' => $data[$f['name']], 'key' => $f['name']]);
 
                     // Append any extra keys not in required_fields
                     $definedKeys = collect($requiredFields)
@@ -479,7 +479,7 @@
                         ->toArray();
                     $extraFields = collect($data)
                         ->filter(fn($v, $k) => !in_array($k, $definedKeys) && $v !== null && $v !== '')
-                        ->map(fn($v, $k) => ['label' => ucwords(str_replace('_', ' ', $k)), 'value' => $v]);
+                        ->map(fn($v, $k) => ['label' => ucwords(str_replace('_', ' ', $k)), 'value' => $v, 'key' => $k]);
 
                     $orderedFields = $orderedFields->merge($extraFields);
                 }
@@ -490,7 +490,13 @@
                         @foreach($orderedFields as $field)
                         <div>
                             <label class="text-[9px] font-extrabold uppercase text-[#757682] opacity-70 mb-1 block">{{ $field['label'] }}</label>
+                            @if(is_scalar($field['value']) && \App\Support\Pii::isPiiKey($field['key']))
+                            <p class="text-base font-bold text-[#191c1e]">
+                                <x-pii source="permohonan" :subject-id="$permohonanSurat->id" :field="$field['key']" :value="$field['value']" />
+                            </p>
+                            @else
                             <p class="text-base font-bold text-[#191c1e]">{{ $field['value'] }}</p>
+                            @endif
                         </div>
                         @endforeach
                     </div>
@@ -902,7 +908,7 @@
                                             <span class="px-2 py-1 rounded-md bg-[#f5f5f5] text-[#616161] text-[11px] font-bold">{{ ucfirst($log->notification_type) }}</span>
                                     @endswitch
                                 </td>
-                                <td class="px-3 py-3 text-[12px] font-semibold text-[#191c1e] font-mono">{{ $log->phone_to }}</td>
+                                <td class="px-3 py-3 text-[12px] font-semibold text-[#191c1e] font-mono"><x-pii source="wa_log" :subject-id="$log->id" field="phone_to" type="phone" :value="$log->phone_to" /></td>
                                 <td class="px-3 py-3 text-[12px] font-semibold">
                                     @if($log->status === 'sent')
                                         <span class="inline-flex items-center gap-1 px-2 py-1 rounded-md bg-[#c8e6c9] text-[#2e7d32]">

@@ -166,7 +166,7 @@
                             @endswitch
                         </td>
                         <td class="px-4 py-3">
-                            <span class="text-[12px] font-mono font-semibold text-[#191c1e]">{{ $log->phone_to }}</span>
+                            <span class="text-[12px] font-mono font-semibold text-[#191c1e]"><x-pii source="wa_log" :subject-id="$log->id" field="phone_to" type="phone" :value="$log->phone_to" /></span>
                         </td>
                         <td class="px-4 py-3">
                             @if($log->status === 'sent')
