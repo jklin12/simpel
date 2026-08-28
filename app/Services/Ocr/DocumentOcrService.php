@@ -316,15 +316,22 @@ EOT;
 
         // PDF — gunakan gs langsung (bypass ImageMagick delegate policy issues)
         if ($mime === 'application/pdf') {
-            try {
-                $pngPath = sys_get_temp_dir() . '/' . uniqid('ocr_pdf_') . '.png';
-                $escapedPath = escapeshellarg($fullPath);
-                $escapedOutput = escapeshellarg($pngPath);
+            $tmpId = uniqid('ocr_pdf_', true);
+            $outputPattern = sys_get_temp_dir() . '/' . $tmpId . '-%03d.png';
+            $pages = [];
 
-                $cmd = "gs -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=png16m -r150 -o {$escapedOutput} {$escapedPath}";
+            try {
+                $escapedPath = escapeshellarg($fullPath);
+                $escapedOutput = escapeshellarg($outputPattern);
+
+                // Batasi maksimal 4 halaman (KTP saksi/KK biasanya 1-2 lembar) supaya gambar gabungan tidak raksasa
+                $cmd = "gs -q -dNOPAUSE -dBATCH -dSAFER -dLastPage=4 -sDEVICE=png16m -r150 -o {$escapedOutput} {$escapedPath}";
                 exec($cmd, $output, $returnCode);
 
-                if ($returnCode !== 0 || !file_exists($pngPath)) {
+                $pages = glob(sys_get_temp_dir() . '/' . $tmpId . '-*.png') ?: [];
+                sort($pages);
+
+                if ($returnCode !== 0 || empty($pages)) {
                     Log::warning('GhostScript PDF conversion failed', [
                         'file' => $dokumen->original_name,
                         'return_code' => $returnCode,
@@ -333,8 +340,22 @@ EOT;
                     return null;
                 }
 
-                $base64 = base64_encode(file_get_contents($pngPath));
-                @unlink($pngPath);
+                if (count($pages) === 1) {
+                    $base64 = base64_encode(file_get_contents($pages[0]));
+                    return [
+                        'base64' => $base64,
+                        'mime' => 'image/png',
+                    ];
+                }
+
+                // Multi-halaman — gabung jadi satu gambar (stack vertikal) supaya AI bisa melihat semua halaman sekaligus
+                $imagick = new \Imagick($pages);
+                $imagick->resetIterator();
+                $combined = $imagick->appendImages(true);
+                $combined->setImageFormat('png');
+                $base64 = base64_encode($combined->getImageBlob());
+                $imagick->clear();
+                $combined->clear();
 
                 return [
                     'base64' => $base64,
@@ -343,6 +364,10 @@ EOT;
             } catch (\Exception $e) {
                 Log::warning('Gagal konversi PDF ke PNG: ' . $e->getMessage());
                 return null;
+            } finally {
+                foreach ($pages as $page) {
+                    @unlink($page);
+                }
             }
         }
 
