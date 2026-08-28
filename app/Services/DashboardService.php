@@ -44,6 +44,7 @@ class DashboardService
         $permohonanMasukBulanLalu = (clone $baseQuery)->whereBetween('created_at', [$startPrev, $endPrev])->count();
 
         $menungguVerifikasi = (clone $baseQuery)->where('status', 'pending')->count();
+        $menungguTtd        = (clone $baseQuery)->where('status', 'approved')->count();
 
         $selesaiBulanIni  = (clone $baseQuery)->where('status', 'completed')->whereBetween('completed_at', [$startMonth, $now])->count();
         $selesaiBulanLalu = (clone $baseQuery)->where('status', 'completed')->whereBetween('completed_at', [$startPrev, $endPrev])->count();
@@ -62,6 +63,7 @@ class DashboardService
                 'permohonan_masuk'    => $permohonanMasukBulanIni,
                 'permohonan_masuk_pct' => $this->percentageChange($permohonanMasukBulanLalu, $permohonanMasukBulanIni),
                 'menunggu_verifikasi' => $menungguVerifikasi,
+                'menunggu_ttd'        => $menungguTtd,
                 'selesai_diproses'    => $selesaiBulanIni,
                 'selesai_pct'         => $this->percentageChange($selesaiBulanLalu, $selesaiBulanIni),
                 'total_jenis_surat'   => $totalJenisSurat,

@@ -53,6 +53,7 @@
                 <option value="">Semua Status</option>
                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                 <option value="in_review" {{ request('status') == 'in_review' ? 'selected' : '' }}>Diproses</option>
+                <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Diterima</option>
                 <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Selesai</option>
                 <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Ditolak</option>
             </select>
