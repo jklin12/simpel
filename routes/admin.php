@@ -55,6 +55,9 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
             Route::get('whatsapp-logs', [App\Http\Controllers\Admin\WhatsappNotificationLogController::class, 'index'])->name('whatsapp-logs.index');
             Route::post('whatsapp-logs/{log}/retry', [App\Http\Controllers\Admin\WhatsappNotificationLogController::class, 'retry'])->name('whatsapp-logs.retry');
 
+            // Reveal nilai PII penuh (masking) — super_admin only, tercatat di audit log
+            Route::post('pii/reveal', [App\Http\Controllers\Admin\PiiRevealController::class, 'reveal'])->name('pii.reveal');
+
             // Master Data
             Route::prefix('master')->name('master.')->group(function () {
                 Route::resource('kabupaten', App\Http\Controllers\Admin\Master\KabupatenController::class);

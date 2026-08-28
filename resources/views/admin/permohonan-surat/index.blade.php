@@ -53,6 +53,7 @@
                 <option value="">Semua Status</option>
                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                 <option value="in_review" {{ request('status') == 'in_review' ? 'selected' : '' }}>Diproses</option>
+                <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Diterima</option>
                 <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>Selesai</option>
                 <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Ditolak</option>
             </select>
@@ -107,7 +108,7 @@
                         <div class="font-bold text-gray-800">{{ $permohonan->nama_pemohon }}</div>
                         <div class="text-[11px] text-gray-400 font-medium flex items-center gap-1 mt-0.5">
                             <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.333 0 4 .667 4 2v1H5v-1c0-1.333 2.667-2 4-2z"/></svg>
-                            NIK: {{ $permohonan->nik_pemohon }}
+                            NIK: <x-pii source="permohonan" :subject-id="$permohonan->id" field="nik_pemohon" type="nik" :value="$permohonan->nik_pemohon" :reveal="false" />
                         </div>
                     </td>
                     <td class="px-6 py-4">

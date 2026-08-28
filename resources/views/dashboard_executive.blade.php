@@ -78,7 +78,7 @@
 </div>
 
 <!-- Stats Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
         <div class="relative z-10">
             <h3 class="text-sm font-medium text-gray-500 mb-1">Permohonan Masuk</h3>
@@ -114,6 +114,25 @@
         <div class="absolute right-0 top-0 opacity-10 group-hover:opacity-20 transition-opacity">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-orange-500 -mr-6 -mt-6" fill="currentcolor" viewBox="0 0 24 24">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+            </svg>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+        <div class="relative z-10">
+            <h3 class="text-sm font-medium text-gray-500 mb-1">Menunggu TTD</h3>
+            <p class="text-3xl font-bold text-gray-800">{{ number_format($stats['menunggu_ttd']) }}</p>
+            <div class="mt-2 flex items-center text-xs font-medium
+                    {{ $stats['menunggu_ttd'] > 0 ? 'text-blue-600' : 'text-green-600' }}">
+                <span class="{{ $stats['menunggu_ttd'] > 0 ? 'bg-blue-50' : 'bg-green-50' }} px-1.5 py-0.5 rounded mr-1">
+                    {{ $stats['menunggu_ttd'] > 0 ? 'Antrian' : 'Bersih' }}
+                </span>
+                <span>{{ $stats['menunggu_ttd'] > 0 ? 'surat siap ditandatangani' : 'tidak ada antrian' }}</span>
+            </div>
+        </div>
+        <div class="absolute right-0 top-0 opacity-10 group-hover:opacity-20 transition-opacity">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-blue-500 -mr-6 -mt-6" fill="currentcolor" viewBox="0 0 24 24">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1.003 1.003 0 000-1.42l-2.34-2.34a1.003 1.003 0 00-1.42 0l-1.83 1.83 3.75 3.75 1.84-1.82z" />
             </svg>
         </div>
     </div>
