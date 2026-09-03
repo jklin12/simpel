@@ -441,6 +441,26 @@
 </div>
 
 @push('scripts')
+@if(!empty($overdue_surat) && (($overdue_surat['belum_ditindaklanjuti'] ?? 0) > 0 || ($overdue_surat['belum_ttd'] ?? 0) > 0))
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let pesan = [];
+        @if(($overdue_surat['belum_ditindaklanjuti'] ?? 0) > 0)
+        pesan.push("Halo Admin, Terdapat <b>{{ $overdue_surat['belum_ditindaklanjuti'] }}</b> Surat yang lebih dari 15 Menit Belum ditindaklanjuti.");
+        @endif
+        @if(($overdue_surat['belum_ttd'] ?? 0) > 0)
+        pesan.push("Halo Admin, Terdapat <b>{{ $overdue_surat['belum_ttd'] }}</b> Surat yang lebih dari 15 Menit Belum diproses Tanda tangan nih.");
+        @endif
+        pesan.push("Mohon segera di proses ya. Terima Kasih dan Tetap semangat!");
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'Perhatian!',
+            html: pesan.join('<br><br>'),
+        });
+    });
+</script>
+@endif
 <script>
 (function() {
     const dailyData = @json($daily_chart);
