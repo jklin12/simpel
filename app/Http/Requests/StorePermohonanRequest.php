@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use App\Models\JenisSurat;
 
 class StorePermohonanRequest extends FormRequest
@@ -16,6 +18,44 @@ class StorePermohonanRequest extends FormRequest
     }
 
     /**
+     * Normalisasi no WA: buang spasi, tanda hubung, dan tanda plus (+62 → 62).
+     */
+    protected function prepareForValidation(): void
+    {
+        if ($this->filled('no_wa')) {
+            $this->merge([
+                'no_wa' => preg_replace('/[\s\-+]/', '', (string) $this->input('no_wa')),
+            ]);
+        }
+    }
+
+    /**
+     * Honeypot: field `website` tersembunyi di form. Jika terisi, berarti bot.
+     * Validasi dibuat gagal, lalu failedValidation() membalas sukses palsu.
+     */
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            if ($this->filled('website')) {
+                $validator->errors()->add('website', 'Permintaan tidak valid.');
+            }
+        });
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        if ($this->filled('website')) {
+            throw new HttpResponseException(
+                redirect()->route('layanan.index')
+                    ->with('success', 'Permohonan Anda telah kami terima.')
+            );
+        }
+
+        parent::failedValidation($validator);
+    }
+
+    public function rules(): array
+    {
         $commonRules = [
             'jenis_surat_id' => 'required|exists:jenis_surats,id',
             'kelurahan_id' => 'required|exists:m_kelurahans,id',
@@ -622,8 +662,8 @@ class StorePermohonanRequest extends FormRequest
     {
         return [
             // Data Diri
-            'nama_lengkap'          => 'required|string|max:255',
-            'nik_bersangkutan'      => 'required|string|size:16',
+            'nama_lengkap'          => ['required', 'string', 'max:255', "regex:/^[\\pL\\s.'-]+$/u"],
+            'nik_bersangkutan'      => ['required', 'string', 'size:16', 'regex:/^(?!0000)6372\d{12}$/'],
             'jenis_kelamin'         => 'required|in:Laki-laki,Perempuan',
             'agama'                 => 'required|string',
             'tempat_lahir'          => 'required|string|max:100',
@@ -631,7 +671,7 @@ class StorePermohonanRequest extends FormRequest
             'status_perkawinan'     => 'required|string',
             'pekerjaan'             => 'required|string|max:100',
             'alamat_lengkap'        => 'required|string',
-            'no_wa'                 => 'required|string|max:20',
+            'no_wa'                 => ['required', 'string', 'regex:/^(08|62)\d{8,13}$/'],
             'keperluan_sktm'        => 'required|string',
             'keterangan_sktm'       => 'required|string',
 

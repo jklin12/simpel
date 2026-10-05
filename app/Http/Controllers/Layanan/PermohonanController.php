@@ -114,6 +114,17 @@ class PermohonanController extends Controller
                     ->withInput();
             }
 
+            // Batas harian per no WA: satu nomor maksimal 3 permohonan per hari (anti spam)
+            $jumlahPerWa = PermohonanSurat::where('phone_pemohon', $phonePemohon)
+                ->where('created_at', '>=', $today)
+                ->count();
+
+            if ($jumlahPerWa >= 3) {
+                return redirect()->back()
+                    ->with('error', 'Nomor WhatsApp ini sudah mencapai batas pengajuan hari ini. Silakan coba lagi besok.')
+                    ->withInput();
+            }
+
             // Filter out non-data fields AND file fields for JSON storage
             $dynamicFileNames = collect($service->required_fields ?? [])
                 ->filter(fn($f) => ($f['type'] ?? '') === 'file')

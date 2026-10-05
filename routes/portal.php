@@ -36,7 +36,7 @@ Route::name('')->group(function () {
         // Modul Surat Menyurat
         Route::prefix('surat-menyurat')->name('surat.')->group(function () {
             Route::get('/ajukan', [PermohonanController::class, 'create'])->name('ajukan');
-            Route::post('/ajukan', [PermohonanController::class, 'store'])->middleware('throttle:20,1')->name('store');
+            Route::post('/ajukan', [PermohonanController::class, 'store'])->middleware('throttle:5,10')->name('store');
             // OCR memanggil Anthropic API berbayar tanpa login → throttle ketat (cost-DoS).
             Route::post('/ocr', [PermohonanController::class, 'ocrKtp'])->middleware('throttle:10,1')->name('ocr');
 
