@@ -35,9 +35,9 @@ class PermohonanSktmrTest extends TestCase
     {
         $payload = array_merge($this->commonPayload(), $this->sktmrPayload(), $this->filePayload());
 
-        $response = $this->post(route('permohonan.store.public'), $payload);
+        $response = $this->post(route('layanan.surat.store'), $payload);
 
-        $response->assertRedirect(route('home'));
+        $response->assertRedirect(route('layanan.index'));
         $response->assertSessionHas('success_application');
 
         // Permohonan tersimpan di DB
@@ -65,7 +65,7 @@ class PermohonanSktmrTest extends TestCase
         $payload = array_merge($this->commonPayload(), $this->sktmrPayload());
         // Tidak menyertakan file sama sekali
 
-        $response = $this->post(route('permohonan.store.public'), $payload);
+        $response = $this->post(route('layanan.surat.store'), $payload);
 
         $response->assertSessionHasErrors([
             'sktmr_surat_pengantar',
@@ -83,7 +83,7 @@ class PermohonanSktmrTest extends TestCase
             // nama_lengkap, nik_bersangkutan, dll sengaja tidak diisi
         ]);
 
-        $response = $this->post(route('permohonan.store.public'), $payload);
+        $response = $this->post(route('layanan.surat.store'), $payload);
 
         $response->assertSessionHasErrors([
             'nama_lengkap',
@@ -102,7 +102,7 @@ class PermohonanSktmrTest extends TestCase
             ['nik_bersangkutan' => '123'] // NIK tidak valid
         );
 
-        $response = $this->post(route('permohonan.store.public'), $payload);
+        $response = $this->post(route('layanan.surat.store'), $payload);
 
         $response->assertSessionHasErrors('nik_bersangkutan');
     }
@@ -112,7 +112,7 @@ class PermohonanSktmrTest extends TestCase
     {
         $payload = array_merge($this->commonPayload(), $this->sktmrPayload(), $this->filePayload());
 
-        $this->post(route('permohonan.store.public'), $payload);
+        $this->post(route('layanan.surat.store'), $payload);
 
         $permohonan = PermohonanSurat::where('nik_pemohon', '3374010101900001')
             ->where('jenis_surat_id', $this->jenisSurat->id)
@@ -135,10 +135,7 @@ class PermohonanSktmrTest extends TestCase
         return [
             'jenis_surat_id' => $this->jenisSurat->id,
             'kelurahan_id'   => $this->kelurahan->id,
-            'pemohon_nama'   => 'Ahmad Saputra',
-            'pemohon_nik'    => '3374010101900001',
-            'pemohon_phone'  => '085600200913',
-            'pemohon_alamat' => 'Jl. Landasan Ulin No. 10, Banjarbaru',
+            'no_wa'          => '085600200913',
         ];
     }
 
