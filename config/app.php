@@ -72,6 +72,18 @@ return [
     |
     */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Trusted Proxies
+    |--------------------------------------------------------------------------
+    | Daftar IP/CIDR proxy yang dipercaya (mis. rentang IP Cloudflare), dipisah koma.
+    | Kosong = tidak ada proxy yang dipercaya. JANGAN isi '*' (IP klien bisa dipalsukan).
+    */
+    'trusted_proxies' => array_values(array_filter(array_map(
+        'trim',
+        explode(',', (string) env('TRUSTED_PROXIES', ''))
+    ))),
+
     'timezone' => 'Asia/Makassar',
 
     /*

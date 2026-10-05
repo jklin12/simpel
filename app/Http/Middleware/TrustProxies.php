@@ -14,6 +14,12 @@ class TrustProxies extends Middleware
      */
     protected $proxies;
 
+    public function __construct()
+    {
+        // Diambil dari config/app.php (TRUSTED_PROXIES). Kosong → null = tidak ada proxy dipercaya.
+        $this->proxies = config('app.trusted_proxies') ?: null;
+    }
+
     /**
      * The headers that should be used to detect proxies.
      *
