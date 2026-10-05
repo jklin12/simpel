@@ -240,6 +240,57 @@
             </div>
         </div>
 
+        <!-- Pindah Wilayah (salah pilih kecamatan/kelurahan) -->
+        @if(in_array($permohonanSurat->status, ['pending', 'in_review', 'revision_open']) && auth()->user()->hasAnyRole(['admin_kelurahan', 'admin_kecamatan', 'super_admin']))
+        <div class="bg-white rounded-[24px] shadow-sm p-8 border border-[#f3f4f6]">
+            <div class="flex items-center gap-3 mb-6">
+                <h2 class="text-xl font-bold text-[#191c1e] tracking-tight">Pindah Wilayah</h2>
+            </div>
+            <p class="text-sm text-[#757682] mb-4">Gunakan jika pemohon salah memilih kecamatan atau kelurahan. Admin tujuan akan menerima notifikasi. Pemohon tidak diberi tahu.</p>
+
+            <form action="{{ route('admin.permohonan-surat.pindah-wilayah', $permohonanSurat->id) }}" method="POST" class="space-y-4">
+                @csrf
+                <div>
+                    <label for="kelurahan_id" class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Kelurahan Tujuan</label>
+                    <select id="kelurahan_id" name="kelurahan_id" required class="w-full rounded-xl border-[#c5c5d4] text-sm">
+                        <option value="">— Pilih kelurahan —</option>
+                        @foreach($kelurahanOptions as $kecamatanNama => $kelurahans)
+                            <optgroup label="Kec. {{ $kecamatanNama }}">
+                                @foreach($kelurahans as $kel)
+                                    <option value="{{ $kel->id }}" @selected($kel->id == $permohonanSurat->kelurahan_id) @disabled($kel->id == $permohonanSurat->kelurahan_id)>
+                                        {{ $kel->nama }}{{ $kel->id == $permohonanSurat->kelurahan_id ? ' (saat ini)' : '' }}
+                                    </option>
+                                @endforeach
+                            </optgroup>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label for="alasan" class="text-[10px] font-bold uppercase tracking-widest text-[#757682] mb-1 block">Alasan Pemindahan</label>
+                    <textarea id="alasan" name="alasan" rows="2" maxlength="500" required class="w-full rounded-xl border-[#c5c5d4] text-sm" placeholder="Contoh: pemohon salah memilih kelurahan, domisili sesuai KTP di kelurahan lain"></textarea>
+                </div>
+                <button type="submit" class="px-5 py-2.5 bg-[#00236f] text-white rounded-xl font-bold shadow-sm hover:opacity-90">Pindahkan</button>
+            </form>
+
+            @if($kelurahanLogs->isNotEmpty())
+            <div class="mt-8">
+                <h3 class="text-sm font-bold text-[#191c1e] mb-3">Riwayat Perpindahan</h3>
+                <ul class="space-y-3">
+                    @foreach($kelurahanLogs as $log)
+                    <li class="text-sm border-l-2 border-[#dce1ff] pl-4">
+                        <span class="font-semibold">{{ $log->fromKelurahan->nama ?? '-' }}</span>
+                        &rarr;
+                        <span class="font-semibold">{{ $log->toKelurahan->nama ?? '-' }}</span>
+                        <div class="text-[#757682]">{{ $log->created_at->format('d M Y H:i') }} oleh {{ $log->movedBy->name ?? 'pengguna terhapus' }}</div>
+                        <div class="text-[#191c1e]">Alasan: {{ $log->alasan }}</div>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+        </div>
+        @endif
+
         <!-- Data Permohonan -->
         <div class="bg-white rounded-[24px] shadow-sm p-8 transition-all hover:shadow-md border border-[#f3f4f6]">
             <div class="flex items-center gap-3 mb-8">

@@ -99,6 +99,61 @@ class PermohonanSuratService
     }
 
     /**
+     * Pindahkan permohonan ke kelurahan lain (salah pilih wilayah).
+     * Boleh lintas kecamatan. Dicatat di permohonan_kelurahan_logs dan notifikasi ke admin, bukan pemohon.
+     *
+     * @throws \RuntimeException jika status sudah selesai, tujuan tidak aktif, atau tujuan sama dengan asal
+     */
+    public function pindahkanWilayah($permohonan, int $kelurahanBaruId, string $alasan): \App\Models\PermohonanSurat
+    {
+        $this->authorizeAccess($permohonan);
+
+        if (!in_array($permohonan->status, ['pending', 'in_review', 'revision_open'], true)) {
+            throw new \RuntimeException('Wilayah hanya bisa dipindahkan saat permohonan belum selesai diproses.');
+        }
+
+        $kelurahanBaru = \App\Models\Kelurahan::with('kecamatan')->findOrFail($kelurahanBaruId);
+        if (!$kelurahanBaru->is_active || !$kelurahanBaru->kecamatan?->is_active) {
+            throw new \RuntimeException('Kelurahan tujuan tidak aktif.');
+        }
+
+        if ((int) $permohonan->kelurahan_id === (int) $kelurahanBaru->id) {
+            throw new \RuntimeException('Kelurahan tujuan sama dengan kelurahan saat ini.');
+        }
+
+        $kelurahanAsalId = $permohonan->kelurahan_id;
+
+        $log = DB::transaction(function () use ($permohonan, $kelurahanAsalId, $kelurahanBaru, $alasan) {
+            $permohonan->update(['kelurahan_id' => $kelurahanBaru->id]);
+
+            return \App\Models\PermohonanKelurahanLog::create([
+                'permohonan_surat_id' => $permohonan->id,
+                'from_kelurahan_id'   => $kelurahanAsalId,
+                'to_kelurahan_id'     => $kelurahanBaru->id,
+                'moved_by'            => Auth::id(),
+                'alasan'              => $alasan,
+            ]);
+        });
+
+        // Notifikasi ke admin tujuan (kelurahan + kecamatan) dan admin kelurahan asal.
+        $penerima = User::role(['admin_kelurahan', 'lurah'])
+            ->whereIn('kelurahan_id', [$kelurahanAsalId, $kelurahanBaru->id])
+            ->get()
+            ->merge(
+                User::role('admin_kecamatan')->where('kecamatan_id', $kelurahanBaru->kecamatan_id)->get()
+            )
+            ->reject(fn ($u) => $u->id === Auth::id())
+            ->unique('id');
+
+        $log->load(['permohonan', 'fromKelurahan', 'toKelurahan']);
+        foreach ($penerima as $admin) {
+            $admin->notify(new \App\Notifications\PermohonanPindahWilayahNotification($log));
+        }
+
+        return $permohonan->fresh();
+    }
+
+    /**
      * Update data_permohonan secara langsung.
      */
     public function updateDataPermohonan($id, array $data)

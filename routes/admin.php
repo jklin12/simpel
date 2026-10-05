@@ -99,6 +99,7 @@ Route::domain(config('app.admin_domain', 'panel.simpel-bjb.id'))->group(function
             Route::post('permohonan-surat/{permohonanSurat}/approve-revisi', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'approveRevisiRequest'])->name('permohonan-surat.approve-revisi');
             Route::post('permohonan-surat/{permohonanSurat}/reject-revisi', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'rejectRevisiRequest'])->name('permohonan-surat.reject-revisi');
             Route::post('permohonan-surat/{permohonanSurat}/confirm-edit-done', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'confirmEditDone'])->name('permohonan-surat.confirm-edit-done');
+            Route::post('permohonan-surat/{permohonanSurat}/pindah-wilayah', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'pindahWilayah'])->name('permohonan-surat.pindah-wilayah');
 
             Route::delete('permohonan-surat/{permohonanSurat}', [App\Http\Controllers\Admin\Surat\PermohonanSuratController::class, 'destroy'])->name('permohonan-surat.destroy');
         });

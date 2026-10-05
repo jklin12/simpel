@@ -70,6 +70,11 @@ class PermohonanSurat extends Model
         return $this->hasMany(PermohonanRevisiRequest::class);
     }
 
+    public function kelurahanLogs(): HasMany
+    {
+        return $this->hasMany(PermohonanKelurahanLog::class)->latest();
+    }
+
     public function currentApprovalStep(): BelongsTo
     {
         return $this->belongsTo(ApprovalStep::class, 'current_step', 'step_order');

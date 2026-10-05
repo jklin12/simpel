@@ -46,12 +46,41 @@ class PermohonanSuratController extends Controller
             $permohonanSurat->load('dokumens', 'revisiRequests.requestedBy', 'revisiRequests.reviewedBy');
             $approvals = $permohonanSurat->approvals()->orderBy('step_order')->get();
             $revisiRequests = $permohonanSurat->revisiRequests()->latest()->get();
+            $kelurahanLogs = $permohonanSurat->kelurahanLogs()->with(['fromKelurahan.kecamatan', 'toKelurahan.kecamatan', 'movedBy'])->get();
+            $kelurahanOptions = \App\Models\Kelurahan::with('kecamatan')
+                ->where('is_active', true)
+                ->whereHas('kecamatan', fn ($q) => $q->where('is_active', true))
+                ->orderBy('nama')
+                ->get()
+                ->groupBy(fn ($k) => $k->kecamatan->nama);
 
-            return view('admin.permohonan-surat.show', compact('permohonanSurat', 'approvals', 'revisiRequests'));
+            return view('admin.permohonan-surat.show', compact('permohonanSurat', 'approvals', 'revisiRequests', 'kelurahanLogs', 'kelurahanOptions'));
         } catch (\Exception $e) {
             return redirect()
                 ->route('admin.permohonan-surat.index')
                 ->with('error', 'Permohonan tidak ditemukan');
+        }
+    }
+
+    /**
+     * Pindahkan permohonan ke kelurahan lain (salah pilih wilayah).
+     */
+    public function pindahWilayah(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'kelurahan_id' => 'required|integer|exists:m_kelurahans,id',
+            'alasan'       => 'required|string|max:500',
+        ]);
+
+        try {
+            $permohonanSurat = $this->service->getPermohonanById($id);
+            $this->service->pindahkanWilayah($permohonanSurat, (int) $validated['kelurahan_id'], $validated['alasan']);
+
+            return redirect()
+                ->route('admin.permohonan-surat.show', $id)
+                ->with('success', 'Permohonan berhasil dipindahkan ke wilayah baru.');
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
         }
     }
 

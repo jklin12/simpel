@@ -12,6 +12,11 @@ class SetupOcrRulesSeeder extends Seeder
      */
     public function run(): void
     {
+        // Dinonaktifkan sementara: seeder ini menimpa aturan OCR yang sudah ada.
+        // Hapus blok return di bawah jika memang perlu dijalankan.
+        $this->command?->warn('SetupOcrRulesSeeder dinonaktifkan sementara. Tidak ada yang diubah.');
+        return;
+
         $ocrRulesData = [
             'SKTM' => [
                 'dokumen' => [
