@@ -30,6 +30,13 @@
             <input type="hidden" name="jenis_surat_id" value="{{ $service->id }}">
             <input type="hidden" name="kelurahan_id" value="{{ $kelurahan->id }}">
 
+            <!-- Honeypot: disembunyikan dari manusia, bot yang mengisinya akan ditolak -->
+            <div aria-hidden="true" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+                <label>Jangan isi kolom ini
+                    <input type="text" name="website" value="" tabindex="-1" autocomplete="off">
+                </label>
+            </div>
+
 
 
             <!-- Fields Based on Letter Type -->
