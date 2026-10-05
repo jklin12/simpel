@@ -86,6 +86,7 @@ class DashboardService
             $data['sla_metrics']              = $this->getSlaMetrics($baseQuery, $startMonth, $now);
             $data['sla_per_kelurahan']        = $data['show_sla_per_kelurahan'] ? $this->getSlaPerKelurahan($baseQuery, $startMonth, $now) : [];
             $data['rekapitulasi_per_kecamatan'] = $this->getRekapitulasiPerKecamatan($user, $startMonth, $now);
+            $data['overdue_surat']            = $this->getOverdueCounts($baseQuery);
         } else {
             $data['is_executive'] = false;
         }
@@ -521,6 +522,31 @@ class DashboardService
             'rows'        => $resultRows,
             'totals'      => $totals,
             'grand_total' => array_sum($totals),
+        ];
+    }
+
+    /**
+     * Hitung jumlah surat overdue (>15 menit) dalam scope user:
+     * - belum ditindaklanjuti (pending/in_review sejak diajukan)
+     * - belum diproses tanda tangan (approved, menunggu upload PDF ber-TTD)
+     */
+    private function getOverdueCounts($baseQuery): array
+    {
+        $threshold = Carbon::now()->subMinutes(15);
+
+        $belumDitindaklanjuti = (clone $baseQuery)
+            ->whereIn('status', ['pending', 'in_review'])
+            ->where('created_at', '<=', $threshold)
+            ->count();
+
+        $belumTtd = (clone $baseQuery)
+            ->where('status', 'approved')
+            ->where('updated_at', '<=', $threshold)
+            ->count();
+
+        return [
+            'belum_ditindaklanjuti' => $belumDitindaklanjuti,
+            'belum_ttd'             => $belumTtd,
         ];
     }
 

@@ -51,7 +51,7 @@ class RekapitulasiSuratExport implements FromArray, WithTitle, WithStyles, WithC
         // Row 1: title
         $sheet[] = ["REKAPITULASI SURAT — {$monthLabel} {$this->year}"];
         // Row 2: blank
-        $sheet[] = [];
+        $sheet[] = [''];
 
         // Row 3: headers
         $headers = ['No', 'Jenis Surat', 'Kode'];

@@ -48,9 +48,12 @@ class PermohonanCreatedWhatsapp extends Notification implements ShouldQueue
 
         if ($isApplicant) {
             return "Halo {$p->nama_pemohon},\n\n" .
-                "Permohonan surat *{$p->jenisSurat->nama}* Anda telah kami terima.\n\n" .
-                "Kode Tracking: *{$p->track_token}*\n\n" .
-                "Gunakan kode ini untuk mengecek status permohonan Anda di website kami.\n" .
+                "Permohonan surat {$p->jenisSurat->nama} Anda TELAH KAMI TERIMA.\n\n" .
+                "Kode Tracking pian : {$p->track_token}\n" .
+                "Gunakan kode ini untuk mengecek status permohonan Anda di website kami.\n\n" .
+                "Pian dapat memonitor proses permohonan pian melalui link berikut:\n" .
+                route('layanan.surat.tracking.search', ['track_token' => $p->track_token]) . "\n\n" .
+                "Semua Pelayanan Administrasi Non Perizinan pada Kecamatan Landasan Ulin Gratis dan tidak dipungut biaya apapun.\n\n" .
                 "Terima kasih.";
         }
 

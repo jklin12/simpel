@@ -35,21 +35,23 @@ class PermohonanApprovedWhatsapp extends Notification implements ShouldQueue
         // Jika sudah completed (final approval)
         if ($p->status === 'completed') {
             return "Halo {$p->nama_pemohon},\n\n" .
-                "✅ Permohonan surat *{$p->jenisSurat->nama}* Anda telah *SELESAI* diproses dan ditandatangai secara elektronik.\n\n" .
-                "Nomor Surat: *{$p->nomor_surat}*\n" .
-                "Tanggal Surat: {$p->tanggal_surat->format('d/m/Y')}\n\n" .
-                "Silahkan download file surat pian melalui link berikut:\n" .
+                "✅ Permohonan surat {$p->jenisSurat->nama} Anda telah SELESAI diproses dan telah ditandatangani secara elektronik.\n\n" .
+                "Nomor Surat : {$p->nomor_surat}\n" .
+                "Tanggal Surat : {$p->tanggal_surat->format('d/m/Y')}\n\n" .
+                "Silahkan Download file surat pian melalui link berikut:\n" .
                 route('layanan.surat.tracking.search', ['track_token' => $p->track_token]) . "\n\n" .
-                "*Bapak/Ibu tidak perlu khawatir jika memerlukan dokumen dalam bentuk fisik. Petugas kami di kantor kelurahan siap membantu mencetakkannya untuk Anda. Apabila ada kendala, silakan langsung datang ke kantor agar kami dapat menyerahkan surat Anda secara langsung pada Senin-Kamis pukul 08.00 - 16.30WITA dan Jumat pukul 07.30 - 11.00 WITA*\n\n" .
+                "Bapak/Ibu tidak perlu khawatir jika memerlukan dokumen dalam bentuk fisik. Petugas kami di kantor kelurahan siap membantu mencetakkannya untuk Anda. Apabila ada kendala, silakan langsung datang ke kantor agar kami dapat menyerahkan surat Anda secara langsung pada Senin-Kamis pukul 08.00 - 16.30 WITA dan Jumat pukul 07.30 - 11.00 WITA\n\n" .
+                "Semua Pelayanan Administrasi Non Perizinan pada Kecamatan Landasan Ulin Gratis dan tidak dipungut biaya apapun.\n\n" .
                 "Terima kasih.";
         }
 
         // Jika masih in_review / approved
         return "Halo {$p->nama_pemohon},\n\n" .
-            "📋 Permohonan surat *{$p->jenisSurat->nama}* Anda telah *DISETUJUI* pada tahap verifikasi saat ini.\n\n" .
-            "Permohonan Anda sedang dilanjutkan ke tahap berikutnya.\n\n" .
-            "Pantau status permohonan Anda di sini:\n" .
+            "📋 Permohonan surat {$p->jenisSurat->nama} Anda saat ini pada tahap verifikasi dan telah DISETUJUI.\n\n" .
+            "Permohonan Anda sedang dilanjutkan ke tahap berikutnya, yaitu penandatangan elektronik oleh Pejabat yang Berwenang.\n\n" .
+            "Pian dapat memonitor proses permohonan pian melalui link berikut:\n" .
             route('layanan.surat.tracking.search', ['track_token' => $p->track_token]) . "\n\n" .
+            "Semua Pelayanan Administrasi Non Perizinan pada Kecamatan Landasan Ulin Gratis dan tidak dipungut biaya apapun.\n\n" .
             "Terima kasih atas kesabarannya.";
     }
 }
