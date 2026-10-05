@@ -21,11 +21,11 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_dengan_provider_mock_berhasil(): void
     {
-        config(['ai.provider' => 'mock']);
+        config(['ai.provider' => 'mock', 'ai.ocr_provider' => 'mock']);
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
@@ -47,7 +47,7 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_dengan_provider_claude_mock_berhasil(): void
     {
-        config(['ai.provider' => 'claude']);
+        config(['ai.provider' => 'claude', 'ai.ocr_provider' => 'claude']);
 
         Http::fake([
             'api.anthropic.com/v1/messages' => Http::response([
@@ -71,7 +71,7 @@ class OcrKtpTest extends TestCase
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
@@ -89,7 +89,7 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_claude_dengan_markdown_fence_terparse(): void
     {
-        config(['ai.provider' => 'claude']);
+        config(['ai.provider' => 'claude', 'ai.ocr_provider' => 'claude']);
 
         Http::fake([
             'api.anthropic.com/v1/messages' => Http::response([
@@ -113,7 +113,7 @@ class OcrKtpTest extends TestCase
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
@@ -125,10 +125,10 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_dengan_provider_gemini_mock_berhasil(): void
     {
-        config(['ai.provider' => 'gemini']);
+        config(['ai.provider' => 'gemini', 'ai.ocr_provider' => 'gemini', 'ai.providers.gemini.api_key' => 'test-key']);
 
         Http::fake([
-            'generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-lite:generateContent' => Http::response([
+            'generativelanguage.googleapis.com/v1beta/models/*' => Http::response([
                 'candidates' => [
                     [
                         'content' => [
@@ -155,7 +155,7 @@ class OcrKtpTest extends TestCase
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
@@ -172,7 +172,7 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_normalisasi_jenis_kelamin(): void
     {
-        config(['ai.provider' => 'claude']);
+        config(['ai.provider' => 'claude', 'ai.ocr_provider' => 'claude']);
 
         Http::fake([
             'api.anthropic.com/v1/messages' => Http::response([
@@ -196,7 +196,7 @@ class OcrKtpTest extends TestCase
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
@@ -209,11 +209,11 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_normalisasi_tanggal_lahir(): void
     {
-        config(['ai.provider' => 'mock']);
+        config(['ai.provider' => 'mock', 'ai.ocr_provider' => 'mock']);
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
@@ -226,10 +226,10 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_gagal_tanpa_file(): void
     {
-        $response = $this->post(route('layanan.surat.ocr'), []);
+        $response = $this->postJson(route('layanan.surat.ocr'), []);
 
         $response->assertStatus(422);
-        $response->assertSessionHasErrors('ktp_image');
+        $response->assertJsonValidationErrors('ktp_image');
     }
 
     /** @test */
@@ -237,12 +237,12 @@ class OcrKtpTest extends TestCase
     {
         $file = UploadedFile::fake()->create('ktp.txt', 100, 'text/plain');
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
         $response->assertStatus(422);
-        $response->assertSessionHasErrors('ktp_image');
+        $response->assertJsonValidationErrors('ktp_image');
     }
 
     /** @test */
@@ -251,12 +251,12 @@ class OcrKtpTest extends TestCase
         // 6MB > 5MB limit
         $file = UploadedFile::fake()->image('ktp.jpg', 3000, 2000)->size(6 * 1024);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
         $response->assertStatus(422);
-        $response->assertSessionHasErrors('ktp_image');
+        $response->assertJsonValidationErrors('ktp_image');
     }
 
     /** @test */
@@ -268,7 +268,7 @@ class OcrKtpTest extends TestCase
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
@@ -285,7 +285,7 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_gagal_respons_json_invalid(): void
     {
-        config(['ai.provider' => 'claude']);
+        config(['ai.provider' => 'claude', 'ai.ocr_provider' => 'claude']);
 
         Http::fake([
             'api.anthropic.com/v1/messages' => Http::response([
@@ -299,7 +299,7 @@ class OcrKtpTest extends TestCase
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
@@ -313,7 +313,7 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_gagal_api_error(): void
     {
-        config(['ai.provider' => 'claude']);
+        config(['ai.provider' => 'claude', 'ai.ocr_provider' => 'claude']);
 
         Http::fake([
             'api.anthropic.com/v1/messages' => Http::response([
@@ -325,7 +325,7 @@ class OcrKtpTest extends TestCase
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
@@ -336,7 +336,7 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_field_boleh_null(): void
     {
-        config(['ai.provider' => 'claude']);
+        config(['ai.provider' => 'claude', 'ai.ocr_provider' => 'claude']);
 
         Http::fake([
             'api.anthropic.com/v1/messages' => Http::response([
@@ -360,7 +360,7 @@ class OcrKtpTest extends TestCase
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
 
@@ -374,7 +374,7 @@ class OcrKtpTest extends TestCase
     /** @test */
     public function ocr_ktp_endpoint_throttled(): void
     {
-        config(['ai.provider' => 'mock']);
+        config(['ai.provider' => 'mock', 'ai.ocr_provider' => 'mock']);
 
         $file = UploadedFile::fake()->image('ktp.jpg', 800, 600);
 
@@ -385,7 +385,7 @@ class OcrKtpTest extends TestCase
         $this->assertNotNull($routeConfig);
 
         // First request should succeed
-        $response = $this->post(route('layanan.surat.ocr'), [
+        $response = $this->postJson(route('layanan.surat.ocr'), [
             'ktp_image' => $file,
         ]);
         $response->assertStatus(200);
