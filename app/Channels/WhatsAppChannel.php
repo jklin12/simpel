@@ -5,6 +5,7 @@ namespace App\Channels;
 use App\Models\PermohonanSurat;
 use App\Models\WhatsappNotificationLog;
 use Illuminate\Contracts\Cache\LockTimeoutException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -38,7 +39,7 @@ class WhatsAppChannel
         $to = $customTo ?? $notifiable->routeNotificationFor('whatsapp') ?? $notifiable->phone ?? $notifiable->phone_pemohon;
 
         if (!$to) {
-            Log::warning("WhatsApp notification skipped - no phone number for " . get_class($notifiable) . " #{$notifiable->id}");
+            Log::warning("WhatsApp notification skipped - no phone number for " . get_class($notifiable) . " #" . ($this->notifiableId($notifiable) ?? 'on-demand'));
             return;
         }
 
@@ -51,7 +52,10 @@ class WhatsAppChannel
         }
 
         // Create log entry
-        $permohonanId = $notifiable instanceof PermohonanSurat ? $notifiable->id : null;
+        // Notifikasi on-demand (Notification::route) tidak punya model; ambil permohonan dari notifikasinya.
+        $permohonanId = $notifiable instanceof PermohonanSurat
+            ? $notifiable->id
+            : (($notification->permohonan ?? null) instanceof PermohonanSurat ? $notification->permohonan->id : null);
         $notificationType = $notification->whatsappType ?? 'unknown';
         $messagePreview = substr(str_replace("\n", ' ', $message), 0, 200);
 
@@ -59,7 +63,7 @@ class WhatsAppChannel
             'permohonan_id' => $permohonanId,
             'notification_type' => $notificationType,
             'notifiable_type' => get_class($notifiable),
-            'notifiable_id' => $notifiable->id,
+            'notifiable_id' => $this->notifiableId($notifiable),
             'phone_to' => $to,
             'message_preview' => $messagePreview,
             'has_file' => (bool) $fileContent,
@@ -125,6 +129,15 @@ class WhatsAppChannel
             Log::error("WhatsApp send exception: " . $e->getMessage());
             throw $e;
         }
+    }
+
+    /**
+     * ID penerima untuk log. Null untuk notifikasi on-demand (AnonymousNotifiable)
+     * yang hanya berupa nomor tujuan tanpa model.
+     */
+    private function notifiableId(object $notifiable): ?int
+    {
+        return $notifiable instanceof Model ? $notifiable->getKey() : null;
     }
 
     /**

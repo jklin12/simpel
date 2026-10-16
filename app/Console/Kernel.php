@@ -12,12 +12,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Backup database — simpan hanya file terbaru per jenis (lihat config/backup.php).
-        $schedule->command('db:backup --type=daily')
-            ->dailyAt('02:00')
-            ->withoutOverlapping()
-            ->onOneServer();
-
+        // Backup database penuh seminggu sekali. Jumlah file yang disimpan diatur
+        // BACKUP_KEEP (prod: 5 = ~1 bulan), file lebih lama dihapus otomatis.
         $schedule->command('db:backup --type=weekly')
             ->weeklyOn(0, '02:30') // Minggu 02:30
             ->withoutOverlapping()

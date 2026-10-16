@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\WhatsappNotificationLog;
 use App\Support\PhoneNumberFormatter;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Support\Facades\Notification;
 
 class WhatsappNotificationLogController extends Controller
 {
@@ -66,7 +68,13 @@ class WhatsappNotificationLogController extends Controller
 
             $notification = $this->buildNotification($log);
 
-            $log->permohonan->notify($notification);
+            // Log on-demand (mis. permintaan TTD ke Lurah/Camat) dikirim ulang ke nomor
+            // tujuan semula, bukan ke pemohon.
+            if ($log->notifiable_type === AnonymousNotifiable::class) {
+                Notification::route('whatsapp', $log->phone_to)->notify($notification);
+            } else {
+                $log->permohonan->notify($notification);
+            }
 
             return redirect()->back()->with('success', 'Notifikasi WhatsApp sedang dikirim ulang ke antrian.');
         } catch (\Exception $e) {
