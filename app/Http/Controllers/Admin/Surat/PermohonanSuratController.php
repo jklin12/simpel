@@ -428,7 +428,13 @@ class PermohonanSuratController extends Controller
                 default => throw new \Exception('Tipe notifikasi tidak dikenal: ' . $failedLog->notification_type)
             };
 
-            $permohonan->notify($notification);
+            // Log on-demand (mis. permintaan TTD ke Lurah/Camat) dikirim ulang ke nomor
+            // tujuan semula, bukan ke pemohon.
+            if ($failedLog->notifiable_type === \Illuminate\Notifications\AnonymousNotifiable::class) {
+                \Illuminate\Support\Facades\Notification::route('whatsapp', $failedLog->phone_to)->notify($notification);
+            } else {
+                $permohonan->notify($notification);
+            }
 
             return redirect()
                 ->route('admin.permohonan-surat.show', $id)
