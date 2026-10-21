@@ -81,20 +81,15 @@ class WhatsAppChannel
 
         try {
             if ($fileContent) {
-                // Write temp file to attach
-                $tempPath = sys_get_temp_dir() . '/' . uniqid() . '_' . $filename;
-                file_put_contents($tempPath, $fileContent);
-
+                // Nama file bisa memuat "/" (nomor permohonan), jadi tidak ditulis ke path sementara.
                 $response = $client->attach(
                     'file',
-                    file_get_contents($tempPath),
-                    $filename
+                    $fileContent,
+                    str_replace(['/', '\\'], '-', $filename)
                 )->post($baseUrl . '/send-media', [
                     'number' => $to,
                     'caption' => $message
                 ]);
-
-                @unlink($tempPath);
             } else {
                 $response = $client->post($baseUrl . '/send-message', [
                     'number' => $to,
@@ -121,9 +116,10 @@ class WhatsAppChannel
 
             Log::info("WhatsApp sent to {$to}" . ($fileContent ? ' (with media)' : ''));
         } catch (\Exception $e) {
+            // Jangan timpa detail respons API yang sudah tersimpan di atas dengan pesan generik.
             $log->update([
                 'status' => 'failed',
-                'error_message' => $e->getMessage(),
+                'error_message' => $log->error_message ?: $e->getMessage(),
             ]);
 
             Log::error("WhatsApp send exception: " . $e->getMessage());
