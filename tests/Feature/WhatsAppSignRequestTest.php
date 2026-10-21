@@ -89,6 +89,34 @@ class WhatsAppSignRequestTest extends TestCase
     }
 
     /** @test */
+    public function gagal_kirim_menyimpan_detail_error_dari_api_bukan_pesan_generik(): void
+    {
+        // Stub dari setUp() sudah terdaftar dan menang; ganti dengan Factory baru.
+        Http::swap(new \Illuminate\Http\Client\Factory());
+        Http::fake([
+            '*/send-message' => Http::response(['status' => false, 'response' => 'Error: No LID for user'], 500),
+            '*/send-media'   => Http::response(['status' => false, 'response' => 'Error: No LID for user'], 500),
+        ]);
+
+        $permohonan = $this->makePermohonan();
+
+        try {
+            Notification::route('whatsapp', self::NOMOR_LURAH)
+                ->notifyNow(new PermohonanSignRequestWhatsapp($permohonan, 'Bapak/Ibu Lurah'));
+        } catch (\Exception $e) {
+            // Channel melempar exception agar job bisa di-retry; yang diuji adalah isi log-nya.
+        }
+
+        $log = WhatsappNotificationLog::where('notification_type', 'sign_request')
+            ->where('permohonan_id', $permohonan->id)
+            ->firstOrFail();
+
+        $this->assertSame('failed', $log->status);
+        $this->assertSame(500, $log->response_code);
+        $this->assertStringContainsString('No LID for user', $log->error_message);
+    }
+
+    /** @test */
     public function notifikasi_ke_model_tetap_mencatat_notifiable_id(): void
     {
         $permohonan = $this->makePermohonan();

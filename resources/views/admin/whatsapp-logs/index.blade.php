@@ -228,6 +228,9 @@
                         <td colspan="9" class="px-4 py-2">
                             <div class="text-[11px] text-[#d32f2f] font-medium">
                                 <span class="font-bold">Error:</span> {{ $log->error_message }}
+                                @if(str_contains($log->error_message, 'No LID for user'))
+                                    <span class="text-[#6b7280]">— Nomor kemungkinan tidak terdaftar di WhatsApp atau salah ketik.</span>
+                                @endif
                             </div>
                         </td>
                     </tr>
