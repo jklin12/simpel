@@ -194,7 +194,7 @@
 
     @if($permohonanSurats->hasPages())
     <div class="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
-        {{ $permohonanSurats->links() }}
+        {{ $permohonanSurats->withQueryString()->links() }}
     </div>
     @endif
 </div>
