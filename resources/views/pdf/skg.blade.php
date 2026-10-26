@@ -119,7 +119,7 @@
         }
 
         table.data-table td.col-label {
-            width: 42%;
+            width: 35%;
         }
 
         table.data-table td.col-sep {
@@ -128,7 +128,7 @@
         }
 
         table.data-table td.col-value {
-            width: 55%;
+            width: 62%;
         }
 
         /* NARASI */

@@ -160,15 +160,15 @@
         }
 
         table.info-table td.il {
-            width: 40%;
+            width: 42%;
         }
 
         table.info-table td.is {
-            width: 4%;
+            width: 3%;
         }
 
         table.info-table td.iv {
-            width: 56%;
+            width: 55%;
         }
 
         .section-label {
@@ -440,7 +440,7 @@
         <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-bottom:4px;">
             <tr>
                 <td style="width:6%; vertical-align:top; padding:1.5px 0;">1.</td>
-                <td style="width:48%; vertical-align:top; padding:1.5px 0;">Nama lengkap dan alias</td>
+                <td style="width:36%; vertical-align:top; padding:1.5px 0;">Nama lengkap dan alias</td>
                 <td style="width:3%; vertical-align:top; padding:1.5px 0;">:</td>
                 <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">{{ $namaLengkap }}</td>
             </tr>
@@ -515,7 +515,7 @@
         <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-bottom:4px;">
             <tr>
                 <td style="width:6%; vertical-align:top; padding:1.5px 0;"></td>
-                <td style="width:48%; vertical-align:top; padding:1.5px 0;">Nama lengkap dan alias</td>
+                <td style="width:36%; vertical-align:top; padding:1.5px 0;">Nama lengkap dan alias</td>
                 <td style="width:3%; vertical-align:top; padding:1.5px 0;">:</td>
                 <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">{{ strtoupper($data['ayah_nama'] ?? '-') }}</td>
             </tr>
@@ -564,7 +564,7 @@
         <table style="width:100%; border-collapse:collapse; font-size:10pt; margin-bottom:4px;">
             <tr>
                 <td style="width:6%; vertical-align:top; padding:1.5px 0;"></td>
-                <td style="width:48%; vertical-align:top; padding:1.5px 0;">Nama lengkap dan alias</td>
+                <td style="width:36%; vertical-align:top; padding:1.5px 0;">Nama lengkap dan alias</td>
                 <td style="width:3%; vertical-align:top; padding:1.5px 0;">:</td>
                 <td style="vertical-align:top; padding:1.5px 0; font-weight:bold;">{{ strtoupper($data['ibu_nama'] ?? '-') }}</td>
             </tr>
