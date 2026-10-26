@@ -49,7 +49,7 @@ class WhatsappNotificationLogController extends Controller
 
         $logs = $query->paginate(25);
         $statuses = ['pending', 'sent', 'failed'];
-        $notificationTypes = ['created', 'approved', 'rejected', 'revisi', 'sign_request'];
+        $notificationTypes = ['created', 'approved', 'rejected', 'revisi', 'sign_request', 'survey'];
 
         return view('admin.whatsapp-logs.index', compact('logs', 'statuses', 'notificationTypes'));
     }
@@ -129,6 +129,7 @@ class WhatsappNotificationLogController extends Controller
             'approved' => new \App\Notifications\PermohonanApprovedWhatsapp($permohonan),
             'rejected' => new \App\Notifications\PermohonanRejectedWhatsapp($permohonan, $permohonan->rejected_reason ?? 'Tidak sesuai kriteria'),
             'revisi' => new \App\Notifications\PermohonanRevisiWhatsapp($permohonan),
+            'survey' => new \App\Notifications\PermohonanSurveyWhatsapp($permohonan),
             'sign_request' => new \App\Notifications\PermohonanSignRequestWhatsapp(
                 $permohonan,
                 $permohonan->currentApprovalStep?->approval_pejabat_name ?? 'Bapak/Ibu'

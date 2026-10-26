@@ -956,6 +956,9 @@
                                         @case('sign_request')
                                             <span class="px-2 py-1 rounded-md bg-[#f3e5f5] text-[#7b1fa2] text-[11px] font-bold">TTD</span>
                                             @break
+                                        @case('survey')
+                                            <span class="px-2 py-1 rounded-md bg-[#e0f2f1] text-[#00796b] text-[11px] font-bold">Survei</span>
+                                            @break
                                         @default
                                             <span class="px-2 py-1 rounded-md bg-[#f5f5f5] text-[#616161] text-[11px] font-bold">{{ ucfirst($log->notification_type) }}</span>
                                     @endswitch
