@@ -266,6 +266,15 @@ class PermohonanSuratController extends Controller
                 \Illuminate\Support\Facades\Log::error('WA completed notification failed: ' . $e->getMessage());
             }
 
+            // Kirim WA ajakan survei 1 jam setelah surat selesai
+            try {
+                $permohonan->fresh()->notify(
+                    (new \App\Notifications\PermohonanSurveyWhatsapp($permohonan->fresh()))->delay(now()->addHour())
+                );
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('WA survey notification failed: ' . $e->getMessage());
+            }
+
             return redirect()
                 ->route('admin.permohonan-surat.show', $id)
                 ->with('success', 'Surat berhasil diupload. Status permohonan sekarang Selesai dan notifikasi telah dikirim ke pemohon.');
@@ -392,6 +401,7 @@ class PermohonanSuratController extends Controller
                 'approved' => new \App\Notifications\PermohonanApprovedWhatsapp($permohonan),
                 'rejected' => new \App\Notifications\PermohonanRejectedWhatsapp($permohonan, $permohonan->rejected_reason ?? 'Tidak sesuai kriteria'),
                 'revisi' => new \App\Notifications\PermohonanRevisiWhatsapp($permohonan),
+                'survey' => new \App\Notifications\PermohonanSurveyWhatsapp($permohonan),
                 'sign_request' => new \App\Notifications\PermohonanSignRequestWhatsapp(
                     $permohonan,
                     $permohonan->currentApprovalStep?->approval_pejabat_name ?? 'Bapak/Ibu'

@@ -40,6 +40,8 @@ return [
         // Set 0 pada keduanya untuk menonaktifkan throttle.
         'throttle_min' => (int) env('WHATSAPP_THROTTLE_MIN', 20),
         'throttle_max' => (int) env('WHATSAPP_THROTTLE_MAX', 30),
+        // Link kuesioner yang dikirim ke pemohon 1 jam setelah surat selesai.
+        'survey_url' => env('WHATSAPP_SURVEY_URL', 'https://docs.google.com/forms/d/e/1FAIpQLSeujkEMGBkYeNe7OM0DjwgcIdzCZ91WWnxQutUS1hyEme9rJw/viewform?usp=dialog'),
     ],
 
     'firebase' => [
