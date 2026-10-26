@@ -65,9 +65,9 @@
             padding: 1px 0;
         }
 
-        table.data-table td.col-label { width: 42%; }
+        table.data-table td.col-label { width: 35%; }
         table.data-table td.col-sep   { width: 3%; text-align: center; }
-        table.data-table td.col-value { width: 55%; }
+        table.data-table td.col-value { width: 62%; }
 
         /* NARASI */
         .narasi {
