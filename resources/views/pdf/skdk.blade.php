@@ -172,7 +172,7 @@
             <tr>
                 <td class="col-label">Jabatan</td>
                 <td class="col-sep">:</td>
-                <td class="col-value">CAMAT</td>
+                <td class="col-value">{{ strtoupper($kelurahan->kecamatan->signer_jabatan ?? 'Camat') }}</td>
             </tr>
         </table>
 
@@ -232,7 +232,7 @@
                 <td style="width:50%;"></td>
                 <td class="ttd-right-cell">
                     <p>Banjarbaru, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-                    <p>Camat {{ $kelurahan->kecamatan->nama ?? 'Landasan Ulin' }}</p>
+                    <p>{{ $kelurahan->kecamatan->signer_jabatan ?? 'Camat' }} {{ $kelurahan->kecamatan->nama ?? 'Landasan Ulin' }}</p>
                     <div class="ttd-spacer"></div>
                     @if(isset($qrBase64))
                     <img src="data:image/png;base64,{{ $qrBase64 }}" style="width:60px;height:60px;" alt="QR Status">

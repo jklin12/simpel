@@ -14,6 +14,20 @@ class Kecamatan extends Model
     protected $table = 'm_kecamatans';
     protected $guarded = ['id'];
 
+    public function getSignerJabatanAttribute(): string
+    {
+        return match ($this->status_pejabat) {
+            'Plh' => 'Plh. Camat',
+            'Plt' => 'Plt. Camat',
+            default => 'Camat',
+        };
+    }
+
+    public function getSignerTitleAttribute(): string
+    {
+        return $this->signer_jabatan . ' ' . ucwords(strtolower($this->nama));
+    }
+
     public function kabupaten(): BelongsTo
     {
         return $this->belongsTo(Kabupaten::class);

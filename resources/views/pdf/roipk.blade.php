@@ -307,7 +307,7 @@
             <tr>
                 <td style="width:55%;"></td>
                 <td class="ttd-right-cell">
-                    <p>Camat {{ $kelurahan->kecamatan->nama ?? 'Landasan Ulin' }}</p>
+                    <p>{{ $kelurahan->kecamatan->signer_jabatan ?? 'Camat' }} {{ $kelurahan->kecamatan->nama ?? 'Landasan Ulin' }}</p>
                     <div class="ttd-spacer"></div>
                     @if(isset($qrBase64))
                     <img src="data:image/png;base64,{{ $qrBase64 }}" style="width:60px;height:60px;" alt="QR Status">

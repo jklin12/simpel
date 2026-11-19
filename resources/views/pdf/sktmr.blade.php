@@ -337,7 +337,7 @@
                 <td style="width:50%;"></td>
                 <td class="ttd-right-cell">
                     <p>Banjarbaru, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</p>
-                    <p>a.n Camat Landasan Ulin</p>
+                    <p>a.n {{ $kelurahan->kecamatan->signer_jabatan ?? 'Camat' }} Landasan Ulin</p>
                     <p>{{ $lurah['title'] }}</p>
                     <div class="ttd-spacer"></div>
                     @if(isset($qrBase64))

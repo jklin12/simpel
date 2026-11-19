@@ -54,6 +54,7 @@ class KecamatanController extends Controller
             'camat_pangkat' => 'nullable|string|max:255',
             'camat_golongan' => 'nullable|string|max:255',
             'camat_no_hp' => 'nullable|string|max:20',
+            'status_pejabat' => 'required|in:Definitif,Plh,Plt',
             'kop_surat_path' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
@@ -92,6 +93,7 @@ class KecamatanController extends Controller
             'camat_pangkat' => 'nullable|string|max:255',
             'camat_golongan' => 'nullable|string|max:255',
             'camat_no_hp' => 'nullable|string|max:20',
+            'status_pejabat' => 'required|in:Definitif,Plh,Plt',
             'kop_surat_path' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 

@@ -385,7 +385,7 @@
                 <td style="width:50%;"></td>
                 <td class="ttd-right-cell">
                     <p style="color: black;">Banjarbaru, <span style="">{{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}</span></p>
-                    <p style="color: black;">Camat {{ (strtoupper($kelurahan->kecamatan->nama ?? 'Landasan Ulin')) }}</p>
+                    <p style="color: black;">{{ $kelurahan->kecamatan->signer_jabatan ?? 'Camat' }} {{ (strtoupper($kelurahan->kecamatan->nama ?? 'Landasan Ulin')) }}</p>
                     <div class="ttd-spacer"></div>
                     @if(isset($qrBase64))
                     <img src="data:image/png;base64,{{ $qrBase64 }}" style="width:70px;height:70px;" alt="QR Status">

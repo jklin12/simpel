@@ -74,6 +74,16 @@
                     <label for="camat_golongan" class="block text-sm font-medium text-gray-700 mb-1">Golongan Camat</label>
                     <input type="text" name="camat_golongan" id="camat_golongan" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" placeholder="Contoh: IV/b" value="{{ old('camat_golongan', $kecamatan->camat_golongan) }}">
                 </div>
+                <div>
+                    <label for="status_pejabat" class="block text-sm font-medium text-gray-700 mb-1">Status Jabatan Camat <span class="text-red-500">*</span></label>
+                    <select name="status_pejabat" id="status_pejabat" class="w-full rounded-lg border-gray-300 focus:ring-blue-500 focus:border-blue-500 shadow-sm" required>
+                        <option value="Definitif" {{ old('status_pejabat', $kecamatan->status_pejabat) == 'Definitif' ? 'selected' : '' }}>Definitif</option>
+                        <option value="Plh" {{ old('status_pejabat', $kecamatan->status_pejabat) == 'Plh' ? 'selected' : '' }}>PLH</option>
+                        <option value="Plt" {{ old('status_pejabat', $kecamatan->status_pejabat) == 'Plt' ? 'selected' : '' }}>PLT</option>
+                    </select>
+                    @error('status_pejabat')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
+                    <p class="mt-1 text-xs text-gray-500">Mempengaruhi penulisan jabatan di PDF (contoh: Plt. Camat ...)</p>
+                </div>
             </div>
 
             <div>
