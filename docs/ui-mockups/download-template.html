@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Download Template · Mockup Mobile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="shared.js"></script>
+  <style>details>summary::-webkit-details-marker{display:none}details[open]>summary .chev{transform:rotate(180deg)}</style>
+</head>
+<body class="font-sans bg-gray-50 text-gray-900 max-w-[430px] mx-auto min-h-screen relative shadow-xl">
+  <div data-topbar data-active="download-template.html"></div>
+
+  <main>
+    <header class="bg-gradient-to-br from-primary-700 to-primary-600 text-white px-4 pt-5 pb-6">
+      <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold bg-white/15 border border-white/25 rounded-full px-3 py-1" data-i="download" data-label="Download gratis"></span>
+      <h1 class="text-[26px] font-bold leading-tight mt-3">Template Surat Pernyataan</h1>
+      <p class="text-sm text-primary-100 mt-1.5 leading-relaxed">Unduh template resmi (PDF/DOCX) untuk menyiapkan dokumen Anda sebelum mengajukan.</p>
+    </header>
+
+    <div class="sticky top-14 z-30 bg-gray-50/95 backdrop-blur px-4 py-3 border-b border-gray-200">
+      <div class="flex items-center gap-2 h-12 rounded-xl bg-white border border-gray-300 px-3.5 text-gray-400"><span data-i="search"></span><span class="text-[15px]">Cari template surat</span></div>
+    </div>
+
+    <section class="px-4 mt-4 space-y-2.5" id="tpl"></section>
+
+    <!-- Cara menggunakan: langkah ringkas -->
+    <section class="mx-4 mt-6 rounded-2xl bg-primary-50 border border-primary-100 p-4">
+      <p class="text-[15px] font-semibold text-primary-800">Cara menggunakan template</p>
+      <ol class="mt-3 space-y-3" id="how"></ol>
+      <a href="daftar-layanan.html" class="mt-4 flex items-center justify-center gap-2 h-12 rounded-xl bg-primary-600 text-white font-semibold">Ajukan online <span data-i="arrow" data-s="w-4 h-4"></span></a>
+    </section>
+  </main>
+
+  <div data-footer></div>
+
+  <script>
+    document.querySelectorAll('[data-i]').forEach(e=>{const l=e.dataset.label||'';e.innerHTML=icon(e.dataset.i,e.dataset.s||'w-4 h-4')+(l?`<span>${l}</span>`:'');});
+
+    // Daftar contoh; syarat contoh, pada implementasi dari TemplateSurat.syarat
+    const data=[
+      ['Surat Keterangan Belum Memiliki Rumah',[['Surat Pernyataan Tidak Memiliki Rumah','template_Surat Pernyataan Tidak Memiliki Rumah.docx','DOCX · 42 KB',['KTP dan KK pemohon','Surat pengantar RT/RW','Bukti lunas PBB']]],true],
+      ['Surat Keterangan Belum Menikah',[['Surat Pernyataan Belum Menikah','template_Surat Pernyataan Belum Menikah.docx','DOCX · 38 KB',['KTP dan KK pemohon','Surat pengantar RT/RW']]],false],
+      ['Surat Keterangan Gaib',[],false],['Surat Keterangan Janda/Duda',[],false],['Surat Keterangan Kematian',[],false],
+      ['Surat Keterangan Penghasilan',[],false],['Surat Keterangan Suami Istri',[],false],['Surat Keterangan Tidak Mampu',[],false],['Surat Pengantar Nikah',[],false],
+    ];
+    const card=(t,f,m,syarat)=>`<div class="rounded-xl border border-gray-200 bg-white p-3.5"><div class="flex gap-3"><span class="w-11 h-11 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center flex-none">${icon('doc','w-5 h-5')}</span><div class="min-w-0"><p class="text-[14px] font-semibold leading-snug">${t}</p><p class="text-[11px] text-gray-400 mt-0.5 truncate">${f}</p><p class="text-[11px] text-gray-500 mt-0.5">${m}</p></div></div>
+      <details class="mt-3 rounded-lg bg-gray-50 border border-gray-100"><summary class="flex items-center justify-between h-10 px-3 text-[13px] font-medium text-gray-700 list-none">Syarat dokumen (${syarat.length})<span class="chev text-gray-400 transition-transform">${icon('down','w-4 h-4')}</span></summary><ul class="px-3 pb-3 space-y-1.5 text-[13px] text-gray-600">${syarat.map(s=>`<li class="flex gap-2">${icon('check','w-4 h-4 text-emerald-500 mt-0.5 flex-none')}${s}</li>`).join('')}</ul></details>
+      <a href="#" class="mt-3 flex items-center justify-center gap-2 h-12 rounded-xl bg-primary-600 text-white text-[15px] font-semibold">${icon('download','w-5 h-5')} Unduh</a></div>`;
+    document.getElementById('tpl').innerHTML=data.map(([n,tpls,open])=>`<details ${open?'open':''} class="bg-white rounded-2xl border border-gray-100 overflow-hidden"><summary class="flex items-center gap-3 px-4 min-h-[64px] py-2 list-none cursor-pointer"><span class="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center flex-none">${icon('doc','w-5 h-5')}</span><span class="flex-1 text-[15px] font-semibold leading-snug">${n}</span><span class="text-[11px] font-semibold text-primary-700 bg-primary-50 rounded-full px-2.5 py-1 whitespace-nowrap">1 template</span><span class="chev text-gray-400 transition-transform">${icon('down','w-4 h-4')}</span></summary>${tpls.length?`<div class="px-3 pb-3 border-t border-gray-100 pt-3 space-y-3">${tpls.map(([t,f,m,s])=>card(t,f,m,s)).join('')}</div>`:''}</details>`).join('');
+
+    const how=['Unduh template sesuai jenis surat.','Isi data pada template sesuai petunjuk.','Bawa dokumen beserta syaratnya ke kantor.','Atau ajukan secara online lewat menu Ajukan Surat.'];
+    document.getElementById('how').innerHTML=how.map((h,i)=>`<li class="flex gap-3 items-start"><span class="w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center flex-none">${i+1}</span><span class="text-[13px] text-primary-900 leading-relaxed">${h}</span></li>`).join('');
+  </script>
+</body>
+</html>

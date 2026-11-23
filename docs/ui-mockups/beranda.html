@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beranda · Mockup Mobile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="shared.js"></script>
+  <style>.noscroll::-webkit-scrollbar{display:none}.noscroll{scrollbar-width:none}</style>
+</head>
+<body class="font-sans bg-gray-50 text-gray-900 max-w-[430px] mx-auto min-h-screen relative shadow-xl">
+  <div data-topbar data-active="beranda.html"></div>
+
+  <main>
+    <!-- Hero: dipendekkan dari min-h-[90vh] menjadi ±300px -->
+    <section class="relative overflow-hidden text-white" style="background:linear-gradient(160deg,#1e3a8a 0%,#2563eb 100%)">
+      <img src="../../public/images/slider-1.png" alt="" class="absolute inset-0 w-full h-full object-cover opacity-20">
+      <div class="relative px-4 pt-6 pb-10">
+        <span class="inline-flex items-center gap-1.5 text-[10px] font-semibold tracking-wide uppercase bg-white/15 border border-white/25 rounded-full px-3 py-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-secondary-400"></span>Portal Resmi Kecamatan Landasan Ulin
+        </span>
+        <h1 class="text-[27px] leading-[1.15] font-bold mt-3">Urus surat kecamatan <span class="text-secondary-400">dari HP Anda</span></h1>
+        <p class="text-sm text-primary-100 mt-2 leading-relaxed">Ajukan, pantau, dan unduh surat tanpa antre. Cepat, responsif, dan transparan.</p>
+        <div class="grid grid-cols-2 gap-3 mt-5">
+          <a href="daftar-layanan.html" class="flex items-center justify-center gap-1.5 h-12 rounded-xl bg-white text-primary-700 text-[15px] font-semibold">Ajukan Surat</a>
+          <a href="#" class="flex items-center justify-center gap-1.5 h-12 rounded-xl bg-secondary-400 text-gray-900 text-[15px] font-semibold">Cek Status</a>
+        </div>
+        <div class="flex items-center gap-1.5 mt-5" aria-label="slide 1 dari 3">
+          <span class="w-6 h-1.5 rounded-full bg-white"></span><span class="w-1.5 h-1.5 rounded-full bg-white/40"></span><span class="w-1.5 h-1.5 rounded-full bg-white/40"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Aksi cepat -->
+    <section class="-mt-6 mx-4 relative z-10 bg-white rounded-2xl shadow-lg border border-gray-100 p-3 grid grid-cols-4 gap-1">
+      <script>
+        [['doc','Ajukan','daftar-layanan.html'],['status','Cek Status','#'],['download','Template','download-template.html'],['map','Peta','#']].forEach(([i,l,h])=>{
+          document.currentScript.parentElement.insertAdjacentHTML('beforeend',
+          `<a href="${h}" class="flex flex-col items-center gap-1.5 py-2"><span class="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center">${icon(i,'w-6 h-6')}</span><span class="text-[11px] font-medium text-gray-700">${l}</span></a>`);
+        });
+      </script>
+    </section>
+
+    <!-- Cek status cepat -->
+    <section class="mx-4 mt-4 bg-white rounded-2xl border border-gray-100 p-4">
+      <p class="text-[15px] font-semibold">Sudah punya kode tracking?</p>
+      <p class="text-xs text-gray-500 mt-0.5">Masukkan kode untuk melihat status permohonan.</p>
+      <div class="flex gap-2 mt-3">
+        <div class="flex-1 h-12 rounded-xl bg-gray-50 border border-gray-300 px-4 flex items-center text-gray-400 tracking-[0.15em] font-semibold text-sm">TRX12345678</div>
+        <a href="#" class="h-12 px-5 rounded-xl bg-primary-600 text-white font-semibold text-sm flex items-center">Cek</a>
+      </div>
+    </section>
+
+    <!-- Layanan populer: scroll horizontal -->
+    <section class="mt-7">
+      <div class="flex items-end justify-between px-4">
+        <div><p class="text-[11px] font-semibold tracking-wider text-primary-600 uppercase">Layanan</p><h2 class="text-xl font-bold leading-tight">Surat yang sering diajukan</h2></div>
+        <a href="daftar-layanan.html" class="text-[13px] font-semibold text-primary-600 whitespace-nowrap pb-0.5">Lihat semua</a>
+      </div>
+      <div class="noscroll flex gap-3 overflow-x-auto snap-x snap-mandatory px-4 mt-3 pb-1" id="pop"></div>
+      <script>
+        const pop=[['SKTM','Surat Keterangan Tidak Mampu','bg-blue-50 text-blue-700'],['SKM','Surat Keterangan Kematian','bg-gray-100 text-gray-700'],['SPN','Surat Pengantar Nikah','bg-rose-50 text-rose-700'],['SKBM','Surat Keterangan Belum Menikah','bg-purple-50 text-purple-700'],['SKP','Surat Keterangan Penghasilan','bg-emerald-50 text-emerald-700']];
+        document.getElementById('pop').innerHTML=pop.map(([k,n,c])=>`<a href="daftar-layanan.html" class="snap-start flex-none w-44 bg-white rounded-2xl border border-gray-100 p-4"><span class="inline-block text-[10px] font-bold px-2 py-1 rounded-md ${c}">${k}</span><p class="text-[15px] font-semibold leading-snug mt-2.5 h-[60px]">${n}</p><p class="text-[13px] font-semibold text-primary-600 mt-2 flex items-center gap-1">Ajukan ${icon('arrow','w-3.5 h-3.5')}</p></a>`).join('');
+      </script>
+    </section>
+
+    <!-- Berita: carousel -->
+    <section class="mt-7">
+      <div class="flex items-end justify-between px-4">
+        <div><p class="text-[11px] font-semibold tracking-wider text-primary-600 uppercase">Informasi Terkini</p><h2 class="text-xl font-bold leading-tight">Berita &amp; Pengumuman</h2></div>
+        <a href="#" class="text-[13px] font-semibold text-primary-600 whitespace-nowrap pb-0.5">Semua</a>
+      </div>
+      <div class="noscroll flex gap-3 overflow-x-auto snap-x snap-mandatory px-4 mt-3 pb-1" id="news"></div>
+      <script>
+        const news=[['26 Feb 2026','Kecamatan Landasan Ulin Luncurkan Portal Layanan Digital SiMPEL'],['23 Feb 2026','Pengumuman: Libur Nasional dan Jadwal Pelayanan Kecamatan'],['21 Feb 2026','Pelaksanaan Musrenbang Kecamatan Landasan Ulin Tahun 2026']];
+        document.getElementById('news').innerHTML=news.map(([d,t])=>`<a href="#" class="snap-start flex-none w-64 bg-white rounded-2xl border border-gray-100 overflow-hidden"><div class="h-28 bg-gradient-to-br from-primary-100 to-primary-50 flex items-center justify-center text-primary-200">${icon('news','w-10 h-10')}</div><div class="p-3.5"><p class="text-[11px] text-gray-400">${d}</p><p class="text-[14px] font-semibold leading-snug mt-1 line-clamp-3">${t}</p></div></a>`).join('');
+      </script>
+    </section>
+
+    <!-- Teaser struktur & FAQ -->
+    <section class="mx-4 mt-7 space-y-3">
+      <a href="struktur-organisasi.html" class="flex items-center gap-3 bg-white rounded-2xl border border-gray-100 p-4">
+        <span class="w-11 h-11 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center" data-i="users"></span>
+        <span class="flex-1"><span class="block text-[15px] font-semibold">Struktur Organisasi</span><span class="block text-xs text-gray-500">Kenali jajaran pejabat kecamatan</span></span>
+        <span class="text-gray-300" data-i="right"></span>
+      </a>
+      <a href="#" class="flex items-center gap-3 bg-white rounded-2xl border border-gray-100 p-4">
+        <span class="w-11 h-11 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center" data-i="help"></span>
+        <span class="flex-1"><span class="block text-[15px] font-semibold">Pertanyaan Umum (FAQ)</span><span class="block text-xs text-gray-500">Jawaban untuk pertanyaan yang sering diajukan</span></span>
+        <span class="text-gray-300" data-i="right"></span>
+      </a>
+      <a href="#" class="flex items-center gap-3 rounded-2xl bg-emerald-50 border border-emerald-100 p-4">
+        <span class="w-11 h-11 rounded-xl bg-emerald-500 text-white flex items-center justify-center" data-i="chat"></span>
+        <span class="flex-1"><span class="block text-[15px] font-semibold text-emerald-900">Butuh bantuan?</span><span class="block text-xs text-emerald-700">Hubungi kami lewat WhatsApp</span></span>
+      </a>
+    </section>
+  </main>
+
+  <div data-footer></div>
+  <script>document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=icon(e.dataset.i,e.dataset.i==='right'?'w-5 h-5':'w-6 h-6'));</script>
+</body>
+</html>

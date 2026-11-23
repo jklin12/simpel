@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daftar Layanan · Mockup Mobile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="shared.js"></script>
+  <style>.noscroll::-webkit-scrollbar{display:none}.noscroll{scrollbar-width:none}</style>
+</head>
+<body class="font-sans bg-gray-50 text-gray-900 max-w-[430px] mx-auto min-h-screen relative shadow-xl">
+  <div data-topbar data-active="daftar-layanan.html"></div>
+
+  <main>
+    <header class="px-4 pt-5 pb-3">
+      <h1 class="text-2xl font-bold leading-tight">Daftar Layanan Surat</h1>
+      <p class="text-sm text-gray-500 mt-1">Pilih jenis surat, lalu ajukan permohonan dalam beberapa langkah.</p>
+    </header>
+
+    <!-- Pencarian + filter kategori (menempel di bawah navbar) -->
+    <div class="sticky top-14 z-30 bg-gray-50/95 backdrop-blur px-4 pt-1 pb-3 border-b border-gray-200">
+      <div class="flex items-center gap-2 h-12 rounded-xl bg-white border border-gray-300 px-3.5 text-gray-400">
+        <span data-i="search"></span><span class="text-[15px]">Cari surat, mis. "tidak mampu"</span>
+      </div>
+      <div class="noscroll flex gap-2 overflow-x-auto mt-2.5 -mx-4 px-4" id="chips"></div>
+    </div>
+
+    <section class="px-4 mt-4 space-y-6" id="list"></section>
+
+    <!-- Alur: pengganti infografis gambar -->
+    <section class="mt-8">
+      <h2 class="px-4 text-lg font-bold">Alur pengajuan</h2>
+      <div class="noscroll flex gap-3 overflow-x-auto snap-x snap-mandatory px-4 mt-3 pb-1" id="alur"></div>
+    </section>
+
+    <!-- Pengganti popup WhatsApp: banner yang bisa dilewati -->
+    <section class="mx-4 mt-6 rounded-2xl bg-emerald-50 border border-emerald-100 p-4">
+      <div class="flex items-start gap-3">
+        <span class="w-10 h-10 rounded-xl bg-emerald-500 text-white flex items-center justify-center flex-none" data-i="chat"></span>
+        <div class="flex-1">
+          <p class="text-[15px] font-semibold text-emerald-900">Kirim pesan WhatsApp dulu</p>
+          <p class="text-xs text-emerald-800 mt-0.5 leading-relaxed">Agar notifikasi proses permohonan sampai, kirim satu pesan ke nomor kami sebelum mengajukan. Tidak perlu menunggu balasan.</p>
+          <a href="#" class="inline-flex items-center justify-center h-10 px-4 mt-3 rounded-lg bg-emerald-600 text-white text-sm font-semibold">Hubungi Kami</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-4 mt-3 rounded-2xl bg-primary-600 text-white p-4 flex items-center gap-3">
+      <div class="flex-1"><p class="text-[15px] font-semibold">Butuh bantuan lain?</p><p class="text-xs text-primary-100">Lihat jawaban di halaman FAQ.</p></div>
+      <a href="#" class="h-10 px-4 rounded-lg bg-white text-primary-700 text-sm font-semibold flex items-center">Buka FAQ</a>
+    </section>
+  </main>
+
+  <div data-footer></div>
+
+  <!-- State: bottom sheet pilih kelurahan (tampil dengan ?sheet=1) -->
+  <div id="sheet" class="hidden fixed inset-0 z-50">
+    <div class="absolute inset-0 bg-black/50"></div>
+    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-white rounded-t-3xl pt-3 pb-6 px-4 shadow-2xl">
+      <div class="w-10 h-1 rounded-full bg-gray-300 mx-auto"></div>
+      <div class="flex items-start justify-between mt-3">
+        <div><p class="text-lg font-bold">Pilih kelurahan</p><p class="text-xs text-gray-500">Untuk <span class="font-semibold text-gray-700">Surat Keterangan Tidak Mampu</span></p></div>
+        <span class="w-9 h-9 -mr-1.5 flex items-center justify-center text-gray-400" data-i="x"></span>
+      </div>
+      <div class="flex items-center gap-2 h-11 rounded-xl bg-gray-50 border border-gray-300 px-3.5 mt-3 text-gray-400"><span data-i="search"></span><span class="text-sm">Cari kelurahan</span></div>
+      <div class="mt-2 divide-y divide-gray-100" id="kel"></div>
+      <a href="#" class="mt-4 flex items-center justify-center gap-2 h-12 rounded-xl bg-primary-600 text-white font-semibold">Lanjut mengisi data <span data-i="arrow" data-s="w-4 h-4"></span></a>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=icon(e.dataset.i,e.dataset.s||'w-5 h-5'));
+
+    const cats=['Semua','Keterangan warga','Kematian & kehilangan','Pernikahan','Lembaga'];
+    document.getElementById('chips').innerHTML=cats.map((c,i)=>`<span class="flex-none h-9 px-4 rounded-full text-[13px] font-medium flex items-center ${i===0?'bg-primary-600 text-white':'bg-white border border-gray-300 text-gray-700'}">${c}</span>`).join('');
+
+    const groups=[
+      ['Keterangan warga',[['SKTM','Surat Keterangan Tidak Mampu'],['SKTMR','Surat Keterangan Belum Memiliki Rumah'],['SKBM','Surat Keterangan Belum Menikah'],['SKP','Surat Keterangan Penghasilan'],['SKJD','Surat Keterangan Janda/Duda'],['SKSI','Surat Keterangan Suami Istri'],['SKG','Surat Keterangan Gaib'],['SKB','Surat Keterangan Bepergian']]],
+      ['Kematian & kehilangan',[['SKM','Surat Keterangan Kematian'],['SPKH','Surat Pengantar Keterangan Kehilangan']]],
+      ['Pernikahan',[['SPN','Surat Pengantar Nikah'],['SDNH','Surat Dispensasi Nikah']]],
+      ['Lembaga & organisasi',[['SKDKO','Surat Keterangan Domisili Kantor/Sekretariat/Organisasi Lainnya'],['SKDK','Surat Keterangan Domisili Kepartaian'],['SPKDK','Surat Pengantar Keterangan Domisili Kepartaian'],['SPRIK','Surat Pengantar Rekomendasi Operasional Izin Penyelenggaraan Kursus dan Pelatihan, Kegiatan Belajar Mengajar'],['ROIPK','Rekomendasi Operasional Izin Penyelenggaraan Kursus']]],
+    ];
+    // satu warna per kategori (bukan di-hard-code per kode surat seperti sekarang)
+    const tone={'Keterangan warga':'bg-blue-50 text-blue-700','Kematian & kehilangan':'bg-gray-100 text-gray-700','Pernikahan':'bg-rose-50 text-rose-700','Lembaga & organisasi':'bg-amber-50 text-amber-700'};
+    document.getElementById('list').innerHTML=groups.map(([g,items])=>`<div><p class="text-[11px] font-semibold tracking-wider uppercase text-gray-400 mb-2">${g} · ${items.length}</p><div class="space-y-2">${items.map(([k,n])=>`<a href="#" class="flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3 min-h-[64px]"><span class="w-12 h-12 rounded-lg flex-none flex items-center justify-center text-[10px] font-bold ${tone[g]}">${k}</span><span class="flex-1 text-[14px] font-semibold leading-snug line-clamp-2">${n}</span><span class="text-gray-300">${icon('right','w-5 h-5')}</span></a>`).join('')}</div></div>`).join('');
+
+    const alur=[['1','Pilih layanan','Cari dan pilih jenis surat.'],['2','Isi data','Isi formulir dan unggah berkas.'],['3','Simpan kode','Catat kode tracking dari WhatsApp.'],['4','Unduh surat','Pantau status, lalu unduh surat.']];
+    document.getElementById('alur').innerHTML=alur.map(([n,t,d])=>`<div class="snap-start flex-none w-40 bg-white rounded-2xl border border-gray-100 p-4"><span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm font-bold flex items-center justify-center">${n}</span><p class="text-[15px] font-semibold mt-2.5">${t}</p><p class="text-xs text-gray-500 mt-1 leading-relaxed">${d}</p></div>`).join('');
+
+    // contoh data kelurahan Kec. Landasan Ulin (pada implementasi: Kelurahan kecamatan_id 6372010)
+    const kel=['Landasan Ulin Barat','Landasan Ulin Selatan','Landasan Ulin Tengah','Landasan Ulin Timur','Landasan Ulin Utara','Syamsudin Noor'];
+    document.getElementById('kel').innerHTML=kel.map((k,i)=>`<div class="flex items-center gap-3 h-12"><span class="w-5 h-5 rounded-full border-2 ${i===3?'border-primary-600':'border-gray-300'} flex items-center justify-center">${i===3?'<span class="w-2.5 h-2.5 rounded-full bg-primary-600"></span>':''}</span><span class="text-[15px] ${i===3?'font-semibold':''}">${k}</span></div>`).join('');
+
+    if(new URLSearchParams(location.search).has('sheet')) document.getElementById('sheet').classList.remove('hidden');
+  </script>
+</body>
+</html>

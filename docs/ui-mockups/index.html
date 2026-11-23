@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mockup UI Mobile · Simpel Landasan Ulin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config={theme:{extend:{fontFamily:{sans:['Outfit','sans-serif']}}}}</script>
+</head>
+<body class="font-sans bg-gray-200 text-gray-900">
+  <header class="px-8 pt-8">
+    <h1 class="text-3xl font-bold">Mockup UI Mobile · Simpel Landasan Ulin</h1>
+    <p class="text-gray-600 mt-1">Revamp mobile-first: beranda, struktur organisasi, daftar layanan, dan download template. Tiap layar 375×812 dan bisa digulir. Lihat README untuk perbandingan dengan produksi.</p>
+  </header>
+  <main class="p-8 flex flex-wrap gap-10" id="grid"></main>
+  <script>
+    const screens=[
+      ['Beranda','beranda.html'],['Beranda · menu terbuka','beranda.html?menu=1'],
+      ['Struktur Organisasi','struktur-organisasi.html'],
+      ['Daftar Layanan','daftar-layanan.html'],['Daftar Layanan · pilih kelurahan','daftar-layanan.html?sheet=1'],
+      ['Download Template','download-template.html'],
+    ];
+    document.getElementById('grid').innerHTML=screens.map(([t,u])=>`<figure><figcaption class="mb-2 flex items-baseline gap-3"><span class="font-semibold">${t}</span><a class="text-sm text-blue-600 underline" href="${u}" target="_blank">buka</a></figcaption><iframe src="${u}" class="rounded-[28px] border-[10px] border-gray-900 bg-white shadow-xl" style="width:395px;height:832px" loading="lazy"></iframe></figure>`).join('');
+  </script>
+</body>
+</html>

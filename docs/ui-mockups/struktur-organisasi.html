@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Struktur Organisasi · Mockup Mobile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="shared.js"></script>
+  <style>details>summary::-webkit-details-marker{display:none}details[open] .chev{transform:rotate(180deg)}</style>
+</head>
+<body class="font-sans bg-gray-50 text-gray-900 max-w-[430px] mx-auto min-h-screen relative shadow-xl">
+  <div data-topbar data-active="struktur-organisasi.html"></div>
+
+  <main>
+    <header class="bg-gradient-to-br from-primary-700 to-primary-600 text-white px-4 pt-5 pb-7">
+      <p class="text-xs text-primary-100">Beranda / Struktur Organisasi</p>
+      <h1 class="text-[26px] font-bold leading-tight mt-1">Struktur Organisasi</h1>
+      <p class="text-sm text-primary-100 mt-1">Bagan kepengurusan pemerintahan Kecamatan Landasan Ulin.</p>
+    </header>
+
+    <!--
+      Pohon vertikal, tanpa scroll horizontal. Pada implementasi dibangun dari
+      PortalStrukturOrganisasi (parent_id + urutan), bukan slot substring jabatan.
+      Nama di bawah hanyalah placeholder.
+    -->
+    <section class="px-4 -mt-4">
+      <!-- Camat -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 text-center border-t-4 border-t-primary-600">
+        <div class="w-20 h-20 rounded-full bg-primary-50 text-primary-300 mx-auto flex items-center justify-center ring-4 ring-primary-100" data-i="user" data-s="w-9 h-9"></div>
+        <p class="text-[11px] font-semibold tracking-wider text-primary-600 uppercase mt-3">Camat</p>
+        <p class="text-[17px] font-bold mt-0.5">Nama Lengkap, gelar</p>
+        <p class="text-xs text-gray-400 mt-0.5">NIP 0000 0000 0000 0000</p>
+      </div>
+      <div class="mx-auto w-0.5 h-5 bg-primary-200"></div>
+      <!-- Sekcam -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 flex items-center gap-3 border-t-4 border-t-primary-400">
+        <div class="w-14 h-14 rounded-full bg-primary-50 text-primary-300 flex items-center justify-center flex-none" data-i="user" data-s="w-7 h-7"></div>
+        <div class="min-w-0">
+          <p class="text-[11px] font-semibold tracking-wider text-primary-600 uppercase">Sekretaris Kecamatan</p>
+          <p class="text-[15px] font-bold">Nama Lengkap, gelar</p>
+        </div>
+      </div>
+      <div class="mx-auto w-0.5 h-5 bg-primary-200"></div>
+    </section>
+
+    <!-- Bidang/seksi sebagai accordion -->
+    <section class="px-4">
+      <p class="text-xs text-gray-500 mb-2">Ketuk bidang untuk melihat anggota</p>
+      <div class="space-y-2.5" id="seksi"></div>
+    </section>
+  </main>
+
+  <div data-footer></div>
+  <script>
+    document.querySelectorAll('[data-i]').forEach(e=>e.innerHTML=icon(e.dataset.i,e.dataset.s||'w-5 h-5'));
+    const person=(role,name)=>`<div class="flex items-center gap-3 py-2.5"><span class="w-10 h-10 rounded-full bg-primary-50 text-primary-300 flex items-center justify-center flex-none">${icon('user','w-5 h-5')}</span><span class="min-w-0"><span class="block text-[14px] font-semibold leading-tight">${name}</span><span class="block text-[11px] text-gray-500 mt-0.5">${role}</span></span></div>`;
+    const seksi=[
+      ['Seksi Pemerintahan',[['Kepala Seksi','Nama Lengkap, gelar'],['Staf','Nama Lengkap'],['Staf','Nama Lengkap']],true],
+      ['Seksi Ekonomi & Pembangunan',[['Kepala Seksi','Nama Lengkap, gelar'],['Staf','Nama Lengkap']],false],
+      ['Seksi Kesejahteraan Rakyat',[['Kepala Seksi','Nama Lengkap, gelar'],['Staf','Nama Lengkap']],false],
+      ['Seksi Ketentraman & Ketertiban',[['Kepala Seksi','Nama Lengkap, gelar'],['Staf','Nama Lengkap']],false],
+      ['Kelompok Jabatan Fungsional',[['Fungsional','Nama Lengkap'],['Fungsional','Nama Lengkap'],['Fungsional','Nama Lengkap']],false],
+    ];
+    document.getElementById('seksi').innerHTML=seksi.map(([n,p,open])=>`<details ${open?'open':''} class="bg-white rounded-2xl border border-gray-100 overflow-hidden"><summary class="flex items-center gap-3 px-4 h-14 list-none cursor-pointer"><span class="w-9 h-9 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center flex-none">${icon('building','w-5 h-5')}</span><span class="flex-1 text-[15px] font-semibold leading-tight">${n}</span><span class="text-[11px] text-gray-400">${p.length} orang</span><span class="chev text-gray-400 transition-transform">${icon('down','w-4 h-4')}</span></summary><div class="px-4 pb-2 divide-y divide-gray-100 border-t border-gray-100">${p.map(([r,nm])=>person(r,nm)).join('')}</div></details>`).join('');
+  </script>
+</body>
+</html>

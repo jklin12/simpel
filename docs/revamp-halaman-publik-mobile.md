@@ -1,6 +1,6 @@
 # Revamp Halaman Publik Mobile: Beranda, Struktur Organisasi, Daftar Layanan, Download Template
 
-Status: **screenshot Before selesai dan sudah ada di Figma. Layar After belum dibuat** karena kuota panggilan Figma MCP (plan Starter) habis. Belum ada perubahan kode.
+Status: **screenshot Before selesai dan sudah ada di Figma. Layar After versi Figma belum dibuat** karena kuota panggilan Figma MCP (plan Starter) habis. **Sebagai gantinya, layar After sudah dibuat sebagai mockup HTML di repo: [ui-mockups/](ui-mockups/README.md)** (beranda, struktur organisasi, daftar layanan, download template, plus preview PNG). Belum ada perubahan kode aplikasi.
 Lanjutan dari [wizard-mobile-ui.md](wizard-mobile-ui.md) (wizard form permohonan dan cek status).
 
 ## Figma
@@ -81,8 +81,22 @@ Tiap halaman 375x812, berdampingan dengan Before. Komponen bersama mengikuti gay
 - Dugaan: reset bulanan, mungkin awal Desember 2026. Ini belum dikonfirmasi.
 - Batas 3 halaman per file di Starter juga berlaku, jadi menambah halaman bukan solusi.
 
+## Hasil sementara: mockup After di repo
+
+Dibuat 23 November 2026 sebagai pengganti prototipe Figma. Detail, perbandingan tinggi halaman, pemetaan ke Blade, dan cara render ulang ada di [ui-mockups/README.md](ui-mockups/README.md). Ringkasan tinggi halaman pada 375px (Before dari produksi, After dari mockup dengan data contoh):
+
+| Halaman | Before | After |
+|---|---|---|
+| Beranda | sekitar 3.627px | 1.850px |
+| Struktur organisasi | sekitar 2.462px (plus scroll horizontal) | 1.458px |
+| Daftar layanan | sekitar 8.820px | 2.712px |
+| Download template | sekitar 4.379px | 1.948px |
+
+Angka After memakai data contoh dan akan berubah dengan data asli.
+
 ## Langkah lanjutan
 
+0. Tinjau mockup di [ui-mockups/](ui-mockups/index.html) bersama tim; revisi langsung di HTML-nya (lalu jalankan `render-previews.py`).
 1. Saat kuota pulih (atau setelah upgrade ke Professional dengan seat Full), coba satu panggilan Figma untuk memastikan.
 2. Rapikan halaman Before: ubah ukuran tiap screenshot ke lebar 375px, beri judul, URL, dan catatan masalah.
 3. Bangun komponen bersama di halaman Komponen, lalu layar After empat halaman di halaman After. Gabungkan banyak pekerjaan dalam satu panggilan untuk menghemat kuota.
