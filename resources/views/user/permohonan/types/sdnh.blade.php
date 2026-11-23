@@ -2,7 +2,7 @@
 
 <div class="space-y-8 animate-fade-in-up">
     <!-- Header/Title untuk Section -->
-    <div class="border-b border-gray-200 pb-4">
+    <div class="border-b border-gray-200 pb-4" x-show="current === 0">
         <h3 class="text-xl leading-6 font-bold text-gray-900 border-l-4 border-primary-500 pl-3">
             Formulir Surat Dispensasi Nikah (SDNH)
         </h3>
@@ -12,31 +12,29 @@
     </div>
 
     <!-- 1. DATA PEMOHON -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8" x-data="ocrSdnhPemohonHandler()">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">1</span>
-                Data Pemohon
-            </h2>
-            <div class="flex flex-col items-end">
-                <button type="button" @click="triggerOCR" :disabled="loading"
-                    class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-60 disabled:cursor-not-allowed">
-                    <template x-if="!loading">
-                        <svg class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </template>
-                    <template x-if="loading">
-                        <svg class="animate-spin h-5 w-5 mr-2 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                        </svg>
-                    </template>
-                    <span x-text="loading ? 'Memproses...' : 'Scan KTP Pemohon (OCR)'"></span>
-                </button>
-                <span class="text-xs text-blue-600 mt-1">*Otomatis isi Nama, NIK, Tgl Lahir, dsb</span>
-            </div>
+    <div x-data="ocrSdnhPemohonHandler()" class="space-y-6">
+
+    <div data-wizard-step data-title="Pemohon" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
+        <h2 class="text-lg font-bold text-gray-900 mb-5">Data Pemohon</h2>
+
+        <div class="mb-5 rounded-xl border border-primary-100 bg-primary-50 p-3">
+            <button type="button" @click="triggerOCR" :disabled="loading"
+                class="w-full inline-flex items-center justify-center gap-2 h-12 rounded-lg bg-white border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed">
+                <template x-if="!loading">
+                    <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </template>
+                <template x-if="loading">
+                    <svg class="animate-spin h-5 w-5 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                </template>
+                <span x-text="loading ? 'Memproses...' : 'Scan KTP Pemohon (OCR)'"></span>
+            </button>
+            <p class="text-xs text-primary-700 mt-2 text-center">Otomatis mengisi data dari foto KTP.</p>
             <input type="file" x-ref="ocrInputPemohon" class="hidden" accept="image/*" @change="handleFileUpload">
         </div>
 
@@ -55,7 +53,7 @@
             <!-- NIK Pemohon -->
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">NIK Pemohon <span class="text-red-500">*</span></label>
-                <input type="text" x-model="nik" name="nik_bersangkutan" maxlength="16" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="16 Digit NIK Pemohon">
+                <input type="text" x-model="nik" inputmode="numeric" name="nik_bersangkutan" maxlength="16" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="16 Digit NIK Pemohon">
             </div>
 
             <!-- Tempat & Tanggal Lahir -->
@@ -90,6 +88,13 @@
                 </select>
             </div>
 
+        </div>
+    </div>
+
+    <div data-wizard-step data-title="Alamat & pekerjaan" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
+        <h2 class="text-lg font-bold text-gray-900 mb-5">Alamat &amp; Pekerjaan Pemohon</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Status Perkawinan & Pekerjaan -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Perkawinan <span class="text-red-500">*</span></label>
@@ -125,33 +130,32 @@
             </div>
         </div>
     </div>
+    </div>
 
     <!-- 2. DATA CALON PASANGAN -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8" x-data="ocrSdnhPasanganHandler()">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">2</span>
-                Akan Melangsungkan Pernikahan Dengan
-            </h2>
-            <div class="flex flex-col items-end">
-                <button type="button" @click="triggerOCR" :disabled="loading"
-                    class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-60 disabled:cursor-not-allowed">
-                    <template x-if="!loading">
-                        <svg class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                    </template>
-                    <template x-if="loading">
-                        <svg class="animate-spin h-5 w-5 mr-2 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-                        </svg>
-                    </template>
-                    <span x-text="loading ? 'Memproses...' : 'Scan KTP Pasangan (OCR)'"></span>
-                </button>
-                <span class="text-xs text-blue-600 mt-1">*Bisa autofill dari berkas KTP Pasangan</span>
-            </div>
+    <div x-data="ocrSdnhPasanganHandler()" class="space-y-6">
+
+    <div data-wizard-step data-title="Calon pasangan" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
+        <h2 class="text-lg font-bold text-gray-900 mb-5">Akan Melangsungkan Pernikahan Dengan</h2>
+
+        <div class="mb-5 rounded-xl border border-primary-100 bg-primary-50 p-3">
+            <button type="button" @click="triggerOCR" :disabled="loading"
+                class="w-full inline-flex items-center justify-center gap-2 h-12 rounded-lg bg-white border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed">
+                <template x-if="!loading">
+                    <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                </template>
+                <template x-if="loading">
+                    <svg class="animate-spin h-5 w-5 text-primary-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                    </svg>
+                </template>
+                <span x-text="loading ? 'Memproses...' : 'Scan KTP Pasangan (OCR)'"></span>
+            </button>
+            <p class="text-xs text-primary-700 mt-2 text-center">Otomatis mengisi data dari foto KTP.</p>
             <input type="file" x-ref="ocrInputPasangan" class="hidden" accept="image/*" @change="handleFileUpload">
         </div>
 
@@ -203,6 +207,13 @@
                 </select>
             </div>
 
+        </div>
+    </div>
+
+    <div data-wizard-step data-title="Alamat pasangan" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
+        <h2 class="text-lg font-bold text-gray-900 mb-5">Alamat &amp; Pekerjaan Calon Pasangan</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Status Perkawinan Pasangan -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Perkawinan <span class="text-red-500">*</span></label>
@@ -233,11 +244,11 @@
             </div>
         </div>
     </div>
+    </div>
 
     <!-- 3. PELAKSANAAN PERNIKAHAN -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+    <div data-wizard-step data-title="Pelaksanaan" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
         <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">3</span>
             Pelaksanaan Pernikahan
         </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -289,9 +300,8 @@
     </div>
 
     <!-- 4. ATTACHMENT (DOKUMEN WAJIB) -->
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+    <div data-wizard-step data-title="Berkas" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
         <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">4</span>
             Upload Berkas Pendukung
         </h2>
 
