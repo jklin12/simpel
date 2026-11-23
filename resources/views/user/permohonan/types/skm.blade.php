@@ -1,51 +1,58 @@
-            <!-- Bagian 1: Data Surat Pengantar -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">1</span>
-                    Data Surat Pengantar RT/RW
+            <!-- Bagian 4: Data Pelapor -->
+            <div data-wizard-step data-title="Pelapor" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
+                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    Data Pelapor
                 </h2>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Surat Pengantar</label>
-                        <input type="text" name="nomor_pengantar" value="{{ old('nomor_pengantar') }}" placeholder="Contoh: 044/RW.009/I/2026" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('nomor_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap Pelapor <span class="text-red-500">*</span></label>
+                        <input type="text" name="nama_pelapor" value="{{ old('nama_pelapor') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('nama_pelapor') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Surat Pengantar</label>
-                        <input type="date" name="tanggal_pengantar" value="{{ old('tanggal_pengantar') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('tanggal_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-2">NIK Pelapor <span class="text-red-500">*</span></label>
+                        <input type="text" inputmode="numeric" name="nik_pelapor" value="{{ old('nik_pelapor') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" maxlength="16" required>
+                        @error('nik_pelapor') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">RT</label>
-                        <input type="text" name="rt" value="{{ old('rt') }}" placeholder="Contoh: 044" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('rt') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hubungan dengan Jenazah <span class="text-red-500">*</span></label>
+                        <select name="hubungan_pelapor" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                            <option value="">Pilih Hubungan</option>
+                            <option value="Ayah" {{ old('hubungan_pelapor') == 'Ayah' ? 'selected' : '' }}>Ayah</option>
+                            <option value="Ibu" {{ old('hubungan_pelapor') == 'Ibu' ? 'selected' : '' }}>Ibu</option>
+                            <option value="Suami" {{ old('hubungan_pelapor') == 'Suami' ? 'selected' : '' }}>Suami</option>
+                            <option value="Istri" {{ old('hubungan_pelapor') == 'Istri' ? 'selected' : '' }}>Istri</option>
+                            <option value="Anak Kandung" {{ old('hubungan_pelapor') == 'Anak Kandung' ? 'selected' : '' }}>Anak Kandung</option>
+                            <option value="Saudara Kandung" {{ old('hubungan_pelapor') == 'Saudara Kandung' ? 'selected' : '' }}>Saudara Kandung</option>
+                            <option value="Kerabat" {{ old('hubungan_pelapor') == 'Kerabat' ? 'selected' : '' }}>Kerabat</option>
+                        </select>
+                        @error('hubungan_pelapor') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">RW</label>
-                        <input type="text" name="rw" value="{{ old('rw') }}" placeholder="Contoh: 009" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('rw') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-2">No. WhatsApp / HP Pelapor <span class="text-red-500">*</span></label>
+                        <input type="text" name="no_wa" value="{{ old('no_wa') }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        <p class="mt-1 text-xs text-blue-600">*Nomor ini akan digunakan sebagai nomor kontak pemohon.</p>
+                        @error('no_wa') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
 
             <!-- Bagian 2: Data Orang yang Meninggal -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8" x-data="ocrJenazahHandler()">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                        <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">2</span>
-                        Data Jenazah / Orang yang Meninggal
-                    </h2>
-                    <div class="flex flex-col items-end">
-                        <button type="button" @click="triggerOCR" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                            <svg class="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            Scan KTP Jenazah (OCR)
-                        </button>
-                        <span class="text-xs text-blue-600 mt-1">*Otomatis isi Nama, NIK, Tgl Lahir, Alamat</span>
-                    </div>
+            <div x-data="ocrJenazahHandler()" class="space-y-6">
+
+            <div data-wizard-step data-title="Almarhum" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
+                <h2 class="text-lg font-bold text-gray-900 mb-5">Data Almarhum / Jenazah</h2>
+
+                <div class="mb-5 rounded-xl border border-primary-100 bg-primary-50 p-3">
+                    <button type="button" @click="triggerOCR"
+                        class="w-full inline-flex items-center justify-center gap-2 h-12 rounded-lg bg-white border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50">
+                        <svg class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Scan KTP Jenazah (OCR)
+                    </button>
+                    <p class="text-xs text-primary-700 mt-2 text-center">Otomatis mengisi nama, NIK, tanggal lahir, dan alamat almarhum.</p>
                     <input type="file" x-ref="ocrInput" class="hidden" accept="image/*" @change="handleFileUpload">
                 </div>
 
@@ -58,7 +65,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">NIK</label>
-                            <input type="text" x-model="nik" name="nik_jenazah" value="{{ old('nik_jenazah') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" maxlength="16" required>
+                            <input type="text" x-model="nik" inputmode="numeric" name="nik_jenazah" value="{{ old('nik_jenazah') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" maxlength="16" required>
                             @error('nik_jenazah') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                         <div>
@@ -83,6 +90,14 @@
                             @error('tanggal_lahir_jenazah') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Langkah: lanjutan data almarhum -->
+            <div data-wizard-step data-title="Alamat almarhum" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
+                <h2 class="text-lg font-bold text-gray-900 mb-5">Alamat &amp; Pekerjaan Almarhum</h2>
+
+                <div class="grid grid-cols-1 gap-5">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Terakhir</label>
                         <textarea x-model="alamat" name="alamat_jenazah" rows="2" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>{{ old('alamat_jenazah') }}</textarea>
@@ -114,11 +129,11 @@
                     </div>
                 </div>
             </div>
+            </div>
 
             <!-- Bagian 3: Detail Kejadian -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <div data-wizard-step data-title="Kejadian" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
                 <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">3</span>
                     Detail Kematian
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -172,51 +187,39 @@
                 </div>
             </div>
 
-            <!-- Bagian 4: Data Pelapor -->
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                <h2 class="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">4</span>
-                    Data Pelapor
+            <!-- Bagian 1: Data Surat Pengantar -->
+            <div data-wizard-step data-title="Pengantar RT/RW" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
+                <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
+                    Data Surat Pengantar RT/RW
                 </h2>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap Pelapor <span class="text-red-500">*</span></label>
-                        <input type="text" name="nama_pelapor" value="{{ old('nama_pelapor') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        @error('nama_pelapor') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Surat Pengantar</label>
+                        <input type="text" name="nomor_pengantar" value="{{ old('nomor_pengantar') }}" placeholder="Contoh: 044/RW.009/I/2026" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('nomor_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">NIK Pelapor <span class="text-red-500">*</span></label>
-                        <input type="text" name="nik_pelapor" value="{{ old('nik_pelapor') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" maxlength="16" required>
-                        @error('nik_pelapor') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Surat Pengantar</label>
+                        <input type="date" name="tanggal_pengantar" value="{{ old('tanggal_pengantar') }}" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('tanggal_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Hubungan dengan Jenazah <span class="text-red-500">*</span></label>
-                        <select name="hubungan_pelapor" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                            <option value="">Pilih Hubungan</option>
-                            <option value="Ayah" {{ old('hubungan_pelapor') == 'Ayah' ? 'selected' : '' }}>Ayah</option>
-                            <option value="Ibu" {{ old('hubungan_pelapor') == 'Ibu' ? 'selected' : '' }}>Ibu</option>
-                            <option value="Suami" {{ old('hubungan_pelapor') == 'Suami' ? 'selected' : '' }}>Suami</option>
-                            <option value="Istri" {{ old('hubungan_pelapor') == 'Istri' ? 'selected' : '' }}>Istri</option>
-                            <option value="Anak Kandung" {{ old('hubungan_pelapor') == 'Anak Kandung' ? 'selected' : '' }}>Anak Kandung</option>
-                            <option value="Saudara Kandung" {{ old('hubungan_pelapor') == 'Saudara Kandung' ? 'selected' : '' }}>Saudara Kandung</option>
-                            <option value="Kerabat" {{ old('hubungan_pelapor') == 'Kerabat' ? 'selected' : '' }}>Kerabat</option>
-                        </select>
-                        @error('hubungan_pelapor') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-2">RT</label>
+                        <input type="text" name="rt" value="{{ old('rt') }}" placeholder="Contoh: 044" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('rt') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">No. WhatsApp / HP Pelapor <span class="text-red-500">*</span></label>
-                        <input type="text" name="no_wa" value="{{ old('no_wa') }}" placeholder="Contoh: 08123456789" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
-                        <p class="mt-1 text-xs text-blue-600">*Nomor ini akan digunakan sebagai nomor kontak pemohon.</p>
-                        @error('no_wa') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
+                        <label class="block text-sm font-medium text-gray-700 mb-2">RW</label>
+                        <input type="text" name="rw" value="{{ old('rw') }}" placeholder="Contoh: 009" class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" required>
+                        @error('rw') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
                 </div>
             </div>
 
             <!-- Bagian 5: Upload Berkas Pendukung -->
-
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mt-6">
+            <div data-wizard-step data-title="Berkas" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
                 <h2 class="text-lg font-bold text-gray-900 mb-6 flex items-center gap-2">
-                    <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">5</span>
                     Upload Berkas Pendukung
                 </h2>
 
