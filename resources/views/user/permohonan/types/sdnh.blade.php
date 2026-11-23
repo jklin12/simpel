@@ -48,22 +48,26 @@
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap Pemohon <span class="text-red-500">*</span></label>
                 <input type="text" x-model="nama" name="nama_lengkap" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Sesuai KTP Pemohon">
+                @error('nama_lengkap') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- NIK Pemohon -->
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">NIK Pemohon <span class="text-red-500">*</span></label>
                 <input type="text" x-model="nik" inputmode="numeric" name="nik_bersangkutan" maxlength="16" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="16 Digit NIK Pemohon">
+                @error('nik_bersangkutan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Tempat & Tanggal Lahir -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir <span class="text-red-500">*</span></label>
                 <input type="text" x-model="tempat_lahir" name="tempat_lahir" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Kota/Kabupaten">
+                @error('tempat_lahir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir <span class="text-red-500">*</span></label>
                 <input type="date" x-model="tanggal_lahir" name="tanggal_lahir" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
+                @error('tanggal_lahir') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Jenis Kelamin & Agama -->
@@ -71,21 +75,23 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin <span class="text-red-500">*</span></label>
                 <select x-ref="jenisKelaminSelect" name="jenis_kelamin" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
                     <option value="">Pilih Jenis Kelamin</option>
-                    <option value="LAKI-LAKI">Laki-laki</option>
-                    <option value="PEREMPUAN">Perempuan</option>
+                    <option value="LAKI-LAKI" {{ old('jenis_kelamin') == 'LAKI-LAKI' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="PEREMPUAN" {{ old('jenis_kelamin') == 'PEREMPUAN' ? 'selected' : '' }}>Perempuan</option>
                 </select>
+                @error('jenis_kelamin') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Agama <span class="text-red-500">*</span></label>
                 <select x-ref="agamaSelect" name="agama" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
                     <option value="">Pilih Agama</option>
-                    <option value="Islam">Islam</option>
-                    <option value="Kristen">Kristen</option>
-                    <option value="Katolik">Katolik</option>
-                    <option value="Hindu">Hindu</option>
-                    <option value="Buddha">Buddha</option>
-                    <option value="Konghucu">Konghucu</option>
+                    <option value="Islam" {{ old('agama') == 'Islam' ? 'selected' : '' }}>Islam</option>
+                    <option value="Kristen" {{ old('agama') == 'Kristen' ? 'selected' : '' }}>Kristen</option>
+                    <option value="Katolik" {{ old('agama') == 'Katolik' ? 'selected' : '' }}>Katolik</option>
+                    <option value="Hindu" {{ old('agama') == 'Hindu' ? 'selected' : '' }}>Hindu</option>
+                    <option value="Buddha" {{ old('agama') == 'Buddha' ? 'selected' : '' }}>Buddha</option>
+                    <option value="Konghucu" {{ old('agama') == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
                 </select>
+                @error('agama') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
         </div>
@@ -100,26 +106,29 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Perkawinan <span class="text-red-500">*</span></label>
                 <select x-ref="statusPerkawinanSelect" name="status_perkawinan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
                     <option value="">Pilih Status Perkawinan</option>
-                    <option value="Belum Kawin">Belum Kawin</option>
-                    <option value="Kawin">Kawin</option>
-                    <option value="Cerai Hidup">Cerai Hidup</option>
-                    <option value="Cerai Mati">Cerai Mati</option>
+                    <option value="Belum Kawin" {{ old('status_perkawinan') == 'Belum Kawin' ? 'selected' : '' }}>Belum Kawin</option>
+                    <option value="Kawin" {{ old('status_perkawinan') == 'Kawin' ? 'selected' : '' }}>Kawin</option>
+                    <option value="Cerai Hidup" {{ old('status_perkawinan') == 'Cerai Hidup' ? 'selected' : '' }}>Cerai Hidup</option>
+                    <option value="Cerai Mati" {{ old('status_perkawinan') == 'Cerai Mati' ? 'selected' : '' }}>Cerai Mati</option>
                 </select>
+                @error('status_perkawinan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Pekerjaan <span class="text-red-500">*</span></label>
                 <select name="pekerjaan" required class="w-full select2-pekerjaan border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4 rounded-lg">
                     <option value="">Pilih/Ketik Pekerjaan</option>
                     @foreach($pekerjaanList ?? [] as $kerja)
-                    <option value="{{ $kerja }}">{{ $kerja }}</option>
+                    <option value="{{ $kerja }}" {{ old('pekerjaan') == $kerja ? 'selected' : '' }}>{{ $kerja }}</option>
                     @endforeach
                 </select>
+                @error('pekerjaan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- No WA Pemohon -->
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">No. WhatsApp / HP <span class="text-red-500">*</span></label>
-                <input type="text" name="no_wa" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Contoh: 08123456789">
+                <input type="text" name="no_wa" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Contoh: 08123456789" value="{{ old('no_wa') }}">
+                @error('no_wa') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 <p class="mt-1 text-xs text-blue-600">*Nomor ini akan dihubungi apabila ada pembaruan status.</p>
             </div>
 
@@ -127,6 +136,7 @@
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Sesuai KTP <span class="text-red-500">*</span></label>
                 <textarea x-model="alamat" name="alamat_lengkap" rows="3" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Sebutkan alamat lengkap RTRW/Desa/Kec"></textarea>
+                @error('alamat_lengkap') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
         </div>
     </div>
@@ -169,18 +179,21 @@
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Nama Calon Pasangan <span class="text-red-500">*</span></label>
                 <input type="text" x-model="nama" name="nama_pasangan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Nama Lengkap Calon Pasangan">
+                @error('nama_pasangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Tempat Lahir Pasangan -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir <span class="text-red-500">*</span></label>
                 <input type="text" x-model="tempat_lahir" name="tempat_lahir_pasangan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
+                @error('tempat_lahir_pasangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Tanggal Lahir Pasangan -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir <span class="text-red-500">*</span></label>
                 <input type="date" x-model="tanggal_lahir" name="tanggal_lahir_pasangan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
+                @error('tanggal_lahir_pasangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Jenis Kelamin Pasangan -->
@@ -188,9 +201,10 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin <span class="text-red-500">*</span></label>
                 <select x-ref="jenisKelaminSelect" name="jenis_kelamin_pasangan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
                     <option value="">Pilih Jenis Kelamin</option>
-                    <option value="LAKI-LAKI">Laki-laki</option>
-                    <option value="PEREMPUAN">Perempuan</option>
+                    <option value="LAKI-LAKI" {{ old('jenis_kelamin_pasangan') == 'LAKI-LAKI' ? 'selected' : '' }}>Laki-laki</option>
+                    <option value="PEREMPUAN" {{ old('jenis_kelamin_pasangan') == 'PEREMPUAN' ? 'selected' : '' }}>Perempuan</option>
                 </select>
+                @error('jenis_kelamin_pasangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Agama Pasangan -->
@@ -198,13 +212,14 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Agama <span class="text-red-500">*</span></label>
                 <select x-ref="agamaSelect" name="agama_pasangan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
                     <option value="">Pilih Agama</option>
-                    <option value="Islam">Islam</option>
-                    <option value="Kristen">Kristen</option>
-                    <option value="Katolik">Katolik</option>
-                    <option value="Hindu">Hindu</option>
-                    <option value="Buddha">Buddha</option>
-                    <option value="Konghucu">Konghucu</option>
+                    <option value="Islam" {{ old('agama_pasangan') == 'Islam' ? 'selected' : '' }}>Islam</option>
+                    <option value="Kristen" {{ old('agama_pasangan') == 'Kristen' ? 'selected' : '' }}>Kristen</option>
+                    <option value="Katolik" {{ old('agama_pasangan') == 'Katolik' ? 'selected' : '' }}>Katolik</option>
+                    <option value="Hindu" {{ old('agama_pasangan') == 'Hindu' ? 'selected' : '' }}>Hindu</option>
+                    <option value="Buddha" {{ old('agama_pasangan') == 'Buddha' ? 'selected' : '' }}>Buddha</option>
+                    <option value="Konghucu" {{ old('agama_pasangan') == 'Konghucu' ? 'selected' : '' }}>Konghucu</option>
                 </select>
+                @error('agama_pasangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
         </div>
@@ -219,11 +234,12 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Status Perkawinan <span class="text-red-500">*</span></label>
                 <select x-ref="statusPerkawinanSelect" name="status_perkawinan_pasangan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
                     <option value="">Pilih Status Perkawinan</option>
-                    <option value="Belum Kawin">Belum Kawin</option>
-                    <option value="Kawin">Kawin</option>
-                    <option value="Cerai Hidup">Cerai Hidup</option>
-                    <option value="Cerai Mati">Cerai Mati</option>
+                    <option value="Belum Kawin" {{ old('status_perkawinan_pasangan') == 'Belum Kawin' ? 'selected' : '' }}>Belum Kawin</option>
+                    <option value="Kawin" {{ old('status_perkawinan_pasangan') == 'Kawin' ? 'selected' : '' }}>Kawin</option>
+                    <option value="Cerai Hidup" {{ old('status_perkawinan_pasangan') == 'Cerai Hidup' ? 'selected' : '' }}>Cerai Hidup</option>
+                    <option value="Cerai Mati" {{ old('status_perkawinan_pasangan') == 'Cerai Mati' ? 'selected' : '' }}>Cerai Mati</option>
                 </select>
+                @error('status_perkawinan_pasangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Pekerjaan Pasangan -->
@@ -232,15 +248,17 @@
                 <select name="pekerjaan_pasangan" required class="w-full select2-pekerjaan border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4 rounded-lg">
                     <option value="">Pilih/Ketik Pekerjaan</option>
                     @foreach($pekerjaanList ?? [] as $kerja)
-                    <option value="{{ $kerja }}">{{ $kerja }}</option>
+                    <option value="{{ $kerja }}" {{ old('pekerjaan_pasangan') == $kerja ? 'selected' : '' }}>{{ $kerja }}</option>
                     @endforeach
                 </select>
+                @error('pekerjaan_pasangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Alamat Sesuai KTP Pasangan -->
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Sesuai KTP <span class="text-red-500">*</span></label>
                 <textarea x-model="alamat" name="alamat_pasangan" rows="3" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Alamat lengkap calon pasangan"></textarea>
+                @error('alamat_pasangan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
         </div>
     </div>
@@ -257,44 +275,50 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Hari <span class="text-red-500">*</span></label>
                 <select name="hari_pernikahan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
                     <option value="">Pilih Hari</option>
-                    <option value="Senin">Senin</option>
-                    <option value="Selasa">Selasa</option>
-                    <option value="Rabu">Rabu</option>
-                    <option value="Kamis">Kamis</option>
-                    <option value="Jumat">Jumat</option>
-                    <option value="Sabtu">Sabtu</option>
-                    <option value="Minggu">Minggu</option>
+                    <option value="Senin" {{ old('hari_pernikahan') == 'Senin' ? 'selected' : '' }}>Senin</option>
+                    <option value="Selasa" {{ old('hari_pernikahan') == 'Selasa' ? 'selected' : '' }}>Selasa</option>
+                    <option value="Rabu" {{ old('hari_pernikahan') == 'Rabu' ? 'selected' : '' }}>Rabu</option>
+                    <option value="Kamis" {{ old('hari_pernikahan') == 'Kamis' ? 'selected' : '' }}>Kamis</option>
+                    <option value="Jumat" {{ old('hari_pernikahan') == 'Jumat' ? 'selected' : '' }}>Jumat</option>
+                    <option value="Sabtu" {{ old('hari_pernikahan') == 'Sabtu' ? 'selected' : '' }}>Sabtu</option>
+                    <option value="Minggu" {{ old('hari_pernikahan') == 'Minggu' ? 'selected' : '' }}>Minggu</option>
                 </select>
+                @error('hari_pernikahan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Tanggal Pelaksanaan -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal <span class="text-red-500">*</span></label>
-                <input type="date" name="tanggal_pernikahan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4">
+                <input type="date" name="tanggal_pernikahan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" value="{{ old('tanggal_pernikahan') }}">
+                @error('tanggal_pernikahan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Waktu Pelaksanaan -->
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Waktu <span class="text-red-500">*</span></label>
-                <input type="text" name="waktu_pernikahan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Contoh: 09.00 WITA / 10.00 WIB s.d Selesai">
+                <input type="text" name="waktu_pernikahan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Contoh: 09.00 WITA / 10.00 WIB s.d Selesai" value="{{ old('waktu_pernikahan') }}">
+                @error('waktu_pernikahan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Tempat Pelaksanaan -->
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tempat <span class="text-red-500">*</span></label>
-                <input type="text" name="tempat_pernikahan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Contoh: KUA Landasan Ulin / Rumah Mempelai / Gedung X">
+                <input type="text" name="tempat_pernikahan" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Contoh: KUA Landasan Ulin / Rumah Mempelai / Gedung X" value="{{ old('tempat_pernikahan') }}">
+                @error('tempat_pernikahan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Alamat Pelaksanaan -->
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Alamat Tempat Pernikahan <span class="text-red-500">*</span></label>
-                <textarea name="alamat_pernikahan" rows="2" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Alamat lengkap tempat akad dilaksanakan"></textarea>
+                <textarea name="alamat_pernikahan" rows="2" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Alamat lengkap tempat akad dilaksanakan">{{ old('alamat_pernikahan') }}</textarea>
+                @error('alamat_pernikahan') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Alasan Mempelai -->
             <div class="col-span-1 md:col-span-2">
                 <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Mengajukan Dispensasi Nikah <span class="text-red-500">*</span></label>
-                <textarea name="alasan_dispensasi" rows="3" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Jelaskan alasan pengajuan dispensasi..."></textarea>
+                <textarea name="alasan_dispensasi" rows="3" required class="w-full rounded-lg border-gray-300 bg-gray-50 focus:bg-white focus:ring-primary-500 focus:border-primary-500 transition-colors py-3 px-4" placeholder="Jelaskan alasan pengajuan dispensasi...">{{ old('alasan_dispensasi') }}</textarea>
+                @error('alasan_dispensasi') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
         </div>
     </div>
@@ -316,6 +340,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Surat Pengantar RT/RW Setempat <span class="text-red-500">*</span></label>
                 <input type="file" name="sdnh_surat_pengantar" required accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+                @error('sdnh_surat_pengantar') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- KTP dan KK -->
@@ -324,6 +349,7 @@
                     <span class="ml-1 text-xs text-gray-500 font-normal">(Dijadikan dalam 1 File gabungan)</span>
                 </label>
                 <input type="file" name="sdnh_ktp_kk" required accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+                @error('sdnh_ktp_kk') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Formulir Nikah N1-N5 -->
@@ -332,24 +358,28 @@
                     <span class="ml-1 text-xs text-gray-500 font-normal">(Digabung ke 1 File PDF)</span>
                 </label>
                 <input type="file" name="sdnh_formulir_n" required accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+                @error('sdnh_formulir_n') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Bukti PBB -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Bukti Tanda Lunas PBB-P2 Tahun Berjalan <span class="text-red-500">*</span></label>
                 <input type="file" name="sdnh_lunas_pbb" required accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+                @error('sdnh_lunas_pbb') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Surat Rekomendasi KUA -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Surat Rekomendasi KUA <span class="text-red-500">*</span></label>
                 <input type="file" name="sdnh_rekom_kua" required accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+                @error('sdnh_rekom_kua') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
             </div>
 
             <!-- Akta Cerai/Kematian -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-2">Fotokopi Akta Cerai atau Kematian <span class="font-normal text-gray-500">(Jika janda/duda)</span></label>
                 <input type="file" name="sdnh_akta_cerai_mati" accept=".jpg,.jpeg,.png,.pdf" class="w-full rounded-lg border border-gray-300 bg-gray-50 focus:ring-primary-500 focus:border-primary-500 transition-colors py-2 px-3 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+                @error('sdnh_akta_cerai_mati') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                 <p class="mt-1 text-xs text-blue-600">*Hanya dilampirkan jika pemohon atau pasangan berstatus cerai hidup/cerai mati.</p>
             </div>
 
