@@ -5,15 +5,13 @@
     $fileFields = collect($fields)->filter(fn($f) => ($f['type'] ?? 'text') === 'file');
 @endphp
 
-@if($textFields->isNotEmpty())
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
-    <div class="flex items-center gap-3 mb-6">
-        <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">1</span>
-        <h2 class="text-lg font-bold text-gray-900">Data Permohonan</h2>
-    </div>
+@php $textChunks = $textFields->chunk(6)->values(); @endphp
+@foreach($textChunks as $chunkIndex => $chunk)
+<div data-wizard-step data-title="{{ $textChunks->count() > 1 ? 'Data permohonan (' . ($chunkIndex + 1) . '/' . $textChunks->count() . ')' : 'Data permohonan' }}" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8 mb-8">
+    <h2 class="text-lg font-bold text-gray-900 mb-5">Data Permohonan@if($textChunks->count() > 1) <span class="text-sm font-normal text-gray-400">({{ $chunkIndex + 1 }}/{{ $textChunks->count() }})</span>@endif</h2>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        @foreach($textFields as $field)
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        @foreach($chunk as $field)
             @php
                 $name = $field['name'];
                 $label = $field['label'];
@@ -77,17 +75,14 @@
         @endforeach
     </div>
 </div>
-@endif
+@endforeach
 
 @if($fileFields->isNotEmpty())
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 mb-8">
-    <div class="flex items-center gap-3 mb-6">
-        <span class="w-8 h-8 rounded-full bg-primary-600 text-white text-sm flex items-center justify-center">2</span>
-        <h2 class="text-lg font-bold text-gray-900">Berkas Pendukung</h2>
-    </div>
-    <p class="text-sm text-gray-500 mb-6">Format yang diterima: JPG, PNG, PDF. Maksimal 5 MB per file.</p>
+<div data-wizard-step data-title="Berkas" class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8 mb-8">
+    <h2 class="text-lg font-bold text-gray-900 mb-2">Berkas Pendukung</h2>
+    <p class="text-sm text-gray-500 mb-5">Format yang diterima: JPG, PNG, PDF. Maksimal 5 MB per file.</p>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         @foreach($fileFields as $field)
             @php
                 $name = $field['name'];

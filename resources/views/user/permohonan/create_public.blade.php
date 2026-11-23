@@ -4,9 +4,12 @@
 
 @section('content')
 @php
-    // Wizard bertahap hanya untuk jenis surat yang terdaftar di config/layanan.php (wizard_aktif).
-    $wizard = in_array(strtolower($service->kode), config('layanan.wizard_aktif', []), true)
-        && View::exists('user.permohonan.types.' . strtolower($service->kode));
+    // Wizard bertahap: jenis surat statis hanya bila terdaftar di config/layanan.php (wizard_aktif);
+    // jenis dinamis (required_fields dari admin) mengikuti wizard_dinamis.
+    $punyaPartial = View::exists('user.permohonan.types.' . strtolower($service->kode));
+    $wizard = $punyaPartial
+        ? in_array(strtolower($service->kode), config('layanan.wizard_aktif', []), true)
+        : (config('layanan.wizard_dinamis', true) && !empty($service->required_fields));
 @endphp
 <div class="bg-gray-50 min-h-screen pt-4 {{ $wizard ? 'pb-32' : 'pb-16' }}" @if($wizard) x-data="permohonanWizard()" @keydown.enter="onEnter($event)" @endif>
 

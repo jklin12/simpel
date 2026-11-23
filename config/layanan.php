@@ -35,6 +35,9 @@ return [
      */
     'wizard_aktif' => ['sktm', 'sktmr', 'skbm', 'skp', 'skjd', 'sksi', 'skg', 'spkh', 'skb', 'skm', 'sdnh', 'spn', 'skdko', 'skdk', 'spkdk', 'sprik', 'roipk'],
 
+    /** Jenis surat baru (form dinamis dari required_fields) memakai wizard. Set false untuk kembali ke form satu halaman. */
+    'wizard_dinamis' => true,
+
     'kategori_lainnya' => [
         'label' => 'Lainnya',
         'tone' => 'bg-primary-50 text-primary-700',
