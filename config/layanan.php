@@ -29,6 +29,12 @@ return [
         ],
     ],
 
+    /**
+     * Kode jenis surat (huruf kecil, sesuai nama partial di types/) yang memakai form wizard bertahap.
+     * Jenis lain tetap memakai form satu halaman sampai wizard-nya diuji. Tambahkan kode di sini untuk mengaktifkan.
+     */
+    'wizard_aktif' => ['sktm'],
+
     'kategori_lainnya' => [
         'label' => 'Lainnya',
         'tone' => 'bg-primary-50 text-primary-700',
