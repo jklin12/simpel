@@ -37,7 +37,52 @@ class PortalPublikController extends Controller
     {
         $beritaTerbaru = $this->beritaService->getLatestPublished(3);
         $sliders       = $this->sliderService->getAktifSliders();
-        return view('portal.index', compact('beritaTerbaru', 'sliders'));
+        $layananPopuler = $this->layananPopuler(6);
+
+        // Tautan bantuan WhatsApp memakai nomor dari pengaturan popup layanan (dikelola admin).
+        $popup = app(\App\Services\LayananPopupService::class)->getSingleton();
+        $bantuanWa = ($popup && $popup->normalized_wa_number)
+            ? 'https://wa.me/' . $popup->normalized_wa_number
+            : null;
+
+        return view('portal.index', compact('beritaTerbaru', 'sliders', 'layananPopuler', 'bantuanWa'));
+    }
+
+    /**
+     * Jenis surat dengan permohonan terbanyak bulan ini. Bila kurang dari $limit,
+     * dilengkapi jenis surat aktif lain agar carousel tidak kosong.
+     */
+    protected function layananPopuler(int $limit): \Illuminate\Support\Collection
+    {
+        $topIds = \App\Models\PermohonanSurat::query()
+            ->where('created_at', '>=', now()->startOfMonth())
+            ->selectRaw('jenis_surat_id, COUNT(*) as total')
+            ->groupBy('jenis_surat_id')
+            ->orderByDesc('total')
+            ->limit($limit)
+            ->pluck('jenis_surat_id');
+
+        $aktif = \App\Models\JenisSurat::where('is_active', true)->get()->keyBy('id');
+
+        $terpilih = $topIds->map(fn ($id) => $aktif->get($id))->filter();
+        if ($terpilih->count() < $limit) {
+            $terpilih = $terpilih->concat(
+                $aktif->reject(fn ($j) => $terpilih->contains('id', $j->id))->take($limit - $terpilih->count())
+            );
+        }
+
+        $kodeKeTone = [];
+        foreach (config('layanan.kategori') as $kat) {
+            foreach ($kat['kode'] as $kode) {
+                $kodeKeTone[$kode] = $kat['tone'];
+            }
+        }
+
+        return $terpilih->values()->map(fn ($j) => [
+            'kode' => $j->kode,
+            'nama' => $j->nama,
+            'tone' => $kodeKeTone[$j->kode] ?? config('layanan.kategori_lainnya.tone'),
+        ]);
     }
 
     /** PREVIEW SEMENTARA - hapus setelah pilih desain **/

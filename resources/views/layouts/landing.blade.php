@@ -59,45 +59,44 @@
         [x-cloak] {
             display: none !important;
         }
-
-        .glass-nav {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .transparent-nav {
-            background: transparent;
-            border-bottom: 1px solid transparent;
-        }
     </style>
 </head>
 
 <body class="bg-gray-50 text-gray-800 font-sans antialiased flex flex-col min-h-screen">
 
+    @php
+        $navItems = [
+            ['Beranda', route('home'), request()->routeIs('home'), 'M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM9 22V12h6v10'],
+            ['Daftar Layanan Surat', route('layanan.index'), request()->routeIs('layanan.index'), 'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8'],
+            ['Cek Status Permohonan', route('layanan.surat.tracking'), request()->routeIs('layanan.surat.tracking*'), 'M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11'],
+            ['Download Template Surat', route('layanan.surat.template.index'), request()->routeIs('layanan.surat.template.*'), 'M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3'],
+            ['Struktur Organisasi', route('struktur-organisasi'), request()->routeIs('struktur-organisasi*'), 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75'],
+            ['Berita & Pengumuman', route('berita.index'), request()->routeIs('berita.*'), 'M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2M18 14h-8M15 18h-5M10 6h8v4h-8z'],
+            ['Peta Wilayah', route('peta.index'), request()->routeIs('peta.*'), 'M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4zM8 2v16M16 6v16'],
+            ['FAQ', route('faq'), request()->routeIs('faq'), 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01'],
+        ];
+    @endphp
+
     <!-- Topbar -->
-    <header
-        class="fixed top-0 w-full z-50 transition-all duration-300 transform glass-nav"
-        x-data="{ mobileMenuOpen: false, scrolled: false }"
-        @scroll.window="scrolled = (window.pageYOffset > 20)"
-        :class="scrolled ? 'shadow-sm py-2' : 'py-4'">
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200"
+        x-data="{ mobileMenuOpen: false }" @keydown.escape.window="mobileMenuOpen = false">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
+            <div class="flex items-center justify-between h-14 lg:h-16">
                 <!-- Logo -->
-                <div class="flex-shrink-0 flex items-center gap-3">
-                    <img src="{{ asset('images/logo_simpel.png') }}" alt="SiMPEL" class="h-10 w-auto object-contain">
-                    <div class="flex flex-col">
-                        <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-700">SiMPEL</span>
-                        <span class="text-[10px] text-gray-500 font-medium tracking-wider uppercase">Landasan Ulin</span>
-                    </div>
-                </div>
+                <a href="{{ route('home') }}" class="flex-shrink-0 flex items-center gap-2.5">
+                    <img src="{{ asset('images/logo_simpel.png') }}" alt="SiMPEL" class="h-8 lg:h-10 w-auto object-contain">
+                    <span class="leading-none">
+                        <span class="block text-base lg:text-xl font-bold text-gray-900">SiMPEL</span>
+                        <span class="block text-[10px] text-gray-500 font-medium tracking-wider uppercase mt-0.5">Landasan Ulin</span>
+                    </span>
+                </a>
 
                 <!-- Desktop Menu -->
                 <nav class="hidden lg:flex items-center gap-8">
-                    <a href="{{ route('home') }}" class="text-base font-medium text-gray-700 hover:text-primary-600 transition-colors {{ request()->routeIs('portal.home') ? 'text-primary-600' : '' }}">Beranda</a>
-                    <a href="{{ route('berita.index') }}" class="text-base font-medium text-gray-700 hover:text-primary-600 transition-colors {{ request()->routeIs('portal.berita*') ? 'text-primary-600' : '' }}">Berita</a>
-                    <a href="{{ route('peta.index') }}" class="text-base font-medium text-gray-700 hover:text-primary-600 transition-colors {{ request()->routeIs('portal.peta*') ? 'text-primary-600' : '' }}">Peta Wilayah</a>
-                    <a href="{{ route('struktur-organisasi') }}" class="text-base font-medium text-gray-700 hover:text-primary-600 transition-colors {{ request()->routeIs('portal.struktur-organisasi*') ? 'text-primary-600' : '' }}">Struktur Organisasi</a>
+                    <a href="{{ route('home') }}" class="text-base font-medium hover:text-primary-600 transition-colors {{ request()->routeIs('home') ? 'text-primary-600' : 'text-gray-700' }}">Beranda</a>
+                    <a href="{{ route('berita.index') }}" class="text-base font-medium hover:text-primary-600 transition-colors {{ request()->routeIs('berita.*') ? 'text-primary-600' : 'text-gray-700' }}">Berita</a>
+                    <a href="{{ route('peta.index') }}" class="text-base font-medium hover:text-primary-600 transition-colors {{ request()->routeIs('peta.*') ? 'text-primary-600' : 'text-gray-700' }}">Peta Wilayah</a>
+                    <a href="{{ route('struktur-organisasi') }}" class="text-base font-medium hover:text-primary-600 transition-colors {{ request()->routeIs('struktur-organisasi*') ? 'text-primary-600' : 'text-gray-700' }}">Struktur Organisasi</a>
 
                     <div class="relative group" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
                         <button class="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors focus:outline-none">
@@ -107,63 +106,52 @@
                             </svg>
                         </button>
                         <div x-show="open" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" class="absolute z-50 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" style="display: none;">
-                            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+                            <div class="py-1" role="menu" aria-orientation="vertical">
                                 <a href="{{ route('layanan.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600" role="menuitem">Ajukan Surat</a>
                                 <a href="{{ route('layanan.surat.tracking') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600" role="menuitem">Cek Status</a>
                                 <div class="border-t border-gray-100 my-1"></div>
                                 <a href="{{ route('layanan.surat.template.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-primary-600" role="menuitem">Download Template</a>
-                                <div class="border-t border-gray-100 my-1"></div>
                             </div>
                         </div>
                     </div>
-                    <a href="{{ route('faq') }}" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">FAQ</a>
+                    <a href="{{ route('faq') }}" class="text-sm font-medium hover:text-primary-600 transition-colors {{ request()->routeIs('faq') ? 'text-primary-600' : 'text-gray-600' }}">FAQ</a>
                     <a href="#contact" class="text-sm font-medium text-gray-600 hover:text-primary-600 transition-colors">Contact Us</a>
                 </nav>
 
-                <!-- Auth Buttons -->
-                {{--<div class="hidden lg:flex items-center gap-4">
-                    @auth
-                    <a href="{{ route('dashboard') }}" class="px-5 py-2.5 text-sm font-medium text-white bg-primary-600 rounded-full hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 shadow-lg shadow-primary-500/30 transition-all transform hover:-translate-y-0.5">
-                Dashboard
-                </a>
-                @else
-                <a href="{{ route('login') }}" class="px-5 py-2.5 text-sm font-medium text-primary-600 bg-primary-50 rounded-full hover:bg-primary-100 transition-colors">
-                    Masuk
-                </a>
-                @endauth
-            </div>--}}
-
-            <!-- Mobile Menu Button -->
-            <div class="flex lg:hidden">
-                <button @click="mobileMenuOpen = !mobileMenuOpen" type="button" class="text-gray-500 hover:text-gray-900 focus:outline-none p-2">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                        <path x-show="mobileMenuOpen" x-cloak stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+                <!-- Mobile Menu Button -->
+                <div class="flex lg:hidden">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" type="button"
+                        class="w-11 h-11 -mr-2 flex items-center justify-center text-gray-700 focus:outline-none"
+                        :aria-expanded="mobileMenuOpen" aria-label="Menu">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                            <path x-show="mobileMenuOpen" x-cloak stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
-        </div>
 
-        <!-- Mobile Menu -->
-        <div x-show="mobileMenuOpen" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2" class="lg:hidden bg-white border-t border-gray-100 shadow-lg absolute w-full z-40" style="display: none;">
-            <div class="px-4 pt-2 pb-6 space-y-1">
-                <a href="{{ route('home') }}" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg">Beranda</a>
-                <a href="{{ route('berita.index') }}" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg">Berita</a>
-                <a href="{{ route('peta.index') }}" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg">Peta Wilayah</a>
-                <a href="{{ route('struktur-organisasi') }}" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg">Struktur Organisasi</a>
-                <a href="{{route('layanan.index')}}" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg">Layanan Surat</a>
-                <a href="{{ route('layanan.surat.template.index') }}" class="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary-600 hover:bg-primary-50 rounded-lg">Download Template</a>
-
-                <div class="border-t border-gray-100 my-2 pt-2">
-                    @auth
-                    <a href="{{ route('dashboard') }}" class="block px-3 py-3 text-base font-medium text-center text-white bg-primary-600 rounded-lg hover:bg-primary-700">Dashboard</a>
-                    @else
-                    <div class="grid grid-cols-2 gap-3 px-3">
-                        <a href="{{ route('login') }}" class="block px-3 py-2.5 text-base font-medium text-center text-primary-600 bg-primary-50 rounded-lg hover:bg-primary-100">Masuk</a>
-                    </div>
-                    @endauth
-                </div>
+        <!-- Mobile Menu (drawer) -->
+        <div x-show="mobileMenuOpen" x-cloak @click.outside="mobileMenuOpen = false"
+            x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-2"
+            class="lg:hidden absolute left-0 right-0 top-full bg-white border-b border-gray-200 shadow-lg max-h-[calc(100vh-3.5rem)] overflow-y-auto">
+            <div class="py-1">
+                @foreach($navItems as [$label, $href, $active, $iconPath])
+                <a href="{{ $href }}" class="flex items-center gap-3 px-4 h-12 text-[15px] {{ $active ? 'bg-primary-50 text-primary-700 font-semibold' : 'text-gray-700 hover:bg-gray-50' }}">
+                    <svg class="w-5 h-5 flex-none {{ $active ? 'text-primary-600' : 'text-gray-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ $iconPath }}" /></svg>
+                    {{ $label }}
+                </a>
+                @endforeach
+            </div>
+            <div class="px-4 pt-2 pb-4 space-y-2">
+                <a href="{{ route('layanan.index') }}" class="flex items-center justify-center h-12 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700">Ajukan Surat</a>
+                @auth
+                <a href="{{ route('dashboard') }}" class="flex items-center justify-center h-11 rounded-xl text-sm font-medium text-primary-600 bg-primary-50">Dashboard</a>
+                @else
+                <a href="{{ route('login') }}" class="flex items-center justify-center h-11 rounded-xl text-sm font-medium text-primary-600 bg-primary-50">Masuk</a>
+                @endauth
             </div>
         </div>
     </header>
@@ -173,82 +161,65 @@
         @yield('content')
     </main>
 
-    <footer class="bg-white border-t border-gray-100 pt-16 pb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 lg:gap-8 mb-12">
-                <!-- Brand -->
-                <div class="col-span-1 md:col-span-2 lg:col-span-1">
-                    <div class="flex items-center gap-3 mb-6">
-                        <img src="{{ asset('images/logo_simpel.png') }}" alt="SiMPEL" class="h-10 w-auto object-contain">
-                        <span class="text-xl font-bold text-gray-900">SiMPEL</span>
+    <footer class="bg-white border-t border-gray-100 mt-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 lg:pt-14">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <!-- Brand + kontak -->
+                <div class="md:col-span-2">
+                    <div class="flex items-center gap-2.5 mb-3">
+                        <img src="{{ asset('images/logo_simpel.png') }}" alt="SiMPEL" class="h-8 w-auto object-contain">
+                        <span class="text-base font-bold text-gray-900">SiMPEL Landasan Ulin</span>
                     </div>
-                    <p class="text-gray-500 text-sm leading-relaxed mb-6">
+                    <p class="text-gray-500 text-[13px] leading-relaxed mb-4">
                         Sistem Informasi Pelayanan Administrasi Kecamatan Landasan Ulin. Memudahkan masyarakat dalam pengurusan surat menyurat secara digital.
                     </p>
-                    <div class="flex gap-4">
-                        <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-600 hover:text-white transition-all">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                            </svg>
-                        </a>
-                        <a href="#" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-primary-600 hover:text-white transition-all">
-                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 2.163c3.204 0 3.584.012 4.85.072 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Links 1 -->
-                <div>
-                    <h4 class="font-bold text-gray-900 mb-6">Navigasi</h4>
-                    <ul class="space-y-3">
-                        <li><a href="#" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">Home</a></li>
-                        <li><a href="#buat-surat" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">Ajukan Surat</a></li>
-                        <li><a href="#cek-status" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">Cek Status</a></li>
-                        <li><a href="#faq" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">FAQ</a></li>
-                    </ul>
-                </div>
-
-                <!-- Links 2 -->
-                <div>
-                    <h4 class="font-bold text-gray-900 mb-6">Layanan</h4>
-                    <ul class="space-y-3">
-                        <li><a href="#" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">SKCK</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">Surat Domisili</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">Surat Kematian</a></li>
-                        <li><a href="#" class="text-gray-500 hover:text-primary-600 text-sm transition-colors">Surat Kelahiran</a></li>
-                    </ul>
-                </div>
-
-                <!-- Contact -->
-                <div id="contact">
-                    <h4 class="font-bold text-gray-900 mb-6">Hubungi Kami</h4>
-                    <ul class="space-y-3">
-                        <li class="flex items-start gap-3 text-sm text-gray-500">
-                            <svg class="w-5 h-5 text-primary-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <ul id="contact" class="space-y-2.5">
+                        <li class="flex items-start gap-3 text-[13px] text-gray-600">
+                            <svg class="w-4 h-4 text-primary-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                             Jl. Kenanga, RT.06/RW.09, Kelurahan Landasan Ulin Timur, Kecamatan Landasan Ulin, Kota Banjarbaru, Kalimantan Selatan, kode pos 70724
                         </li>
-                        <li class="flex items-center gap-3 text-sm text-gray-500">
-                            <svg class="w-5 h-5 text-primary-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <li class="flex items-center gap-3 text-[13px] text-gray-600">
+                            <svg class="w-4 h-4 text-primary-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                             kecamatan@landasanulin.id
                         </li>
                     </ul>
                 </div>
+
+                <!-- Tautan: accordion di HP, kolom biasa di md ke atas -->
+                <div x-data="{ open: false }" class="border-t border-gray-100 md:border-0">
+                    <button type="button" @click="open = !open" class="w-full flex items-center justify-between h-12 md:h-auto md:mb-4 text-left font-semibold text-gray-900 text-sm md:text-base md:cursor-default" :aria-expanded="open">
+                        Navigasi
+                        <svg class="w-4 h-4 text-gray-400 md:hidden transition-transform" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" /></svg>
+                    </button>
+                    <ul class="pb-3 md:pb-0 space-y-2.5 md:!block" :class="open ? 'block' : 'hidden'">
+                        <li><a href="{{ route('home') }}" class="text-gray-500 hover:text-primary-600 text-[13px] transition-colors">Beranda</a></li>
+                        <li><a href="{{ route('layanan.index') }}" class="text-gray-500 hover:text-primary-600 text-[13px] transition-colors">Ajukan Surat</a></li>
+                        <li><a href="{{ route('layanan.surat.tracking') }}" class="text-gray-500 hover:text-primary-600 text-[13px] transition-colors">Cek Status</a></li>
+                        <li><a href="{{ route('faq') }}" class="text-gray-500 hover:text-primary-600 text-[13px] transition-colors">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div x-data="{ open: false }" class="border-t border-gray-100 md:border-0">
+                    <button type="button" @click="open = !open" class="w-full flex items-center justify-between h-12 md:h-auto md:mb-4 text-left font-semibold text-gray-900 text-sm md:text-base md:cursor-default" :aria-expanded="open">
+                        Layanan
+                        <svg class="w-4 h-4 text-gray-400 md:hidden transition-transform" :class="open ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" /></svg>
+                    </button>
+                    <ul class="pb-3 md:pb-0 space-y-2.5 md:!block" :class="open ? 'block' : 'hidden'">
+                        <li><a href="{{ route('layanan.index') }}" class="text-gray-500 hover:text-primary-600 text-[13px] transition-colors">Daftar Layanan Surat</a></li>
+                        <li><a href="{{ route('layanan.surat.template.index') }}" class="text-gray-500 hover:text-primary-600 text-[13px] transition-colors">Download Template</a></li>
+                        <li><a href="{{ route('struktur-organisasi') }}" class="text-gray-500 hover:text-primary-600 text-[13px] transition-colors">Struktur Organisasi</a></li>
+                    </ul>
+                </div>
             </div>
 
             <!-- Copyright -->
-            <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-                <p class="text-sm text-gray-400">© {{ date('Y') }} SiMPEL Landasan Ulin. All rights reserved.</p>
-                <div class="flex gap-6">
-                    <a href="#" class="text-sm text-gray-400 hover:text-primary-600 transition-colors">Privacy Policy</a>
-                    <a href="#" class="text-sm text-gray-400 hover:text-primary-600 transition-colors">Terms of Service</a>
-                </div>
+            <div class="border-t border-gray-100 py-4 text-center md:text-left">
+                <p class="text-[11px] md:text-sm text-gray-400">© {{ date('Y') }} SiMPEL Landasan Ulin. All rights reserved.</p>
             </div>
         </div>
     </footer>

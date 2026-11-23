@@ -25,7 +25,7 @@ $kelurahan = $permohonan->kelurahan;
 @endphp
 
 @section('content')
-<div class="bg-gray-50 min-h-screen pt-24 pb-16">
+<div class="bg-gray-50 min-h-screen pt-6 pb-16">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {{-- Header Info --}}

@@ -5,7 +5,7 @@
 @section('content')
 
 {{-- Header --}}
-<div class="bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 text-white pt-[110px] pb-16">
+<div class="bg-gradient-to-br from-primary-800 via-primary-700 to-primary-900 text-white pt-8 pb-16">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div class="inline-flex items-center gap-2 bg-white/15 text-white text-xs font-bold px-4 py-2 rounded-full mb-6 border border-white/20">
             <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">

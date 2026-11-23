@@ -8,7 +8,7 @@
 
 @section('content')
 
-<div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white pt-[110px] pb-8">
+<div class="bg-gradient-to-r from-primary-600 to-primary-700 text-white pt-8 pb-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="flex items-center gap-2 text-primary-200 text-sm mb-3">
             <a href="{{ route('home') }}" class="hover:text-white">Portal</a>

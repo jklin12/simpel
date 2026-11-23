@@ -3,161 +3,150 @@
 @section('title', 'Download Template Surat')
 
 @section('content')
-{{-- Hero Section --}}
-<section class="bg-gradient-to-br from-primary-700 via-primary-600 to-blue-500 pt-28 pb-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm font-medium px-4 py-1.5 rounded-full mb-6">
-            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
-            Download Gratis
-        </div>
-        <h1 class="text-3xl md:text-4xl font-bold text-white mb-4">Template Surat Pernyataan</h1>
-        <p class="text-blue-100 text-lg max-w-2xl mx-auto">
-            Unduh template surat resmi dari Kelurahan Landasan Ulin. Tersedia dalam format PDF/DOCX untuk memudahkan persiapan dokumen Anda.
+{{-- Hero --}}
+<section class="bg-gradient-to-br from-primary-700 to-primary-600 text-white px-4 pt-5 pb-6 lg:pt-12 lg:pb-14">
+    <div class="max-w-5xl mx-auto lg:text-center">
+        <span class="inline-flex items-center gap-1.5 text-[11px] font-semibold bg-white/15 border border-white/25 rounded-full px-3 py-1">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" /></svg>
+            Download gratis
+        </span>
+        <h1 class="text-[26px] lg:text-4xl font-bold leading-tight mt-3">Template Surat Pernyataan</h1>
+        <p class="text-sm lg:text-lg text-primary-100 mt-1.5 leading-relaxed lg:max-w-2xl lg:mx-auto">
+            Unduh template resmi (PDF/DOCX) untuk menyiapkan dokumen Anda sebelum mengajukan.
         </p>
     </div>
 </section>
 
-{{-- Main Content --}}
-<section class="py-12 bg-gray-50">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+@if($jenisSurats->isEmpty())
+<section class="px-4 py-16 text-center">
+    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+    </div>
+    <h3 class="text-lg font-semibold text-gray-700 mb-2">Belum Ada Template</h3>
+    <p class="text-gray-500 text-sm">Template surat belum tersedia saat ini. Silakan cek kembali nanti.</p>
+</section>
+@else
+@php
+    $searchIndex = $jenisSurats->map(fn ($j) => Str::lower($j->nama . ' ' . $j->templateSurats->pluck('judul')->implode(' ')))->values();
+@endphp
+<div x-data="{
+        q: '',
+        open: {{ $jenisSurats->first()->id }},
+        idx: {{ Js::from($searchIndex) }},
+        match(i) { const k = this.q.toLowerCase().trim(); return k === '' || this.idx[i].includes(k); },
+        get shown() { return this.idx.filter((_, i) => this.match(i)).length; }
+    }">
 
-        @if($jenisSurats->isEmpty())
-        {{-- Empty State --}}
-        <div class="text-center py-20">
-            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg class="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+    {{-- Pencarian menempel di bawah navbar --}}
+    <div class="sticky top-14 lg:top-16 z-30 bg-gray-50/95 backdrop-blur px-4 py-3 border-b border-gray-200">
+        <label class="max-w-5xl mx-auto flex items-center gap-2 h-12 rounded-xl bg-white border border-gray-300 px-3.5 text-gray-400 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500">
+            <svg class="w-5 h-5 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21l-4.35-4.35M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" /></svg>
+            <input type="search" x-model.debounce.150ms="q" placeholder="Cari template surat"
+                class="flex-1 min-w-0 bg-transparent border-0 p-0 text-[15px] text-gray-900 placeholder-gray-400 focus:ring-0 focus:outline-none">
+        </label>
+    </div>
+
+    <section class="max-w-5xl mx-auto px-4 mt-4 space-y-2.5">
+        @foreach($jenisSurats as $jenisSurat)
+        <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden" x-show="match({{ $loop->index }})">
+
+            {{-- Judul jenis surat: teks boleh turun baris, badge dan panah tidak menghimpit --}}
+            <button type="button"
+                @click="open = (open === {{ $jenisSurat->id }}) ? null : {{ $jenisSurat->id }}"
+                :aria-expanded="open === {{ $jenisSurat->id }} || q !== ''"
+                class="w-full flex items-center gap-3 px-4 min-h-[64px] py-2 text-left">
+                <span class="w-10 h-10 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center flex-none">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8" /></svg>
+                </span>
+                <span class="flex-1 min-w-0">
+                    <span class="block text-[15px] font-semibold leading-snug text-gray-900">{{ $jenisSurat->nama }}</span>
+                    <span class="mt-0.5 inline-block text-[11px] font-semibold text-primary-700 bg-primary-50 rounded-full px-2 py-0.5">{{ $jenisSurat->templateSurats->count() }} template</span>
+                </span>
+                <svg class="w-5 h-5 text-gray-400 flex-none transition-transform duration-200"
+                    :class="(open === {{ $jenisSurat->id }} || q !== '') ? 'rotate-180' : ''"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                 </svg>
-            </div>
-            <h3 class="text-lg font-semibold text-gray-700 mb-2">Belum Ada Template</h3>
-            <p class="text-gray-500 text-sm">Template surat belum tersedia saat ini. Silakan cek kembali nanti.</p>
-        </div>
-        @else
+            </button>
 
-        {{-- Template Cards per Jenis Surat --}}
-        <div class="space-y-8" x-data="{ openCategory: {{ $jenisSurats->first()->id }} }">
-            @foreach($jenisSurats as $jenisSurat)
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-
-                {{-- Category Header --}}
-                <button type="button"
-                    @click="openCategory = (openCategory === {{ $jenisSurat->id }}) ? null : {{ $jenisSurat->id }}"
-                    class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-colors">
-                    <div class="flex items-center gap-4">
-                        <div class="w-10 h-10 rounded-xl bg-primary-100 flex items-center justify-center shrink-0">
-                            <svg class="w-5 h-5 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                            </svg>
-                        </div>
-                        <div>
-                            <h2 class="text-base font-bold text-gray-800">{{ $jenisSurat->nama }}</h2>
-                            @if($jenisSurat->deskripsi)
-                            <p class="text-sm text-gray-500 mt-0.5">{{ Str::limit($jenisSurat->deskripsi, 80) }}</p>
+            <div x-show="open === {{ $jenisSurat->id }} || q !== ''" x-cloak
+                class="px-3 pb-3 border-t border-gray-100 pt-3 space-y-3">
+                @foreach($jenisSurat->templateSurats as $template)
+                @php
+                    $fileName = $template->file_original_name ?? basename($template->file_path);
+                    $ext = strtoupper(pathinfo($fileName, PATHINFO_EXTENSION));
+                    $sizeLabel = !empty($template->file_size) ? ' · ' . number_format($template->file_size / 1024, 0) . ' KB' : '';
+                @endphp
+                <div class="rounded-xl border border-gray-200 bg-white p-3.5">
+                    <div class="flex gap-3">
+                        <span class="w-11 h-11 rounded-lg bg-primary-50 text-primary-600 flex items-center justify-center flex-none">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8" /></svg>
+                        </span>
+                        <div class="min-w-0">
+                            <p class="text-[14px] font-semibold leading-snug text-gray-900">{{ $template->judul }}</p>
+                            @if($template->deskripsi)
+                            <p class="text-[13px] text-gray-500 mt-0.5">{{ $template->deskripsi }}</p>
+                            @endif
+                            <p class="text-[11px] text-gray-400 mt-0.5 truncate">{{ $fileName }}</p>
+                            @if($ext)
+                            <p class="text-[11px] text-gray-500 mt-0.5">{{ $ext }}{{ $sizeLabel }}</p>
                             @endif
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 shrink-0">
-                        <span class="px-2.5 py-1 bg-primary-50 text-primary-700 text-xs font-semibold rounded-full">
-                            {{ $jenisSurat->templateSurats->count() }} template
-                        </span>
-                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-200"
-                            :class="openCategory === {{ $jenisSurat->id }} ? 'rotate-180' : ''"
-                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
+
+                    @if($template->syarat && count($template->syarat) > 0)
+                    <div x-data="{ s: false }" class="mt-3 rounded-lg bg-gray-50 border border-gray-100">
+                        <button type="button" @click="s = !s" :aria-expanded="s" class="w-full flex items-center justify-between h-11 px-3 text-[13px] font-medium text-gray-700">
+                            Syarat dokumen ({{ count($template->syarat) }})
+                            <svg class="w-4 h-4 text-gray-400 transition-transform" :class="s ? 'rotate-180' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+                        </button>
+                        <ul x-show="s" x-cloak class="px-3 pb-3 space-y-1.5 text-[13px] text-gray-600">
+                            @foreach($template->syarat as $syarat)
+                            <li class="flex gap-2">
+                                <svg class="w-4 h-4 text-emerald-500 mt-0.5 flex-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
+                                <span>{{ $syarat }}</span>
+                            </li>
+                            @endforeach
+                        </ul>
                     </div>
-                </button>
+                    @endif
 
-                {{-- Template List --}}
-                <div x-show="openCategory === {{ $jenisSurat->id }}"
-                    x-transition:enter="transition ease-out duration-200"
-                    x-transition:enter-start="opacity-0 -translate-y-1"
-                    x-transition:enter-end="opacity-100 translate-y-0"
-                    x-transition:leave="transition ease-in duration-150"
-                    x-transition:leave-start="opacity-100 translate-y-0"
-                    x-transition:leave-end="opacity-0 -translate-y-1">
-                    <div class="border-t border-gray-100 divide-y divide-gray-50">
-                        @foreach($jenisSurat->templateSurats as $template)
-                        <div class="px-6 py-5">
-                            <div class="flex flex-col md:flex-row md:items-start gap-4">
-                                {{-- Info --}}
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-start gap-3">
-                                        <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 mt-0.5">
-                                            <svg class="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <h3 class="text-sm font-semibold text-gray-800">{{ $template->judul }}</h3>
-                                            @if($template->deskripsi)
-                                            <p class="text-sm text-gray-500 mt-0.5">{{ $template->deskripsi }}</p>
-                                            @endif
-                                            <p class="text-xs text-gray-400 mt-1">
-                                                {{ $template->file_original_name ?? basename($template->file_path) }}
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    {{-- Syarat-Syarat --}}
-                                    @if($template->syarat && count($template->syarat) > 0)
-                                    <div class="mt-4 ml-12">
-                                        <p class="text-xs font-semibold text-gray-600 uppercase tracking-wider mb-2">Syarat Penggunaan</p>
-                                        <ul class="space-y-1.5">
-                                            @foreach($template->syarat as $syarat)
-                                            <li class="flex items-start gap-2 text-sm text-gray-600">
-                                                <svg class="w-4 h-4 text-green-500 mt-0.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
-                                                <span>{{ $syarat }}</span>
-                                            </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                    @endif
-                                </div>
-
-                                {{-- Download Button --}}
-                                <div class="shrink-0">
-                                    <a href="{{ route('layanan.surat.template.download', $template->id) }}"
-                                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-primary-600 text-white text-sm font-semibold rounded-xl hover:bg-primary-700 transition-all shadow-sm hover:shadow-md transform hover:-translate-y-0.5">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                        </svg>
-                                        Download
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
+                    <a href="{{ route('layanan.surat.template.download', $template->id) }}"
+                        class="mt-3 flex items-center justify-center gap-2 h-12 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-[15px] font-semibold">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" /></svg>
+                        Unduh
+                    </a>
                 </div>
-
-            </div>
-            @endforeach
-        </div>
-
-        {{-- Info Box --}}
-        <div class="mt-10 bg-blue-50 border border-blue-100 rounded-2xl p-6 flex items-start gap-4">
-            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </div>
-            <div>
-                <h4 class="text-sm font-semibold text-blue-800 mb-1">Cara Menggunakan Template</h4>
-                <ol class="text-sm text-blue-700 space-y-1 list-decimal list-inside">
-                    <li>Download template sesuai jenis surat yang dibutuhkan.</li>
-                    <li>Isi data pada template sesuai petunjuk di dalam file.</li>
-                    <li>Bawa dokumen yang sudah terisi beserta syarat-syaratnya ke kantor kelurahan.</li>
-                    <li>Atau ajukan secara online melalui menu <a href="{{ route('layanan.index') }}" class="font-semibold underline">Buat Surat</a>.</li>
-                </ol>
+                @endforeach
             </div>
         </div>
+        @endforeach
 
-        @endif
-    </div>
-</section>
+        <p x-show="q !== '' && shown === 0" x-cloak class="text-center text-sm text-gray-500 py-10">
+            Template tidak ditemukan. Coba kata kunci lain.
+        </p>
+    </section>
+
+    {{-- Cara menggunakan: langkah ringkas --}}
+    <section class="max-w-5xl mx-auto mt-6 px-4">
+        <div class="rounded-2xl bg-primary-50 border border-primary-100 p-4">
+            <p class="text-[15px] font-semibold text-primary-800">Cara menggunakan template</p>
+            <ol class="mt-3 space-y-3">
+                @foreach(['Unduh template sesuai jenis surat.', 'Isi data pada template sesuai petunjuk.', 'Bawa dokumen beserta syaratnya ke kantor kelurahan.', 'Atau ajukan secara online lewat menu Ajukan Surat.'] as $i => $step)
+                <li class="flex gap-3 items-start">
+                    <span class="w-6 h-6 rounded-full bg-primary-600 text-white text-xs font-bold flex items-center justify-center flex-none">{{ $i + 1 }}</span>
+                    <span class="text-[13px] text-primary-900 leading-relaxed">{{ $step }}</span>
+                </li>
+                @endforeach
+            </ol>
+            <a href="{{ route('layanan.index') }}" class="mt-4 flex items-center justify-center gap-2 h-12 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-semibold">
+                Ajukan online
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </a>
+        </div>
+    </section>
+</div>
+@endif
 @endsection
