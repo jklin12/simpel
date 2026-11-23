@@ -84,8 +84,8 @@
                                 <div class="py-2">
                                     <dt class="text-[11px] uppercase tracking-wide font-semibold text-gray-400" x-text="row.label"></dt>
                                     <dd class="text-sm mt-0.5 break-words"
-                                        :class="row.value ? 'text-gray-900 font-medium' : (row.isFile ? 'text-red-600' : 'text-gray-400')"
-                                        x-text="row.value || (row.isFile ? 'Belum dipilih' : '-')"></dd>
+                                        :class="row.value ? 'text-gray-900 font-medium' : ((row.isFile && row.required) ? 'text-red-600' : 'text-gray-400')"
+                                        x-text="row.value || (row.isFile ? (row.required ? 'Belum dipilih' : 'Tidak dilampirkan') : '-')"></dd>
                                 </div>
                             </template>
                         </dl>
@@ -306,7 +306,7 @@
                 else if (el.tagName === 'SELECT') value = el.value ? (el.selectedOptions[0] ? el.selectedOptions[0].text : el.value) : '';
                 else if (el.type === 'radio' || el.type === 'checkbox') { if (!el.checked) return null; value = el.value; }
                 else value = el.value;
-                return { label: this.labelOf(el), value: (value || '').trim(), isFile, index: k };
+                return { label: this.labelOf(el), value: (value || '').trim(), isFile, required: el.required, index: k };
             },
         };
     }
